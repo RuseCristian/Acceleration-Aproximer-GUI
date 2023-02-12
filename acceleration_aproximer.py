@@ -178,40 +178,19 @@ class INIEditor(tk.Tk):
         if not self.check_data():
             return
 
-        # getting data
-        initial_speed = int(self.initial_speed_entry.get())
-        final_speed = int(self.final_speed_entry.get())
-
-        # transforming from km/h to m/s (SI units)
-        v_init = initial_speed / 3.6
-        v_fin = final_speed / 3.6
-
-        # engine
-        idle_rpm = int(self.idle_rpm_entry.get())
-        redline = int(self.redline_entry.get())
-        rpm = []
-        torque = []
-        drivetrain_loss = float(self.drivetrain_loss_entry.get())
-        rpm_to_torque_aux = self.torque_text_box.get("1.0", "end-1c")
-        for element in rpm_to_torque_aux.splitlines():
-            rpm_torque = element.split("=")
-            rpm.append(int(rpm_torque[0]))
-            torque.append(int((rpm_torque[1])))
-
-        torque = [x * (1 - drivetrain_loss/100) for x in torque]
-        # gears
-        gr = []
-        for element in self.drivetrain_gears:
-            if element.get() != "":
-                gr.append(float(element.get()))
-        gr.append(float(self.final_drive_entry.get()))
+        # target speeds
+        initial_speed_kmh = int(self.initial_speed_entry.get())
+        final_speed_kmh = int(self.final_speed_entry.get())
 
         # drivetrain info
+        drivetrain_loss_percentage = float(self.drivetrain_loss_entry.get())
         layout = self.layout_entry.get()
-        shifting_time = float(self.shifting_time_entry.get())
+        shift_time_s = float(self.shifting_time_entry.get())
         off_clutch = float(self.off_clutch_entry.get())
         clutch_bite = float(self.clutch_bite_entry.get())
         gas_level = float(self.gas_level_entry.get())
+        idle_rpm = int(self.idle_rpm_entry.get())
+        redline_rpm = int(self.redline_entry.get())
 
         # tire data
         tire_width = float(self.tire_width_entry.get())
@@ -227,7 +206,6 @@ class INIEditor(tk.Tk):
         cd_car = float(self.car_cd_entry.get())
         frontal_area = float(self.car_frontal_area_entry.get())
         air_density = float(self.car_air_density_entry.get())
-        number_of_gears = len(gr) - 1  # final drive is also included in gr, so we need to subtract 1
         lift_coefficient = float(self.car_lift_coefficient_entry.get())
         downforce_total_area = float(self.car_downforce_total_area_entry.get())
         downforce_distribution = float(self.car_downforce_distribution_entry.get())
@@ -235,11 +213,49 @@ class INIEditor(tk.Tk):
         # gravitational acceleration m/s^2
         g = 9.81
 
+        # transforming from km/h to m/s (SI units)
+        initial_speed_ms = initial_speed_kmh / 3.6
+        final_speed_ms = final_speed_kmh / 3.6
+
         # tire diameter in inch
         tire_diameter = (tire_width * tire_aspect * 2) / 25.4 + tire_radial
 
-        # tire radius in m
+        # tire radius in meters (diameter in inch divided by 2 to get the radius)
         tire_radius = tire_diameter / 39.37 / 2
+
+        # engine curves
+        rpm_curve = np.array([])
+        horsepower_curve = np.array([])
+        torque_curve = np.array([])
+        rpm_to_torque_aux = self.torque_text_box.get("1.0", "end-1c")
+
+        # index 0 is rpm, index 1 is torque at that rpm
+        for element in rpm_to_torque_aux.splitlines():
+            rpm_torque = element.split("=")
+            np.append(rpm_curve, (int(rpm_torque[0])))
+            np.append(torque_curve, (int((rpm_torque[1]))))
+
+        # taking into account drivetrain mechanical losses
+        torque_curve = [x * (1 - drivetrain_loss_percentage/100) for x in torque_curve]
+
+        for i in range(0, len(torque_curve)):
+            horsepower_curve = np.append(horsepower_curve, int(torque_curve[i] * rpm_curve[i] / 7127))
+
+        max_rpm = rpm_curve[len(rpm_curve) - 1]
+
+        # data interpolation
+        rpm_torque_interpolation = interp1d(rpm_curve, torque_curve, kind="cubic")
+        rpm_curve = np.linspace(rpm_curve.min(), rpm_curve.max(), max_rpm)
+        torque_curve = rpm_torque_interpolation(rpm_curve)[:redline_rpm + 1]
+        horsepower_interpolation = interp1d(rpm_curve, horsepower_curve, kind="cubic")
+        horsepower = horsepower_interpolation(rpm_curve)[:redline_rpm + 1]
+
+        # gear ratios
+        gear_ratios = []
+        for element in self.drivetrain_gears:
+            if element.get() != "":
+                gear_ratios.append(float(element.get()))
+        gear_ratios.append(float(self.final_drive_entry.get()))
 
         # limit of adhesion of tires in terms of max allowed force before
         # entering dynamic friction
@@ -247,21 +263,6 @@ class INIEditor(tk.Tk):
             max_tractive_force = g * car_mass * (1 - front_weight_distribution) * tire_mu
         elif layout == "fwd":
             max_tractive_force = g * car_mass * front_weight_distribution * tire_mu
-
-        horsepower = np.array([])
-        rpm = np.array(rpm)
-        torque = np.array(torque)
-        max_rpm = rpm[len(rpm) - 1]
-
-        for i in range(0, len(torque)):
-            horsepower = np.append(horsepower, int(torque[i] * rpm[i] / 7127))
-
-        smoother = interp1d(rpm, torque, kind="cubic")
-        rpm_curve = np.linspace(rpm.min(), rpm.max(), max_rpm)
-        torque_curve = smoother(rpm_curve)[:redline + 1]
-        smoother2 = interp1d(rpm, horsepower, kind="cubic")
-        horsepower = smoother2(rpm_curve)[:redline + 1]
-        rpm_curve = np.array(rpm_curve)[:redline + 1]
 
         # graphs
         # torque vs rpm graph
@@ -287,7 +288,7 @@ class INIEditor(tk.Tk):
 
         Gears = []
         for i in range(0, number_of_gears):
-            specific_speed = [(x * tire_diameter) / (gr[i] * gr[len(gr) - 1]
+            specific_speed = [(x * tire_diameter) / (gear_ratios[i] * gear_ratios[len(gear_ratios) - 1]
                                                      * 336) * 1.609 / 3.6 for x in rpm_curve]
             # maximum speed at each rpm for specified gear, in m/s
 
@@ -299,7 +300,7 @@ class INIEditor(tk.Tk):
                                 air_density * (x ** 2)) / 2 for x in specific_speed]
             # downforce in relation to speed, in Newtons
 
-            torque_at_the_wheels = [x * gr[i] * gr[len(gr) - 1] for x in torque_curve]
+            torque_at_the_wheels = [x * gear_ratios[i] * gear_ratios[len(gear_ratios) - 1] for x in torque_curve]
             # torque at the wheels in Nm
 
             acceleration = []
@@ -364,21 +365,21 @@ class INIEditor(tk.Tk):
             rpm = np.searchsorted(speed_values, speed)
             return accel_values[rpm]
 
-        current_v = v_init
+        current_v = initial_speed_ms
         current_rpm = -1
         current_gear = -1
         # finding the gear and rpm to start ,based on the initial speed
         try:
             for i in range(0, number_of_gears):
                 for x in range(idle_rpm, len(Gears[i].rpm) - 1):
-                    if v_init <= Gears[i].speed[x]:
+                    if initial_speed_ms <= Gears[i].speed[x]:
                         current_gear = i
                         current_rpm = x
                         raise
         except:
             pass
 
-        if current_rpm < off_clutch and current_gear == 0 and 0 <= initial_speed <= 10:
+        if current_rpm < off_clutch and current_gear == 0 and 0 <= initial_speed_kmh <= 10:
             delta_rpm = off_clutch - current_rpm
             clutch_progression_rate = abs((clutch_bite - 1)) / delta_rpm
             gas_progression_rate = (1 - gas_level) / delta_rpm
@@ -454,11 +455,11 @@ class INIEditor(tk.Tk):
 
         bad_final_speed = False
         total_time = 0
-        while current_v <= v_fin and current_rpm != -1 and current_gear != -1:
+        while current_v <= final_speed_ms and current_rpm != -1 and current_gear != -1:
             # upshift
             try:
                 if current_rpm == optimum_upshift[current_gear]:
-                    total_time += shifting_time
+                    total_time += shift_time_s
                     current_rpm = gear_dropdown_rpm[current_gear]
                     current_gear += 1
             except IndexError:
@@ -500,7 +501,7 @@ class INIEditor(tk.Tk):
         self.append_text("-------------------------------------------------------------------------------", False)
         self.append_text("", False)
         if not bad_final_speed:
-            self.append_text(f"{initial_speed} - {final_speed} km/h in {round(total_time, 3)} seconds", False)
+            self.append_text(f"{initial_speed_kmh} - {final_speed_kmh} km/h in {round(total_time, 3)} seconds", False)
         else:
             self.append_text("Use a lower final speed, the car is not able to reach this speed.")
         fig.update_layout(showlegend=False)
