@@ -289,7 +289,7 @@ class INIEditor(tk.Tk):
         rpm_torque_interpolation = interp1d(rpm_curve, torque_curve, kind="cubic")
         rpm_curve = np.linspace(np.min(rpm_curve), np.max(rpm_curve), max_rpm - idle_rpm)
         torque_curve = rpm_torque_interpolation(rpm_curve)[:redline_rpm + 1]
-        horsepower_curve = np.array([int(torque * rpm / 7127) for torque, rpm in zip(torque_curve, rpm_curve)])
+        horsepower_curve = np.array([torque * rpm / 7127 for torque, rpm in zip(torque_curve, rpm_curve)])
         rpm_torque_interpolation = interp1d(rpm_curve, torque_curve, kind="cubic")
         torque_curve = rpm_torque_interpolation(rpm_curve)[:redline_rpm + 1]
         horsepower_interpolation = interp1d(rpm_curve, horsepower_curve, kind="cubic")
@@ -406,6 +406,22 @@ class INIEditor(tk.Tk):
                            ), row=1, col=2
             )
             # acceleration vs speed graph
+
+            # graphs
+            # torque vs rpm graph
+            fig = make_subplots(rows=2, cols=3)
+            fig.add_trace(
+                go.Scatter(x=rpm_curve, y=torque_curve,
+                           name="Torque(Nm)"
+                           ), row=1, col=1
+            )
+
+            # horsepower vs rpm graph
+            fig.add_trace(
+                go.Scatter(x=rpm_curve, y=horsepower_curve,
+                           name='HP'
+                           ), row=1, col=1
+            )
         self.append_text("", False)
         self.append_text("-----------------------------------RESULTS-------------------------------------", False)
         self.append_text("", False)
