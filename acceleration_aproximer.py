@@ -178,6 +178,54 @@ class INIEditor(tk.Tk):
         if not self.check_data():
             return
 
+        def estimate_weight_shift(acceleration_value, wheelbase, track_width, roll_center_height, roll_stiffness):
+
+            # Compute the roll angle caused by the weight shift
+            roll_angle = acceleration_value * wheelbase / (2 * roll_stiffness)
+
+            # Compute the weight shift as a fraction of the track width
+            weight_shift = roll_angle * track_width / 2 * roll_center_height
+
+            return weight_shift
+
+        def find_accel_from_speed(speed, speed_values, accel_values):
+            # acceleration is stored on an index based on the rpm, but because gears have different gear ratios
+            # in each gear you will have different rpm at the same speed, this function, returns the acceleration value of the next gear
+            # at the current speed
+            rpm = np.searchsorted(speed_values, speed)
+            return accel_values[rpm]
+
+        def find_optimum_upshift_point(gears_data):
+            optimum_shift_points = []
+
+            for i in range(len(gears_data) - 1):
+                current_gear_acceleration = gears_data[i].accel
+
+                next_gear_acceleration = []
+                for j in range(len(current_gear_acceleration)):
+                    if j >= len(gears_data[i + 1].accel):
+                        break
+                    next_gear_acceleration.append(find_accel_from_speed(gears_data[i].speed[j], gears_data[i + 1].speed, gears_data[i + 1].accel))
+                next_gear_acceleration = np.array(next_gear_acceleration)
+
+                for index, j in enumerate(range(min(len(current_gear_acceleration), len(next_gear_acceleration)))):
+                    if current_gear_acceleration[j] < next_gear_acceleration[j]:
+                        optimum_shift_points.append(index)
+                else:
+                    optimum_shift_points.append(len(current_gear_acceleration))
+
+            return optimum_shift_points
+
+        def find_starting_parameters(speed_value):
+            for i in range(0, number_of_gears):
+                idx = np.searchsorted(gears[i].speed, speed_value, side='right')
+                if idx < len(gears[i].speed):
+                    gear_value = i
+                    rpm_value = idx
+                    break
+            return gear_value, rpm_value
+
+        fig = make_subplots(rows=2, cols=3)
         # target speeds
         initial_speed_kmh = int(self.initial_speed_entry.get())
         final_speed_kmh = int(self.final_speed_entry.get())
@@ -232,23 +280,20 @@ class INIEditor(tk.Tk):
         # index 0 is rpm, index 1 is torque at that rpm
         for element in rpm_to_torque_aux.splitlines():
             rpm_torque = element.split("=")
-            np.append(rpm_curve, (int(rpm_torque[0])))
-            np.append(torque_curve, (int((rpm_torque[1]))))
-
-        # taking into account drivetrain mechanical losses
-        torque_curve = [x * (1 - drivetrain_loss_percentage/100) for x in torque_curve]
-
-        for i in range(0, len(torque_curve)):
-            horsepower_curve = np.append(horsepower_curve, int(torque_curve[i] * rpm_curve[i] / 7127))
-
-        max_rpm = rpm_curve[len(rpm_curve) - 1]
+            rpm_curve = np.append(rpm_curve, (int(rpm_torque[0])))
+            torque_curve = np.append(torque_curve, (int((rpm_torque[1]))))
 
         # data interpolation
+        max_rpm = int(rpm_curve[len(rpm_curve) - 1])
+        torque_curve = [x * (1 - drivetrain_loss_percentage / 100) for x in torque_curve]
         rpm_torque_interpolation = interp1d(rpm_curve, torque_curve, kind="cubic")
-        rpm_curve = np.linspace(rpm_curve.min(), rpm_curve.max(), max_rpm)
+        rpm_curve = np.linspace(np.min(rpm_curve), np.max(rpm_curve), max_rpm - idle_rpm)
+        torque_curve = rpm_torque_interpolation(rpm_curve)[:redline_rpm + 1]
+        horsepower_curve = np.array([int(torque * rpm / 7127) for torque, rpm in zip(torque_curve, rpm_curve)])
+        rpm_torque_interpolation = interp1d(rpm_curve, torque_curve, kind="cubic")
         torque_curve = rpm_torque_interpolation(rpm_curve)[:redline_rpm + 1]
         horsepower_interpolation = interp1d(rpm_curve, horsepower_curve, kind="cubic")
-        horsepower = horsepower_interpolation(rpm_curve)[:redline_rpm + 1]
+        horsepower_curve = horsepower_interpolation(rpm_curve)[:redline_rpm + 1]
 
         # gear ratios
         gear_ratios = []
@@ -256,254 +301,120 @@ class INIEditor(tk.Tk):
             if element.get() != "":
                 gear_ratios.append(float(element.get()))
         gear_ratios.append(float(self.final_drive_entry.get()))
+        number_of_gears = len(gear_ratios) - 1
 
-        # limit of adhesion of tires in terms of max allowed force before
-        # entering dynamic friction
+        # limit of adhesion of tires in terms of max allowed force before entering dynamic friction
         if layout == "rwd":
             max_tractive_force = g * car_mass * (1 - front_weight_distribution) * tire_mu
         elif layout == "fwd":
             max_tractive_force = g * car_mass * front_weight_distribution * tire_mu
 
-        # graphs
-        # torque vs rpm graph
-        fig = make_subplots(rows=2, cols=3)
-        fig.add_trace(
-            go.Scatter(x=rpm_curve, y=torque_curve,
-                       name="Torque(Nm)"
-                       ), row=1, col=1
-        )
-
-        # horsepower vs rpm graph
-        fig.add_trace(
-            go.Scatter(x=rpm_curve, y=horsepower,
-                       name='HP'
-                       ), row=1, col=1
-        )
-
         class Gear:
-            def __init__(self, accel, rpm, speed):
+            def __init__(self, ratio, accel, rpm, speed, torque_at_the_wheels, air_resistance_curve, downforce_curve):
+                self.dropdown_rpm = None
+                self.max_speed = None
+                self.optimum_upshift = None
+                self.ratio = ratio
                 self.accel = accel
                 self.rpm = rpm
                 self.speed = speed
+                self.torque_at_the_wheels = torque_at_the_wheels
+                self.air_resistance = air_resistance_curve
+                self.downforce_curve = downforce_curve
 
-        Gears = []
+            def add_optimum_upshift(self, value):
+                self.optimum_upshift = value
+                self.max_speed = self.speed[min(value, len(self.accel) - 1)]
+
+            def add_dropdown_rpm(self, value):
+                self.dropdown_rpm = value
+
+        # calculating relevant gear information
+        gears = []
         for i in range(0, number_of_gears):
-            specific_speed = [(x * tire_diameter) / (gear_ratios[i] * gear_ratios[len(gear_ratios) - 1]
-                                                     * 336) * 1.609 / 3.6 for x in rpm_curve]
+
             # maximum speed at each rpm for specified gear, in m/s
+            specific_speed = np.array([(x * tire_diameter) / (gear_ratios[i] * gear_ratios[len(gear_ratios) - 1] * 336) * 1.609 / 3.6 for x in rpm_curve])
 
-            air_resistance_curve = [
-                (cd_car * frontal_area * air_density * (x ** 2)) / 2 for x in specific_speed]
             # air resistance in relation to speed, in Newtons
+            air_resistance_curve = np.array([(cd_car * frontal_area * air_density * (x ** 2)) / 2 for x in specific_speed])
 
-            downforce_curve = [(lift_coefficient * downforce_total_area *
-                                air_density * (x ** 2)) / 2 for x in specific_speed]
             # downforce in relation to speed, in Newtons
+            downforce_curve = np.array([(lift_coefficient * downforce_total_area * air_density * (x ** 2)) / 2 for x in specific_speed])
 
-            torque_at_the_wheels = [x * gear_ratios[i] * gear_ratios[len(gear_ratios) - 1] for x in torque_curve]
             # torque at the wheels in Nm
+            torque_at_the_wheels = np.array([x * gear_ratios[i] * gear_ratios[len(gear_ratios) - 1] for x in torque_curve])
 
-            acceleration = []
+            acceleration = np.array([])
             for index in range(0, len(torque_curve) - 1):
-
                 if layout == 'fwd':
-                    acceleration_at_specific_rpm = (min(
-                        (max_tractive_force + downforce_curve[index] * downforce_distribution) * tire_mu,
-                        torque_at_the_wheels[index] / tire_radius) - air_resistance_curve[
-                                                        index] - rolling_k * g * car_mass) / car_mass
+                    acceleration_at_specific_rpm = (min((max_tractive_force + downforce_curve[index] * downforce_distribution) * tire_mu,
+                                                        torque_at_the_wheels[index] / tire_radius) - air_resistance_curve[index] - rolling_k * g * car_mass) / car_mass
                 else:
-                    acceleration_at_specific_rpm = (min(
-                        (max_tractive_force + downforce_curve[index] * (1 - downforce_distribution)) * tire_mu,
-                        torque_at_the_wheels[index] / tire_radius) - air_resistance_curve[
-                                                        index] - rolling_k * g * car_mass) / car_mass
+                    acceleration_at_specific_rpm = (min((max_tractive_force + downforce_curve[index] * (1 - downforce_distribution)) * tire_mu,
+                                                        torque_at_the_wheels[index] / tire_radius) - air_resistance_curve[index] - rolling_k * g * car_mass) / car_mass
                 if acceleration_at_specific_rpm > 0:
-                    acceleration.append(acceleration_at_specific_rpm)
+                    acceleration = np.append(acceleration, acceleration_at_specific_rpm)
 
-            g_acceleration = [x / g for x in acceleration]
-            acceleration = np.array(acceleration)
-            specific_speed = np.array(specific_speed)
-
-            Gear_info = Gear(acceleration, rpm_curve, specific_speed)
-            Gears.append(Gear_info)
             # putting together all the info
+            gear_info = Gear(gear_ratios[i], acceleration, rpm_curve, specific_speed, torque_at_the_wheels, air_resistance_curve,
+                             downforce_curve)
+            gears.append(gear_info)
 
-            specific_speed = [x * 3.6 for x in specific_speed]
+        # finding the optimum upshift shift points for each gear
+        optimum_upshift = find_optimum_upshift_point(gears)
+        for i in range(len(gears) - 1):
+            gears[i].add_optimum_upshift(optimum_upshift[i])
 
+        # calculating gear rpm dropdown when upshifting
+        for i in range(len(gears) - 2):
+            gears[i].add_dropdown_rpm(np.searchsorted(gears[i + 1].speed, gears[i].max_speed))
+
+        # finding initial starting parameters
+        current_speed_ms = initial_speed_ms
+        current_gear, current_rpm = find_starting_parameters(current_speed_ms)
+
+        total_time = 0
+        while current_speed_ms <= final_speed_ms and current_rpm != -1 and current_gear != -1:
+            # upshift
+            if current_rpm == optimum_upshift[current_gear]:
+                total_time += shift_time_s
+                current_rpm = gears[current_gear].dropdown_rpm
+                current_gear += 1
+            # accelerating
+            try:
+                if current_rpm != idle_rpm:
+                    total_time = total_time + ((gears[current_gear].speed[current_rpm] - gears[current_gear].speed[current_rpm - 1]) / gears[current_gear].accel[current_rpm])
+                else:
+                    total_time = (gears[current_gear].speed[current_rpm] / gears[current_gear].accel[current_rpm])
+                current_speed_ms = gears[current_gear].speed[current_rpm]
+            except:
+                pass
+            current_rpm += 1
+
+        for i in range(len(gears)):
             fig.add_trace(
-                go.Scatter(x=specific_speed, y=torque_at_the_wheels,
+                go.Scatter(x=gears[i].speed*3.6, y=gears[i].torque_at_the_wheels,
                            name="Gear {}".format(i + 1)
                            ), row=2, col=2
             )
             # torque vs speed in each gear (max potential speed)
 
             fig.add_trace(
-                go.Scatter(x=specific_speed, y=g_acceleration,
+                go.Scatter(x=gears[i].speed*3.6, y=gears[i].accel/g,
                            name="Gear {}".format(i + 1)
                            ), row=1, col=2
             )
             # acceleration vs speed graph
-
-        # air resistance vs speed graph , in Kg
-        fig.add_trace(
-            go.Scatter(y=air_resistance_curve, x=specific_speed,
-                       name="Air resistance (kg)"
-                       ), row=1, col=3
-        )
-        fig.add_trace(
-            go.Scatter(y=downforce_curve, x=specific_speed,
-                       name="Downforce (kg)"
-                       ), row=2, col=3
-        )
-
-        fig.update_layout(
-            title=car_name,
-            xaxis_title='RPM',
-            yaxis_title='Nm / HP'
-        )
-
-        def find_accel_from_speed(speed, speed_values, accel_values):
-            rpm = np.searchsorted(speed_values, speed)
-            return accel_values[rpm]
-
-        current_v = initial_speed_ms
-        current_rpm = -1
-        current_gear = -1
-        # finding the gear and rpm to start ,based on the initial speed
-        try:
-            for i in range(0, number_of_gears):
-                for x in range(idle_rpm, len(Gears[i].rpm) - 1):
-                    if initial_speed_ms <= Gears[i].speed[x]:
-                        current_gear = i
-                        current_rpm = x
-                        raise
-        except:
-            pass
-
-        if current_rpm < off_clutch and current_gear == 0 and 0 <= initial_speed_kmh <= 10:
-            delta_rpm = off_clutch - current_rpm
-            clutch_progression_rate = abs((clutch_bite - 1)) / delta_rpm
-            gas_progression_rate = (1 - gas_level) / delta_rpm
-
-        # finding the optimum upshift shift points for each gear
-        optimum_upshift = []
-        current_gear_accel = 0
-        next_gear_accel = 0
-
-        for i in range(0, number_of_gears):
-            for x in range(idle_rpm, len(Gears[i].accel)):
-                try:
-                    if Gears[i].accel[x] <= find_accel_from_speed(Gears[i].speed[x], Gears[i + 1].speed,
-                                                                  Gears[i + 1].accel):
-                        old_x = x
-                        try:
-                            for j in range(x, len(Gears[i].accel)):
-                                current_gear_accel += Gears[i].accel[j]
-                                next_gear_accel += find_accel_from_speed(
-                                    Gears[i].speed[j], Gears[i + 1].speed, Gears[i + 1].accel)
-                            if current_gear_accel >= next_gear_accel:
-                                optimum_upshift.append(x)
-                            else:
-                                optimum_upshift.append(old_x)
-                            break
-                        except:
-                            if current_gear_accel >= next_gear_accel:
-                                optimum_upshift.append(len(Gear[i].accel) - 1)
-                            else:
-                                optimum_upshift.append(old_x)
-                            current_gear_accel = 0
-                            next_gear_accel = 0
-                            break
-                    elif x == len(Gears[i].accel) - 1:
-                        optimum_upshift.append(x)
-                except:
-                    optimum_upshift.append(len(Gears[i].accel) - 1)
-                    break
-        # calculating max rpm and gear rpm dropdown when upshifting
-        gear_dropdown_rpm = []
-        max_speed = []
-        for i in range(0, number_of_gears):
-            try:
-                max_speed.append(Gears[i].speed[optimum_upshift[i]])
-            except:
-                max_speed.append(Gears[i].speed[len(Gears[i].accel)])
-                pass
-        for i in range(0, number_of_gears - 2):
-            gear_dropdown_rpm.append(np.searchsorted(
-                Gears[i + 1].speed, Gears[i].speed[optimum_upshift[i]]))
-
         self.append_text("", False)
         self.append_text("-----------------------------------RESULTS-------------------------------------", False)
         self.append_text("", False)
-
-        for i in range(0, number_of_gears):
-            self.append_text(f"Gear {i + 1} Max Speed {round(max_speed[i] * 3.6, 2)} km/h", False)
-            specific_speed = [(x * tire_diameter) /
-                              (gr[i] * gr[len(gr) - 1] * 336) * 1.609 for x in rpm_curve]
-            fig.add_vline(x=round(max_speed[i - 1] * 3.6, 2),
-                          row=2, col=1, fillcolor="LightSalmon")
-            try:
-                new_rpm = [x for x in range(0, optimum_upshift[i] + 2)]
-            except:
-                new_rpm = [x for x in range(0, len(Gears[i].accel))]
-            fig.add_trace(
-                go.Scatter(y=new_rpm, x=specific_speed,
-                           name="Gear " + str(i + 1)
-                           ), row=2, col=1
-            )
-        fig.update_layout(showlegend=False)
-        fig.show()
-
-        bad_final_speed = False
-        total_time = 0
-        while current_v <= final_speed_ms and current_rpm != -1 and current_gear != -1:
-            # upshift
-            try:
-                if current_rpm == optimum_upshift[current_gear]:
-                    total_time += shift_time_s
-                    current_rpm = gear_dropdown_rpm[current_gear]
-                    current_gear += 1
-            except IndexError:
-                bad_final_speed = True
-                break
-
-            # accelerating from standstill in first gear
-            if current_gear == 0 and current_rpm < off_clutch and current_v <= 4:
-                clutch_bite -= clutch_progression_rate
-                gas_level += gas_progression_rate
-                aux_time = (
-                        (Gears[current_gear].speed[current_rpm] - Gears[current_gear].speed[current_rpm - 1]) / (
-                        Gears[current_gear].accel[current_rpm]))
-                aux_time += aux_time * (1 + (1 - clutch_bite) * gas_level)
-                total_time = total_time + aux_time
-
-                current_v = Gears[current_gear].speed[current_rpm]
-                current_rpm += 1
-            else:
-                # accelerating
-                try:
-                    aux_time2 = ((Gears[current_gear].speed[current_rpm] -
-                                  Gears[current_gear].speed[current_rpm - 1]) / Gears[current_gear].accel[
-                                     current_rpm])
-                    total_time = total_time + ((Gears[current_gear].speed[current_rpm] -
-                                                Gears[current_gear].speed[current_rpm - 1]) / Gears[current_gear].accel[
-                                                   current_rpm])
-                    current_v = Gears[current_gear].speed[current_rpm]
-                except:
-                    pass
-                current_rpm += 1
-
-        self.append_text("", False)
-        self.append_text("-------------------------------------------------------------------------------", False)
-        self.append_text("", False)
         for i in range(0, number_of_gears - 1):
-            self.append_text(f"Gear {i + 1} Optimum Upshift - {optimum_upshift[i] + 2} RPM", False)
+            self.append_text(f"Gear {i + 1} Optimum Upshift - {gears[i].optimum_upshift + 1 + idle_rpm} RPM", False)
         self.append_text("", False)
         self.append_text("-------------------------------------------------------------------------------", False)
+        self.append_text(f"{initial_speed_kmh} - {final_speed_kmh} km/h in {round(total_time, 3)} seconds", False)
         self.append_text("", False)
-        if not bad_final_speed:
-            self.append_text(f"{initial_speed_kmh} - {final_speed_kmh} km/h in {round(total_time, 3)} seconds", False)
-        else:
-            self.append_text("Use a lower final speed, the car is not able to reach this speed.")
         fig.update_layout(showlegend=False)
         fig.show()
 
