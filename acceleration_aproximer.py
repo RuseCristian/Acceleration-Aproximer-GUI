@@ -26,7 +26,6 @@ class INIEditor(tk.Tk):
         self.tire_mu_entry = None
         self.shifting_time_entry = None
         self.off_clutch_entry = None
-        self.clutch_bite_entry = None
         self.gas_level_entry = None
         self.drivetrain_loss_entry = None
         self.layout_entry = None
@@ -143,9 +142,6 @@ class INIEditor(tk.Tk):
         if not self.check_if_int_or_float(self.off_clutch_entry.get()):
             return
 
-        if not self.check_if_int_or_float(self.clutch_bite_entry.get()):
-            return
-
         if not self.check_if_int_or_float(self.gas_level_entry.get()):
             return
 
@@ -234,11 +230,10 @@ class INIEditor(tk.Tk):
         drivetrain_loss_percentage = float(self.drivetrain_loss_entry.get())
         layout = self.layout_entry.get()
         shift_time_s = float(self.shifting_time_entry.get())
-        off_clutch = float(self.off_clutch_entry.get())
-        clutch_bite = float(self.clutch_bite_entry.get())
-        gas_level = float(self.gas_level_entry.get())
+        disengagement_rpm = float(self.off_clutch_entry.get())
         idle_rpm = int(self.idle_rpm_entry.get())
         redline_rpm = int(self.redline_entry.get())
+        gas_level_data = float(self.gas_level_entry.get())
 
         # tire data
         tire_width = float(self.tire_width_entry.get())
@@ -373,35 +368,57 @@ class INIEditor(tk.Tk):
         # finding initial starting parameters
         current_speed_ms = initial_speed_ms
         current_gear, current_rpm = find_starting_parameters(current_speed_ms)
-
         total_time = 0
+        standing_conditions = False
+
         while current_speed_ms <= final_speed_ms and current_rpm != -1 and current_gear != -1:
+
             # upshift
-            if current_rpm == optimum_upshift[current_gear]:
+            if current_rpm == gears[current_gear].optimum_upshift:
                 total_time += shift_time_s
                 current_rpm = gears[current_gear].dropdown_rpm
                 current_gear += 1
+
+            # standing start
+            if current_gear == 0 and current_rpm <= disengagement_rpm - idle_rpm:
+
+                # disengagement_rpm - idle_rpm because current_rpm is an index, and we store rpm values starting from idle_rpm, not 0
+                while current_rpm <= disengagement_rpm - idle_rpm:
+                    if not standing_conditions:
+                        rolling_resistance = rolling_k * car_mass
+                        rpm_delta = disengagement_rpm - idle_rpm
+
+                        # uses the highest gas level either from the minimum necessary to start moving the car
+                        # or the driver defined gas level, if higher
+                        gas_level = max(rolling_resistance / gears[0].torque_at_the_wheels[0], gas_level_data)
+                        gas_level_step = (1 - gas_level) / rpm_delta
+                        standing_conditions = True
+
+                    current_rpm += 1
+                    aux_time = (gears[current_gear].speed[current_rpm] - gears[current_gear].speed[current_rpm - 1]) / (
+                            gears[current_gear].accel[current_rpm] * gas_level)
+                    gas_level += gas_level_step
+                    total_time += aux_time
+                    current_speed_ms = gears[current_gear].speed[current_rpm]
+
             # accelerating
-            try:
-                if current_rpm != idle_rpm:
-                    total_time = total_time + ((gears[current_gear].speed[current_rpm] - gears[current_gear].speed[current_rpm - 1]) / gears[current_gear].accel[current_rpm])
-                else:
-                    total_time = (gears[current_gear].speed[current_rpm] / gears[current_gear].accel[current_rpm])
-                current_speed_ms = gears[current_gear].speed[current_rpm]
-            except:
-                pass
+            if current_rpm != 0:  # 0 meaning idle_rpm
+                total_time = total_time + ((gears[current_gear].speed[current_rpm] - gears[current_gear].speed[current_rpm - 1]) / gears[current_gear].accel[current_rpm])
+            else:
+                total_time = (gears[current_gear].speed[current_rpm] / gears[current_gear].accel[current_rpm])
+            current_speed_ms = gears[current_gear].speed[current_rpm]
             current_rpm += 1
 
         for i in range(len(gears)):
             fig.add_trace(
-                go.Scatter(x=gears[i].speed*3.6, y=gears[i].torque_at_the_wheels,
+                go.Scatter(x=gears[i].speed * 3.6, y=gears[i].torque_at_the_wheels,
                            name="Gear {}".format(i + 1)
                            ), row=2, col=2
             )
             # torque vs speed in each gear (max potential speed)
 
             fig.add_trace(
-                go.Scatter(x=gears[i].speed*3.6, y=gears[i].accel/g,
+                go.Scatter(x=gears[i].speed * 3.6, y=gears[i].accel / g,
                            name="Gear {}".format(i + 1)
                            ), row=1, col=2
             )
@@ -489,7 +506,7 @@ class INIEditor(tk.Tk):
             {'section': 'engine', 'options': ['idle_rpm', 'redline']},
             {'section': 'drivetrain_gears', 'options': ['gear1', 'gear2', 'final_drive']},
             {'section': 'drivetrain',
-             'options': ['layout', 'shifting_time', 'off_clutch', 'clutch_bite', 'gas_level']},
+             'options': ['layout', 'shifting_time', 'off_clutch', 'gas_level']},
             {'section': 'tire', 'options': ['tire_width', 'tire_aspect', 'tire_radial', 'tire_mu', 'rolling_k']},
             {'section': 'car',
              'options': ['car_name', 'car_mass', 'front_weight_distribution', 'frontal_area', 'air_density', 'cd_car',
@@ -542,7 +559,6 @@ class INIEditor(tk.Tk):
         self.update_text(self.drivetrain_loss_entry)
         self.update_text(self.shifting_time_entry)
         self.update_text(self.off_clutch_entry)
-        self.update_text(self.clutch_bite_entry)
         self.update_text(self.gas_level_entry)
         self.update_text(self.tire_width_entry)
         self.update_text(self.tire_aspect_entry)
@@ -593,7 +609,6 @@ class INIEditor(tk.Tk):
         except:
             pass
         self.update_text(self.shifting_time_entry, config["drivetrain"]["shifting_time"])
-        self.update_text(self.clutch_bite_entry, config["drivetrain"]["clutch_bite"])
         self.update_text(self.off_clutch_entry, config["drivetrain"]["off_clutch"])
         self.update_text(self.gas_level_entry, config["drivetrain"]["gas_level"])
 
@@ -609,8 +624,7 @@ class INIEditor(tk.Tk):
             'engine': {'idle_rpm': '', 'redline': ''},
             'drivetrain_gears': {'gear1': '', 'gear2': '', 'gear3': '', 'gear4': '', 'gear5': '', 'gear6': '',
                                  'final_drive': ''},
-            'drivetrain': {'layout': '', 'drivetrain_loss': '', 'shifting_time': '', 'off_clutch': '',
-                           'clutch_bite': '', 'gas_level': ''},
+            'drivetrain': {'layout': '', 'drivetrain_loss': '', 'shifting_time': '', 'off_clutch': '', 'gas_level': ''},
             'tire': {'tire_width': '', 'tire_aspect': '', 'tire_radial': '', 'tire_mu': '', 'rolling_k': ''},
             'car': {'car_name': '', 'car_mass': '', 'front_weight_distribution': '', 'frontal_area': '',
                     'air_density': '', 'cd_car': '', 'lift_coefficient': '0', 'downforce_total_area': '',
@@ -653,7 +667,6 @@ class INIEditor(tk.Tk):
             pass
         base_dictionary["drivetrain"]["shifting_time"] = self.shifting_time_entry.get()
         base_dictionary["drivetrain"]["off_clutch"] = self.off_clutch_entry.get()
-        base_dictionary["drivetrain"]["clutch_bite"] = self.clutch_bite_entry.get()
         base_dictionary["drivetrain"]["gas_level"] = self.gas_level_entry.get()
 
         base_dictionary["tire"]["tire_width"] = self.tire_width_entry.get()
@@ -813,10 +826,6 @@ class INIEditor(tk.Tk):
         tk.Label(drivetrain_frame, text="Off Clutch RPM").grid(row=3, column=0)
         self.off_clutch_entry = tk.Entry(drivetrain_frame)
         self.off_clutch_entry.grid(row=3, column=1)
-
-        tk.Label(drivetrain_frame, text="Clutch Bite Point").grid(row=4, column=0)
-        self.clutch_bite_entry = tk.Entry(drivetrain_frame)
-        self.clutch_bite_entry.grid(row=4, column=1)
 
         tk.Label(drivetrain_frame, text="Gas Level").grid(row=5, column=0)
         self.gas_level_entry = tk.Entry(drivetrain_frame)

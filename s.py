@@ -70,23 +70,35 @@ def estimate_weight_shift(acceleration_values, wheelbase, track_width, roll_cent
 #
 
 
+idle_rpm = 1000
+time = 0
+rolling_coefficient = 0.001
+car_mass = 1000
+torque = [200, 300, 400, 100]
 
 
-def find_optimum_upshift_point(gears):
-    optimum_shift_points = []
+# calculeaza din nou acceleratia, inmultind cuplul cu gas level?
 
-    for i in range(len(gears) - 1):
-        current_gear_acceleration = gears[i].accel
-        next_gear_acceleration = np.array(
-            [find_accel_from_speed(gears[i].speed[j], gears[i + 1].speed, gears[i + 1].accel) for j in range(len(current_gear_acceleration))])
-        positive_curr_gear_acceleration = np.array([])
-        count = 1
-        for j in range(min(len(current_gear_acceleration), len(next_gear_acceleration))):
-            average_acceleration = (positive_curr_gear_acceleration[j - 1] + current_gear_acceleration[j] - next_gear_acceleration[j]) / count
-            positive_curr_gear_acceleration = np.append(positive_curr_gear_acceleration, (average_acceleration, j))
-            count += 1
+def clutch_simulation( duration, disengagement_rpm):
+    # 1 clutch represents fully open
+    # 0 clutch represents fully depressed
 
-        upshift_point = np.where(positive_curr_gear_acceleration == min(x for x in positive_curr_gear_acceleration if x[0] >= 0))[1]
-        optimum_shift_points.append(upshift_point)
+    current_rpm = idle_rpm
+    rolling_resistance = rolling_coefficient * car_mass
+    rpm_step = disengagement_rpm - idle_rpm
+    gas_level = rolling_resistance / torque[0]
+    gas_level_step = (1 - gas_level) / rpm_step
 
-    return optimum_shift_points
+    time = 0
+
+    while current_rpm <= disengagement_rpm:
+        if not standing_conditions:
+            current_rpm = idle_rpm
+            rolling_resistance = rolling_coefficient * car_mass
+            rpm_step = disengagement_rpm - idle_rpm
+            gas_level = rolling_resistance / torque[0]
+            gas_level_step = (1 - gas_level) / rpm_step
+        gas_level += gas_level_step
+        current_rpm += 1
+        aux_time = (gears[current_gear].speed[current_rpm] - gears[current_gear].speed[current_rpm - 1]) / (gears[current_gear].accel[current_rpm]*gas_level)
+        total_time += aux_time
