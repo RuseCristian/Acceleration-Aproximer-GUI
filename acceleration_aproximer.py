@@ -221,6 +221,17 @@ class INIEditor(tk.Tk):
                     break
             return gear_value, rpm_value
 
+        def upshift_lift_off(gear, index, initial_velocity, t):
+            time_elapsed = 0
+            count = 0
+            while time_elapsed <= t:
+                initial_velocity = gear.speed[index-1]
+                aux_velocity = initial_velocity - gear.speed[index]
+                time_elapsed += abs(aux_velocity)/abs(gear.accel[index - 1] - gear.torque_at_the_wheels[index - 1]/car_mass - gear.accel[index] - gear.torque_at_the_wheels[index]/car_mass)
+                count += 1
+                index -= 1
+            return index,initial_velocity
+
         fig = make_subplots(rows=2, cols=3)
         # target speeds
         initial_speed_kmh = int(self.initial_speed_entry.get())
@@ -379,18 +390,26 @@ class INIEditor(tk.Tk):
                 current_rpm = gears[current_gear].dropdown_rpm
                 current_gear += 1
 
+                idx, current_speed_ms = upshift_lift_off(gears[current_gear],current_rpm, current_speed_ms, shift_time_s)
+                current_rpm = idx
+
             # standing start
             if current_gear == 0 and current_rpm <= disengagement_rpm - idle_rpm:
 
                 # disengagement_rpm - idle_rpm because current_rpm is an index, and we store rpm values starting from idle_rpm, not 0
                 while current_rpm <= disengagement_rpm - idle_rpm:
                     if not standing_conditions:
-                        rolling_resistance = rolling_k * car_mass
+                        rolling_resistance = rolling_k * car_mass * g
                         rpm_delta = disengagement_rpm - idle_rpm
 
                         # uses the highest gas level either from the minimum necessary to start moving the car
                         # or the driver defined gas level, if higher
-                        gas_level = max(rolling_resistance / gears[0].torque_at_the_wheels[0], gas_level_data)
+                        for i in range(len(gears[0].torque_at_the_wheels)):
+                            if rolling_resistance < gears[0].torque_at_the_wheels[i]/tire_radius:
+                                first_torque_entry = gears[0].torque_at_the_wheels[i]//tire_radius
+                                current_rpm = i
+                                break
+                        gas_level = max(rolling_resistance / first_torque_entry, gas_level_data)
                         gas_level_step = (1 - gas_level) / rpm_delta
                         standing_conditions = True
 
@@ -403,9 +422,9 @@ class INIEditor(tk.Tk):
 
             # accelerating
             if current_rpm != 0:  # 0 meaning idle_rpm
-                total_time = total_time + ((gears[current_gear].speed[current_rpm] - gears[current_gear].speed[current_rpm - 1]) / gears[current_gear].accel[current_rpm])
+                total_time += ((gears[current_gear].speed[current_rpm] - gears[current_gear].speed[current_rpm - 1]) / gears[current_gear].accel[current_rpm])
             else:
-                total_time = (gears[current_gear].speed[current_rpm] / gears[current_gear].accel[current_rpm])
+                total_time += (gears[current_gear].speed[current_rpm] / gears[current_gear].accel[current_rpm])
             current_speed_ms = gears[current_gear].speed[current_rpm]
             current_rpm += 1
 

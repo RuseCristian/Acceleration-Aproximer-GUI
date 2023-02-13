@@ -1,0 +1,10 @@
+mesaje de eroare pt cazul in care rollin resistance ul e prea mare si nu poate sa plece de pe loc
+
+mesaje de eroare daca rolling resistance ul e un pic mai mare si rezulta ca incepe de la un rpm mai inalt, atat de inalt incat
+e mai inalt decat off clutch rpm
+
+
+
+sa aflu indexu de rpm in functie de viteza specifica, e probabil mai precis
+calculezi acceleratia negativa a fortei de frecare cu aerul
+dupa care calculezi cat de mult dureaza sa deccelere pana la celalat index de rpm, adica cu o unitate mai joasa de viteza
