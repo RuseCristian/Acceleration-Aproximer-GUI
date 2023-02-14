@@ -79,26 +79,21 @@ torque = [200, 300, 400, 100]
 
 # calculeaza din nou acceleratia, inmultind cuplul cu gas level?
 
-def clutch_simulation( duration, disengagement_rpm):
-    # 1 clutch represents fully open
-    # 0 clutch represents fully depressed
+for index in range(0, len(torque_curve) - 1):
+    if layout == 'fwd':
+        acceleration_at_specific_rpm = (min((max_tractive_force + downforce_curve[index] * downforce_distribution) * tire_mu,
+                                            torque_at_the_wheels[index] / tire_radius) - air_resistance_curve[index] - rolling_k * g * car_mass) / car_mass
+    else:
+        acceleration_at_specific_rpm = (min((max_tractive_force + downforce_curve[index] * (1 - downforce_distribution)) * tire_mu,torque_at_the_wheels[index] / tire_radius) - air_resistance_curve[
+                                            index] - rolling_k * g * car_mass) / car_mass
 
-    current_rpm = idle_rpm
-    rolling_resistance = rolling_coefficient * car_mass
-    rpm_step = disengagement_rpm - idle_rpm
-    gas_level = rolling_resistance / torque[0]
-    gas_level_step = (1 - gas_level) / rpm_step
 
-    time = 0
+for index in range(0, len(torque_curve) - 1):
+    downforce = downforce_curve[index] * (downforce_distribution if layout == 'fwd' else (1 - downforce_distribution))
+    air_resistance = air_resistance_curve[index]
+    rolling_resistance = rolling_k * g * car_mass
+    traction = min((max_tractive_force + downforce) * tire_mu, torque_at_the_wheels[index] / tire_radius - air_resistance - rolling_resistance)/ car_mass
 
-    while current_rpm <= disengagement_rpm:
-        if not standing_conditions:
-            current_rpm = idle_rpm
-            rolling_resistance = rolling_coefficient * car_mass
-            rpm_step = disengagement_rpm - idle_rpm
-            gas_level = rolling_resistance / torque[0]
-            gas_level_step = (1 - gas_level) / rpm_step
-        gas_level += gas_level_step
-        current_rpm += 1
-        aux_time = (gears[current_gear].speed[current_rpm] - gears[current_gear].speed[current_rpm - 1]) / (gears[current_gear].accel[current_rpm]*gas_level)
-        total_time += aux_time
+    acceleration_at_specific_rpm = traction / car_mass
+
+

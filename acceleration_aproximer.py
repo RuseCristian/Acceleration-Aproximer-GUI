@@ -233,6 +233,14 @@ class INIEditor(tk.Tk):
             return index,initial_velocity
 
         fig = make_subplots(rows=2, cols=3)
+
+        # for weight shifting extra calculations
+        car_extra_calculations = False
+        car_wheelbase = None
+        car_track_width = None
+        car_roll_center_height = None
+        car_roll_stiffness = None
+
         # target speeds
         initial_speed_kmh = int(self.initial_speed_entry.get())
         final_speed_kmh = int(self.final_speed_entry.get())
@@ -353,12 +361,12 @@ class INIEditor(tk.Tk):
 
             acceleration = np.array([])
             for index in range(0, len(torque_curve) - 1):
-                if layout == 'fwd':
-                    acceleration_at_specific_rpm = (min((max_tractive_force + downforce_curve[index] * downforce_distribution) * tire_mu,
-                                                        torque_at_the_wheels[index] / tire_radius) - air_resistance_curve[index] - rolling_k * g * car_mass) / car_mass
-                else:
-                    acceleration_at_specific_rpm = (min((max_tractive_force + downforce_curve[index] * (1 - downforce_distribution)) * tire_mu,
-                                                        torque_at_the_wheels[index] / tire_radius) - air_resistance_curve[index] - rolling_k * g * car_mass) / car_mass
+                downforce = downforce_curve[index] * (downforce_distribution if layout == 'fwd' else (1 - downforce_distribution))
+                air_resistance = air_resistance_curve[index]
+                rolling_resistance = rolling_k * g * car_mass
+                traction = min((max_tractive_force + downforce) * tire_mu, torque_at_the_wheels[index] / tire_radius - air_resistance - rolling_resistance)
+
+                acceleration_at_specific_rpm = traction / car_mass
                 if acceleration_at_specific_rpm > 0:
                     acceleration = np.append(acceleration, acceleration_at_specific_rpm)
 
@@ -458,6 +466,24 @@ class INIEditor(tk.Tk):
                            name='HP'
                            ), row=1, col=1
             )
+
+        count2 = 1
+        for i in gears:
+            fig.add_trace(
+                go.Scatter(x=i.speed, y=i.torque_at_the_wheels,
+                           name="Gear {}".format(count2)
+                           ), row=2, col=2
+            )
+            # torque vs speed in each gear (max potential speed)
+
+            fig.add_trace(
+                go.Scatter(x=i.speed*3.6, y=i.accel/g,
+                           name="Gear {}".format(count2)
+                           ), row=1, col=2
+            )
+            count2 += 1
+            # acceleration vs speed graph
+
         self.append_text("", False)
         self.append_text("-----------------------------------RESULTS-------------------------------------", False)
         self.append_text("", False)
