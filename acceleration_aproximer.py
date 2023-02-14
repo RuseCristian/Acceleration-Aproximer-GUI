@@ -225,21 +225,22 @@ class INIEditor(tk.Tk):
             time_elapsed = 0
             count = 0
             while time_elapsed <= t:
-                initial_velocity = gear.speed[index-1]
+                initial_velocity = gear.speed[index - 1]
                 aux_velocity = initial_velocity - gear.speed[index]
-                time_elapsed += abs(aux_velocity)/abs(gear.accel[index - 1] - gear.torque_at_the_wheels[index - 1]/car_mass - gear.accel[index] - gear.torque_at_the_wheels[index]/car_mass)
+                time_elapsed += abs(aux_velocity) / abs(
+                    gear.accel[index - 1] - gear.torque_at_the_wheels[index - 1] / car_mass - gear.accel[index] - gear.torque_at_the_wheels[index] / car_mass)
                 count += 1
                 index -= 1
-            return index,initial_velocity
+            return index, initial_velocity
 
         fig = make_subplots(rows=2, cols=3)
 
         # for weight shifting extra calculations
         car_extra_calculations = False
-        car_wheelbase = None
-        car_track_width = None
-        car_roll_center_height = None
-        car_roll_stiffness = None
+        car_wheelbase = None  # meters
+        car_track_width = None  # meters
+        car_roll_center_height = None  # meters
+        car_roll_stiffness = None  # Nm/rad
 
         # target speeds
         initial_speed_kmh = int(self.initial_speed_entry.get())
@@ -364,7 +365,13 @@ class INIEditor(tk.Tk):
                 downforce = downforce_curve[index] * (downforce_distribution if layout == 'fwd' else (1 - downforce_distribution))
                 air_resistance = air_resistance_curve[index]
                 rolling_resistance = rolling_k * g * car_mass
-                traction = min((max_tractive_force + downforce) * tire_mu, torque_at_the_wheels[index] / tire_radius - air_resistance - rolling_resistance)
+
+                aux_acceleration = (torque_at_the_wheels[index] / tire_radius - air_resistance - rolling_resistance) / car_mass
+                if car_extra_calculations:
+                    traction = min((max_tractive_force + downforce + estimate_weight_shift(aux_acceleration, car_wheelbase, car_track_width, car_roll_center_height,
+                                                                                           car_roll_stiffness)) * tire_mu, aux_acceleration * car_mass)
+                else:
+                    traction = min((max_tractive_force + downforce) * tire_mu, aux_acceleration * car_mass)
 
                 acceleration_at_specific_rpm = traction / car_mass
                 if acceleration_at_specific_rpm > 0:
@@ -398,7 +405,7 @@ class INIEditor(tk.Tk):
                 current_rpm = gears[current_gear].dropdown_rpm
                 current_gear += 1
 
-                idx, current_speed_ms = upshift_lift_off(gears[current_gear],current_rpm, current_speed_ms, shift_time_s)
+                idx, current_speed_ms = upshift_lift_off(gears[current_gear], current_rpm, current_speed_ms, shift_time_s)
                 current_rpm = idx
 
             # standing start
@@ -413,8 +420,8 @@ class INIEditor(tk.Tk):
                         # uses the highest gas level either from the minimum necessary to start moving the car
                         # or the driver defined gas level, if higher
                         for i in range(len(gears[0].torque_at_the_wheels)):
-                            if rolling_resistance < gears[0].torque_at_the_wheels[i]/tire_radius:
-                                first_torque_entry = gears[0].torque_at_the_wheels[i]//tire_radius
+                            if rolling_resistance < gears[0].torque_at_the_wheels[i] / tire_radius:
+                                first_torque_entry = gears[0].torque_at_the_wheels[i] // tire_radius
                                 current_rpm = i
                                 break
                         gas_level = max(rolling_resistance / first_torque_entry, gas_level_data)
@@ -477,7 +484,7 @@ class INIEditor(tk.Tk):
             # torque vs speed in each gear (max potential speed)
 
             fig.add_trace(
-                go.Scatter(x=i.speed*3.6, y=i.accel/g,
+                go.Scatter(x=i.speed * 3.6, y=i.accel / g,
                            name="Gear {}".format(count2)
                            ), row=1, col=2
             )
