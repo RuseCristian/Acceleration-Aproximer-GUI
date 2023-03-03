@@ -1,131 +1,62 @@
-<MainScreen>:
-    name: 'main'
-    BoxLayout:
-        orientation: 'vertical'
-        MDToolbar:
-            title: 'Acceleration approximer'
-            md_bg_color: app.theme_cls.primary_color
-            specific_text_color: [1, 1, 1, 1]
-            elevation: 10
-        MDTabs:
-            Tab:
-                text: 'Engine'
-                icon: 'engine'
-                MDLabel:
-                    text: 'Idle RPM:'
-                    pos_hint: {'center_x': 0.2, 'center_y': 0.8}
-                MDTextField:
-                    hint_text: 'Enter idle RPM'
-                    pos_hint: {'center_x': 0.5, 'center_y': 0.8}
-                    size_hint_x: None
-                    width: 200
-                MDLabel:
-                    text: 'Redline RPM:'
-                    pos_hint: {'center_x': 0.2, 'center_y': 0.6}
-                MDTextField:
-                    hint_text: 'Enter redline RPM'
-                    pos_hint: {'center_x': 0.5, 'center_y': 0.6}
-                    size_hint_x: None
-                    width: 200
-            Tab:
-                text: 'Drivetrain'
-                icon: 'car-shift-pattern'
-                MDLabel:
-                    text: 'Gear Ratio 1:'
-                    pos_hint: {'center_x': 0.2, 'center_y': 0.8}
-                MDTextField:
-                    hint_text: 'Enter gear ratio 1'
-                    pos_hint: {'center_x': 0.5, 'center_y': 0.8}
-                    size_hint_x: None
-                    width: 200
-                MDLabel:
-                    text: 'Gear Ratio 2:'
-                    pos_hint: {'center_x': 0.2, 'center_y': 0.6}
-                MDTextField:
-                    hint_text: 'Enter gear ratio 2'
-                    pos_hint: {'center_x': 0.5, 'center_y': 0.6}
-                    size_hint_x: None
-                    width: 200
-                MDLabel:
-                    text: 'Gear Ratio 3:'
-                    pos_hint: {'center_x': 0.2, 'center_y': 0.4}
+#:import MDDialog kivymd.uix.dialog.MDDialog
 
-            MDTextField:
-                hint_text: 'Enter gear ratio 3'
-                pos_hint: {'center_x': 0.5, 'center_y': 0.4}
-                size_hint_x: None
-                width: 200
-            MDLabel:
-                text: 'Gear Ratio 4:'
-                pos_hint: {'center_x': 0.2, 'center_y': 0.2}
-            MDTextField:
-                hint_text: 'Enter gear ratio 4'
-                pos_hint: {'center_x': 0.5, 'center_y': 0.2}
-                size_hint_x: None
-                width: 200
-            MDLabel:
-                text: 'Gear Ratio 5:'
-                pos_hint: {'center_x': 0.7, 'center_y': 0.8}
-            MDTextField:
-                hint_text: 'Enter gear ratio 5'
-                pos_hint: {'center_x': 1.0, 'center_y': 0.8}
-                size_hint_x: None
-                width: 200
-            MDLabel:
-                text: 'Gear Ratio 6:'
-                pos_hint: {'center_x': 0.7, 'center_y': 0.6}
-            MDTextField:
-                hint_text: 'Enter gear ratio 6'
-                pos_hint: {'center_x': 1.0, 'center_y': 0.6}
-                size_hint_x: None
-                width: 200
-        Tab:
-            text: 'Car'
-            icon: 'car-sports'
-            MDLabel:
-                text: 'Car Name:'
-                pos_hint: {'center_x': 0.2, 'center_y': 0.8}
-            MDTextField:
-                hint_text: 'Enter car name'
-                pos_hint: {'center_x': 0.5, 'center_y': 0.8}
-                size_hint_x: None
-                width: 200
-            MDLabel:
-                text: 'Car Mass:'
-                pos_hint: {'center_x': 0.2, 'center_y': 0.6}
-            MDTextField:
-                hint_text: 'Enter car mass'
-                pos_hint: {'center_x': 0.5, 'center_y': 0.6}
-                size_hint_x: None
-                width: 200
-            MDLabel:
-                text: 'Mass Distribution:'
-                pos_hint: {'center_x': 0.2, 'center_y': 0.4}
-            MDTextField:
-                hint_text: 'Enter mass distribution'
-                pos_hint: {'center_x': 0.5, 'center_y': 0.4}
-                size_hint_x: None
-                width: 200
-        Tab:
-            text: 'Tire'
-            icon: 'car-tire-alert'
-            MDLabel:
-                text: 'Tire label'
-        Tab:
-            text: 'Aerodynamics'
-            icon: 'air-filter'
-            MDLabel:
-                text: 'Frontal Area:'
-                pos_hint: {'center_x': 0.2, 'center_y': 0.8}
-            MDTextField:
-                hint_text: 'Enter frontal area'
-                pos_hint: {'center_x': 0.5, 'center_y': 0.8}
-                size_hint_x: None
-                width: 200
-            MDLabel:
-                text: 'Air Density:'
-                pos_hint: {'center_x': 0.2, 'center_y': 0.6}
-            MDTextField:
-                hint_text: 'Enter air density'
-                pos_hint: {'center_x': 0.5, 'center_y': 0.6}
-                size_hint
+ScreenManager:
+    CarScreen:
+        name: "CarScreen"
+
+        MDLabel:
+            text: "Car Info"
+            halign: "center"
+            pos_hint: {"y": 0.45}
+            font_style: "H5"
+            theme_text_color: "Secondary"
+
+        MDTextField:
+            hint_text: "Car Name"
+            pos_hint: {"center_x": .5, "y": .8}
+            size_hint_x: .5
+            mode: "fill"
+
+
+        MDTextField:
+            hint_text: "Car Mass"
+            pos_hint: {"center_x": .5, "y": .65}
+            size_hint_x: .5
+            mode: "fill"
+            input_filter: 'int'
+
+        MDTextField:
+            hint_text: "Car Mass Distribution"
+            pos_hint: {"center_x": .5, "y": .5}
+            size_hint_x: .5
+            mode: "fill"
+            helper_text: "Percentage of mass on the front axle of the car, between 0 and 100"
+            helper_text_mode: "persistent"
+            input_filter: lambda x,y: str(x) if str(self.text+x).isdigit() and 0 < int(self.text+x) < 100 else False
+
+        MDLabel:
+            pos_hint: {'center_x': .75, 'center_y': .40}
+            text: "Extra Calculations (Weight Shifting) "
+
+        MDSwitch:
+            pos_hint: {'center_x': .72, 'center_y': .40}
+            active: False
+
+        MDIconButton:
+            icon: 'information'
+            on_release: Factory.MyPopup().open()
+
+        MDRectangleFlatButton:
+            text: "ALERT POPUP!"
+            pos_hint: {'center_x': .5, 'center_y': .5}
+            on_release: app.show_alert_dialog()
+
+
+
+    EngineScreen:
+    DrivetrainScreen:
+    TireScreen:
+    AeroScreen:
+    ResultsScreen:
+
+

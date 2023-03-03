@@ -1,0 +1,92 @@
+MDScreen:
+
+    MDNavigationLayout:
+
+        MDScreenManager:
+
+            MDScreen:
+
+                MDTopAppBar:
+                    title: "Acceleration Approximer"
+                    pos_hint: {"top": 1}
+                    size_hint_y: 0.1
+                    elevation: 0
+                    left_action_items:
+                        [['menu', lambda x: nav_drawer.set_state("open")]]
+
+                MDTabs:
+                    id: top_tabs
+                    tab_indicator_anim: True
+                    tab_hint_x: True
+                    allow_stretch: True
+                    pos_hint: {"top": 0.9}
+
+                    Tab:
+                        id: engine_tab
+                        icon: "engine"
+                        MDLabel:
+                            text: "Engine"
+                            halign: "center"
+                            pos_hint: {"y": 0.45}
+                            font_style: "H5"
+                            theme_text_color: "Secondary"
+
+                    Tab:
+                        id: drivetrain_tab
+                        icon: "car-shift-pattern"
+                        MDLabel:
+                            text: "Drivetrain"
+                            halign: "center"
+                            pos_hint: {"y": 0.45}
+                            font_style: "H5"
+                            theme_text_color: "Secondary"
+
+                    Tab:
+                        id: car_tab
+                        icon: "car-sports"
+                        MDLabel:
+                            text: "Car Info"
+                            halign: "center"
+                            pos_hint: {"y": 0.45}
+                            font_style: "H5"
+                            theme_text_color: "Secondary"
+
+                    Tab:
+                        id: tyre_tab
+                        icon: "tire"
+                        MDLabel:
+                            text: "Tyre"
+                            halign: "center"
+                            pos_hint: {"y": 0.45}
+                            font_style: "H5"
+                            theme_text_color: "Secondary"
+
+                    Tab:
+                        id: aero_tab
+                        icon: "plane-car"
+                        MDLabel:
+                            text: "Aerodynamics"
+                            halign: "center"
+                            pos_hint: {"y": 0.45}
+                            font_style: "H5"
+                            theme_text_color: "Secondary"
+
+                    Tab:
+                        id: results_tab
+                        icon: "chart-bell-curve-cumulative"
+                        MDLabel:
+                            text: "Results"
+                            halign: "center"
+                            pos_hint: {"y": 0.45}
+                            font_style: "H5"
+                            theme_text_color: "Secondary"
+
+
+
+
+
+        MDNavigationDrawer:
+            id: nav_drawer
+            radius: (0, 16, 16, 0)
+
+            ContentNavigationDrawer:
