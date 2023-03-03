@@ -3,11 +3,8 @@
 
 
 ScreenManager:
-    DrivetrainScreen:
-
-        number_of_gears: 2
-
-        name: "Drivetrain"
+    TireScreen:
+        name: "TireScreen"
 
         ScrollView:
             pos_hint: {"center_x": 0.72}
@@ -27,7 +24,7 @@ ScreenManager:
 
                     MDLabel:
                         pos_hint: {"center_x": 0.67}
-                        text: "Drivetrain"
+                        text: "Tire"
                         font_style: "H4"
                         theme_text_color: "Secondary"
 
@@ -36,65 +33,50 @@ ScreenManager:
                     size_hint_x: .5
 
                     MDTextField:
-                        hint_text: "Layout"
+                        hint_text: "Tire Width"
                         size_hint_x: .5
                         mode: "fill"
+                        input_filter: 'int'
 
                 MDBoxLayout:
                     orientation: "horizontal"
                     size_hint_x: .5
 
                     MDTextField:
-                        hint_text: "Drivetrain Loss"
+                        hint_text: "Tire Aspect Ratio"
                         size_hint_x: .5
                         mode: "fill"
-                        input_filter: "int"
+                        input_filter: lambda x,y: str(x) if str(self.text+x).isdigit() and 0 < int(self.text+x) < 100 else False
 
                 MDBoxLayout:
                     orientation: "horizontal"
                     size_hint_x: .5
 
                     MDTextField:
-                        hint_text: "Shifting Time (s)"
+                        hint_text: "Tire Radius"
                         size_hint_x: .5
                         mode: "fill"
-                        input_filter: "int"
+                        input_filter: 'int'
 
                 MDBoxLayout:
                     orientation: "horizontal"
                     size_hint_x: .5
 
                     MDTextField:
-                        hint_text: "Off Clutch RPM"
+                        hint_text: "Tire Friction Coefficient (µ)"
                         size_hint_x: .5
                         mode: "fill"
-                        input_filter: "int"
-
+                        input_filter: 'int'
 
                 MDBoxLayout:
                     orientation: "horizontal"
                     size_hint_x: .5
 
                     MDTextField:
-                        hint_text: "Gas Level"
+                        hint_text: "Rolling Resistance Coefficient (k)"
                         size_hint_x: .5
                         mode: "fill"
-                        input_filter: "int"
-
-
-                MDBoxLayout:
-                    orientation: "horizontal"
-                    size_hint_x: .5
-
-
-
-                    MDIconButton:
-                        icon: 'plus'
-                        on_release: root.add_field()
-
-                    MDIconButton:
-                        icon: 'minus'
-                        on_release: root.remove_field()
+                        input_filter: 'int'
 
 
     EngineScreen:

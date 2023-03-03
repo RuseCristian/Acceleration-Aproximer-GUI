@@ -1,0 +1,131 @@
+#:import MDDialog kivymd.uix.dialog.MDDialog
+
+
+
+ScreenManager:
+    AeroScreen:
+        name: "AeroScreen"
+
+        ScrollView:
+            pos_hint: {"center_x": 0.72}
+            do_scroll_y: True
+
+
+            MDBoxLayout:
+                orientation: "vertical"
+                spacing: dp(110)
+                padding: dp(50)
+                size_hint_y: None
+                height: self.minimum_height
+
+                MDBoxLayout:
+                    orientation: "horizontal"
+                    size_hint_x: .5
+
+                    MDLabel:
+                        pos_hint: {"center_x": 0.67}
+                        text: "Aerodynamics"
+                        font_style: "H4"
+                        theme_text_color: "Secondary"
+
+                MDBoxLayout:
+                    orientation: "horizontal"
+                    size_hint_x: .5
+
+                    MDTextField:
+                        hint_text: "Coefficient of Drag"
+                        size_hint_x: .5
+                        mode: "fill"
+                        input_filter: "int"
+
+                MDBoxLayout:
+                    orientation: "horizontal"
+                    size_hint_x: .5
+
+                    MDTextField:
+                        hint_text: "Frontal Area"
+                        size_hint_x: .5
+                        mode: "fill"
+                        input_filter: "int"
+
+                MDBoxLayout:
+                    orientation: "horizontal"
+                    size_hint_x: .5
+
+                    MDTextField:
+                        hint_text: "Air Density"
+                        size_hint_x: .5
+                        mode: "fill"
+                        input_filter: "int"
+
+
+                MDBoxLayout:
+                    orientation: "horizontal"
+                    padding_top: dp(40)
+                    padding_bottom: dp(40)
+                    size_hint_x: .5
+
+                    MDLabel:
+                        text: "Downforce Calculation"
+                        size_hint_x: .5
+
+                    MDIconButton:
+                        size_hint_x: .2
+                        pos_hint: {"center_x": 1, "center_y": 0.5}
+                        icon: 'information'
+                        on_press: app.show_downforce_extra_information()
+
+                    MDSwitch:
+                        id: downforce_switch
+                        thumb_color_down: 1,0,0,1
+                        pos_hint: {"center_y": 0.5}
+                        name: "weight_shifting_calculations"
+                        active: False
+                        on_active: app.downforce_turned_off(self, self.active)
+
+
+                MDBoxLayout:
+                    orientation: "horizontal"
+                    size_hint_x: .5
+
+                    MDTextField:
+                        id: negative_lift_coefficient
+                        visible: False
+                        opacity: 1 if self.visible else 0
+                        disabled: not self.visible
+                        hint_text: "Negative Lift Coefficient"
+                        size_hint_x: .5
+                        mode: "fill"
+
+                MDBoxLayout:
+                    orientation: "horizontal"
+                    size_hint_x: .5
+
+                    MDTextField:
+                        id: downforce_total_area
+                        visible: False
+                        opacity: 1 if self.visible else 0
+                        disabled: not self.visible
+                        hint_text: "Downforce Total Area"
+                        size_hint_x: .5
+                        mode: "fill"
+
+                MDBoxLayout:
+                    orientation: "horizontal"
+                    size_hint_x: .5
+
+                    MDTextField:
+                        id: downforce_distribution
+                        visible: False
+                        opacity: 1 if self.visible else 0
+                        disabled: not self.visible
+                        hint_text: "Downforce Distribution"
+                        size_hint_x: .5
+                        mode: "fill"
+
+
+    EngineScreen:
+    DrivetrainScreen:
+    AeroScreen:
+    ResultsScreen:
+
