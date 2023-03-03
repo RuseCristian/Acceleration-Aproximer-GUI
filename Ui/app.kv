@@ -1,56 +1,109 @@
 #:import MDDialog kivymd.uix.dialog.MDDialog
 
+
+
 ScreenManager:
     CarScreen:
         name: "CarScreen"
 
-        MDLabel:
-            text: "Car Info"
-            halign: "center"
-            pos_hint: {"y": 0.45}
-            font_style: "H5"
-            theme_text_color: "Secondary"
-
-        MDTextField:
-            hint_text: "Car Name"
-            pos_hint: {"center_x": .5, "y": .8}
-            size_hint_x: .5
-            mode: "fill"
+        ScrollView:
+            pos_hint: {"center_x": 0.75}
+            do_scroll_y: True
 
 
-        MDTextField:
-            hint_text: "Car Mass"
-            pos_hint: {"center_x": .5, "y": .65}
-            size_hint_x: .5
-            mode: "fill"
-            input_filter: 'int'
+            MDBoxLayout:
+                orientation: "vertical"
+                spacing: dp(40)
+                padding: dp(50)
+                size_hint_y: None
+                height: self.minimum_height
 
-        MDTextField:
-            hint_text: "Car Mass Distribution"
-            pos_hint: {"center_x": .5, "y": .5}
-            size_hint_x: .5
-            mode: "fill"
-            helper_text: "Percentage of mass on the front axle of the car, between 0 and 100"
-            helper_text_mode: "persistent"
-            input_filter: lambda x,y: str(x) if str(self.text+x).isdigit() and 0 < int(self.text+x) < 100 else False
 
-        MDLabel:
-            pos_hint: {'center_x': .75, 'center_y': .40}
-            text: "Extra Calculations (Weight Shifting) "
+                MDLabel:
+                    pos_hint: {"center_x": 0.67}
+                    text: "Car Info"
+                    font_style: "H4"
+                    theme_text_color: "Secondary"
 
-        MDSwitch:
-            pos_hint: {'center_x': .72, 'center_y': .40}
-            active: False
+                MDTextField:
+                    hint_text: "Car Name"
+                    size_hint_x: .5
+                    mode: "fill"
 
-        MDIconButton:
-            icon: 'information'
-            on_release: Factory.MyPopup().open()
+                MDTextField:
+                    hint_text: "Car Mass"
+                    size_hint_x: .5
+                    mode: "fill"
+                    input_filter: 'int'
 
-        MDRectangleFlatButton:
-            text: "ALERT POPUP!"
-            pos_hint: {'center_x': .5, 'center_y': .5}
-            on_release: app.show_alert_dialog()
+                MDTextField:
+                    hint_text: "Car Mass Distribution"
+                    size_hint_x: .5
+                    mode: "fill"
+                    helper_text: "Percentage of mass on the front axle of the car, between 0 and 100"
+                    helper_text_mode: "persistent"
+                    input_filter: lambda x,y: str(x) if str(self.text+x).isdigit() and 0 < int(self.text+x) < 100 else False
 
+
+                MDBoxLayout:
+                    orientation: "horizontal"
+                    padding_top: dp(40)
+                    padding_bottom: dp(40)
+                    size_hint_x: .5
+
+                    MDLabel:
+                        text: "Extra Calculations (Weight Shifting)"
+                        size_hint_x: .5
+
+                    MDIconButton:
+                        size_hint_x: .2
+                        pos_hint: {"center_x": 1, "center_y": 0.5}
+                        icon: 'information'
+                        on_press: app.show_weight_shifting_extra_information()
+
+                    MDSwitch:
+                        id: weight_shifting_switch
+                        thumb_color_down: 1,0,0,1
+                        pos_hint: {"center_y": 0.5}
+                        name: "weight_shifting_calculations"
+                        active: False
+                        on_active: app.weight_shifting_turned_off(self, self.active)
+
+                MDTextField:
+                    id: wheelbase_field
+                    visible: False
+                    opacity: 1 if self.visible else 0
+                    disabled: not self.visible
+                    hint_text: "WheelBase"
+                    size_hint_x: .5
+                    mode: "fill"
+
+                MDTextField:
+                    id: track_width_field
+                    visible: False
+                    opacity: 1 if self.visible else 0
+                    disabled: not self.visible
+                    hint_text: "Track Width"
+                    size_hint_x: .5
+                    mode: "fill"
+
+                MDTextField:
+                    id: roll_center_height_field
+                    visible: False
+                    opacity: 1 if self.visible else 0
+                    disabled: not self.visible
+                    hint_text: "Roll Center Height"
+                    size_hint_x: .5
+                    mode: "fill"
+
+                MDTextField:
+                    id: roll_stiffness_field
+                    visible: False
+                    opacity: 1 if self.visible else 0
+                    disabled: not self.visible
+                    hint_text: "Roll Stiffness"
+                    size_hint_x: .5
+                    mode: "fill"
 
 
     EngineScreen:
@@ -58,5 +111,4 @@ ScreenManager:
     TireScreen:
     AeroScreen:
     ResultsScreen:
-
 
