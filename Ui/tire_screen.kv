@@ -30,7 +30,8 @@ ScreenManager:
 
                 MDBoxLayout:
                     orientation: "horizontal"
-                    size_hint_x: .5
+                    size_hint_x: .55
+                    spacing: 20
 
                     MDTextField:
                         hint_text: "Tire Width"
@@ -38,9 +39,15 @@ ScreenManager:
                         mode: "fill"
                         input_filter: 'int'
 
+                    MDIconButton:
+                        size_hint_x: .05
+                        icon: 'information'
+                        on_press: app.dialog_information("weight_shifting")
+
                 MDBoxLayout:
                     orientation: "horizontal"
-                    size_hint_x: .5
+                    size_hint_x: .55
+                    spacing: 20
 
                     MDTextField:
                         hint_text: "Tire Aspect Ratio"
@@ -48,9 +55,15 @@ ScreenManager:
                         mode: "fill"
                         input_filter: lambda x,y: str(x) if str(self.text+x).isdigit() and 0 < int(self.text+x) < 100 else False
 
+                    MDIconButton:
+                        size_hint_x: .05
+                        icon: 'information'
+                        on_press: app.dialog_information("weight_shifting")
+
                 MDBoxLayout:
                     orientation: "horizontal"
-                    size_hint_x: .5
+                    size_hint_x: .55
+                    spacing: 20
 
                     MDTextField:
                         hint_text: "Tire Radius"
@@ -58,9 +71,15 @@ ScreenManager:
                         mode: "fill"
                         input_filter: 'int'
 
+                    MDIconButton:
+                        size_hint_x: .05
+                        icon: 'information'
+                        on_press: app.dialog_information("weight_shifting")
+
                 MDBoxLayout:
                     orientation: "horizontal"
-                    size_hint_x: .5
+                    size_hint_x: .55
+                    spacing: 20
 
                     MDTextField:
                         hint_text: "Tire Friction Coefficient (µ)"
@@ -68,15 +87,26 @@ ScreenManager:
                         mode: "fill"
                         input_filter: 'int'
 
+                    MDIconButton:
+                        size_hint_x: .05
+                        icon: 'information'
+                        on_press: app.dialog_information("weight_shifting")
+
                 MDBoxLayout:
                     orientation: "horizontal"
-                    size_hint_x: .5
+                    size_hint_x: .55
+                    spacing: 20
 
                     MDTextField:
                         hint_text: "Rolling Resistance Coefficient (k)"
                         size_hint_x: .5
                         mode: "fill"
                         input_filter: 'int'
+
+                    MDIconButton:
+                        size_hint_x: .05
+                        icon: 'information'
+                        on_press: app.dialog_information("weight_shifting")
 
 
     EngineScreen:

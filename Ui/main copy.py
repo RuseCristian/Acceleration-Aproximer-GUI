@@ -12,7 +12,7 @@ class MainApp(MDApp):
     def build(self):
         self.theme_cls.primary_palette = "BlueGray"
         self.theme_cls.theme_style = "Light"
-        return Builder.load_file('app.kv')
+        return Builder.load_file('drivetrain_screen.kv')
 
     def on_tab_switch(self, instance_tabs, instance_tab, instance_tab_label, tab_text):
         pass

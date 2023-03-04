@@ -4,9 +4,6 @@
 
 ScreenManager:
     DrivetrainScreen:
-
-        number_of_gears: 2
-
         name: "Drivetrain"
 
         ScrollView:
@@ -33,16 +30,23 @@ ScreenManager:
 
                 MDBoxLayout:
                     orientation: "horizontal"
-                    size_hint_x: .5
+                    size_hint_x: .55
+                    spacing: 20
 
                     MDTextField:
                         hint_text: "Layout"
                         size_hint_x: .5
                         mode: "fill"
 
+                    MDIconButton:
+                        size_hint_x: .05
+                        icon: 'information'
+                        on_press: app.dialog_information("weight_shifting")
+
                 MDBoxLayout:
                     orientation: "horizontal"
-                    size_hint_x: .5
+                    size_hint_x: .55
+                    spacing: 20
 
                     MDTextField:
                         hint_text: "Drivetrain Loss"
@@ -50,9 +54,15 @@ ScreenManager:
                         mode: "fill"
                         input_filter: "int"
 
+                    MDIconButton:
+                        size_hint_x: .05
+                        icon: 'information'
+                        on_press: app.dialog_information("weight_shifting")
+
                 MDBoxLayout:
                     orientation: "horizontal"
-                    size_hint_x: .5
+                    size_hint_x: .55
+                    spacing: 20
 
                     MDTextField:
                         hint_text: "Shifting Time (s)"
@@ -60,9 +70,15 @@ ScreenManager:
                         mode: "fill"
                         input_filter: "int"
 
+                    MDIconButton:
+                        size_hint_x: .05
+                        icon: 'information'
+                        on_press: app.dialog_information("weight_shifting")
+
                 MDBoxLayout:
                     orientation: "horizontal"
-                    size_hint_x: .5
+                    size_hint_x: .55
+                    spacing: 20
 
                     MDTextField:
                         hint_text: "Off Clutch RPM"
@@ -70,10 +86,16 @@ ScreenManager:
                         mode: "fill"
                         input_filter: "int"
 
+                    MDIconButton:
+                        size_hint_x: .05
+                        icon: 'information'
+                        on_press: app.dialog_information("weight_shifting")
+
 
                 MDBoxLayout:
                     orientation: "horizontal"
-                    size_hint_x: .5
+                    size_hint_x: .55
+                    spacing: 20
 
                     MDTextField:
                         hint_text: "Gas Level"
@@ -81,20 +103,11 @@ ScreenManager:
                         mode: "fill"
                         input_filter: "int"
 
-
-                MDBoxLayout:
-                    orientation: "horizontal"
-                    size_hint_x: .5
-
-
-
                     MDIconButton:
-                        icon: 'plus'
-                        on_release: root.add_field()
+                        size_hint_x: .05
+                        icon: 'information'
+                        on_press: app.dialog_information("weight_shifting")
 
-                    MDIconButton:
-                        icon: 'minus'
-                        on_release: root.remove_field()
 
 
     EngineScreen:
