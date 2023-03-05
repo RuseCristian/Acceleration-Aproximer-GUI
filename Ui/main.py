@@ -64,7 +64,7 @@ class AccelerationApproximator(MDApp):
         self.theme_cls.theme_style = "Dark"
         self.rpm_torque_rows = 0
         Window.size = (1080, 2220)
-        return Builder.load_file('aero_screen.kv')
+        return Builder.load_file('main_ui.kv')
 
     def show_hide_ui(self, switchObject, switchValue, *args):
         if switchValue:
@@ -100,17 +100,17 @@ class AccelerationApproximator(MDApp):
         self.torque_text_field = MDTextField(hint_text=f"Torque", mode="fill", size_hint_x=.5, input_filter="float")
         self.box_layout.add_widget(self.rpm_text_field)
         self.box_layout.add_widget(self.torque_text_field)
-        self.root.ids.engine_screen_vertical_boxlayout.add_widget(self.box_layout)
+        self.root.ids.enginescreen_1.ids.engine_screen_vertical_boxlayout.add_widget(self.box_layout)
 
     def remove_rpm_torque_text_field(self):
         try:
-            if len(self.root.ids.engine_screen_vertical_boxlayout.children) > 5:
+            if len(self.root.ids.enginescreen_1.ids.engine_screen_vertical_boxlayout.children) > 6:
                 # Get the first child widget and set its size_hint_y to None
-                first_child = self.root.ids.engine_screen_vertical_boxlayout.children[0]
+                first_child = self.root.ids.enginescreen_1.ids.engine_screen_vertical_boxlayout.children[0]
                 first_child.size_hint_y = None
 
                 # Remove the first child widget
-                self.root.ids.engine_screen_vertical_boxlayout.remove_widget(first_child)
+                self.root.ids.enginescreen_1.ids.engine_screen_vertical_boxlayout.remove_widget(first_child)
                 self.rpm_torque_rows -= 1
         except Exception as e:
             print(e)
@@ -118,18 +118,18 @@ class AccelerationApproximator(MDApp):
 
     def add_gear_text_fields(self):
         self.remove_gear_text_fields()
-        if len(self.root.ids.drivetrain_vertical_boxlayout.children) >= 10:
-            for i in range(2, floor(self.root.ids.number_of_gears_slider.value)):
-                self.box_layout = MDBoxLayout(orientation='horizontal', size_hint_x=.493, spacing=dp(20), id=f"gear_{i+1}_boxlayout")
-                self.gear_textfield = MDTextField(hint_text=f"Gear {i+1} Ratio", mode="fill", size_hint_x=.5, input_filter="float")
-                self.box_layout.add_widget(self.gear_textfield)
-                self.root.ids.drivetrain_vertical_boxlayout.add_widget(self.box_layout)
-        else:
-            for i in range(floor(self.root.ids.number_of_gears_slider.value)):
+        if len(self.root.ids.drivetrainscreen_1.ids.drivetrain_vertical_boxlayout.children) >= 10:
+            for i in range(2, floor(self.root.ids.drivetrainscreen_1.ids.number_of_gears_slider.value)):
                 self.box_layout = MDBoxLayout(orientation='horizontal', size_hint_x=.493, spacing=dp(20), id=f"gear_{i + 1}_boxlayout")
                 self.gear_textfield = MDTextField(hint_text=f"Gear {i + 1} Ratio", mode="fill", size_hint_x=.5, input_filter="float")
                 self.box_layout.add_widget(self.gear_textfield)
-                self.root.ids.drivetrain_vertical_boxlayout.add_widget(self.box_layout)
+                self.root.ids.drivetrainscreen_1.ids.drivetrain_vertical_boxlayout.add_widget(self.box_layout)
+        else:
+            for i in range(floor(self.root.ids.drivetrainscreen_1.ids.ids.number_of_gears_slider.value)):
+                self.box_layout = MDBoxLayout(orientation='horizontal', size_hint_x=.493, spacing=dp(20), id=f"gear_{i + 1}_boxlayout")
+                self.gear_textfield = MDTextField(hint_text=f"Gear {i + 1} Ratio", mode="fill", size_hint_x=.5, input_filter="float")
+                self.box_layout.add_widget(self.gear_textfield)
+                self.root.ids.drivetrainscreen_1.ids.drivetrain_vertical_boxlayout.add_widget(self.box_layout)
 
     def remove_gear_text_fields(self):
         try:
@@ -139,5 +139,6 @@ class AccelerationApproximator(MDApp):
         except Exception as e:
             print(e)
             pass
+
 
 AccelerationApproximator().run()
