@@ -108,11 +108,13 @@ MDNavigationLayout:
                     hint_text: "Layout"
                     size_hint_x: .5
                     mode: "fill"
+                    helper_text: "Possible layouts: fwd, rwd, awd"
+                    helper_text_mode: "persistent"
 
                 MDIconButton:
                     size_hint_x: .05
                     icon: 'information'
-                    on_press: app.dialog_information("weight_shifting")
+                    on_press: app.dialog_information("drivetrain_layout")
 
             MDBoxLayout:
                 orientation: "horizontal"
@@ -128,7 +130,7 @@ MDNavigationLayout:
                 MDIconButton:
                     size_hint_x: .05
                     icon: 'information'
-                    on_press: app.dialog_information("weight_shifting")
+                    on_press: app.dialog_information("drivetrain_loss")
 
             MDBoxLayout:
                 orientation: "horizontal"
@@ -144,7 +146,7 @@ MDNavigationLayout:
                 MDIconButton:
                     size_hint_x: .05
                     icon: 'information'
-                    on_press: app.dialog_information("weight_shifting")
+                    on_press: app.dialog_information("drivetrain_shift_time")
 
             MDBoxLayout:
                 orientation: "horizontal"
@@ -160,7 +162,7 @@ MDNavigationLayout:
                 MDIconButton:
                     size_hint_x: .05
                     icon: 'information'
-                    on_press: app.dialog_information("weight_shifting")
+                    on_press: app.dialog_information("drivetrain_off_clutch")
 
 
             MDBoxLayout:
@@ -177,7 +179,7 @@ MDNavigationLayout:
                 MDIconButton:
                     size_hint_x: .05
                     icon: 'information'
-                    on_press: app.dialog_information("weight_shifting")
+                    on_press: app.dialog_information("drivetrain_gas_level")
 
             MDBoxLayout:
                 orientation: "horizontal"
@@ -193,7 +195,7 @@ MDNavigationLayout:
                 MDIconButton:
                     size_hint_x: .05
                     icon: 'information'
-                    on_press: app.dialog_information("weight_shifting")
+                    on_press: app.dialog_information("drivetrain_final_gear")
 
 
             MDBoxLayout:
@@ -226,7 +228,7 @@ MDNavigationLayout:
                     width: sp(50)
                     icon: 'information'
                     pos_hint: {"center_y": 0.5}
-                    on_press: app.dialog_information("weight_shifting")
+                    on_press: app.dialog_information("add_gear")
 
 
 <CarScreen>:
@@ -257,7 +259,7 @@ MDNavigationLayout:
 
             MDBoxLayout:
                 orientation: "horizontal"
-                size_hint_x: .55
+                size_hint_x: .488
                 spacing: sp(20)
 
                 MDTextField:
@@ -265,14 +267,10 @@ MDNavigationLayout:
                     size_hint_x: .5
                     mode: "fill"
 
-                MDIconButton:
-                    size_hint_x: .05
-                    icon: 'information'
-                    on_press: app.dialog_information("weight_shifting")
 
             MDBoxLayout:
                 orientation: "horizontal"
-                size_hint_x: .55
+                size_hint_x: .488
                 spacing: sp(20)
 
                 MDTextField:
@@ -280,11 +278,6 @@ MDNavigationLayout:
                     size_hint_x: .5
                     mode: "fill"
                     input_filter: 'int'
-
-                MDIconButton:
-                    size_hint_x: .05
-                    icon: 'information'
-                    on_press: app.dialog_information("weight_shifting")
 
             MDBoxLayout:
                 orientation: "horizontal"
@@ -303,7 +296,7 @@ MDNavigationLayout:
                 MDIconButton:
                     size_hint_x: .05
                     icon: 'information'
-                    on_press: app.dialog_information("weight_shifting")
+                    on_press: app.dialog_information("car_mass_distribution")
 
 
             MDBoxLayout:
@@ -342,7 +335,7 @@ MDNavigationLayout:
                     visible: False
                     opacity: 1 if self.visible else 0
                     disabled: not self.visible
-                    hint_text: "WheelBase"
+                    hint_text: "Wheel Base"
                     size_hint_x: .5
                     mode: "fill"
 
@@ -353,7 +346,7 @@ MDNavigationLayout:
                     opacity: 1 if self.visible else 0
                     disabled: not self.visible
                     icon: 'information'
-                    on_press: app.dialog_information("weight_shifting")
+                    on_press: app.dialog_information("car_wheel_base")
 
             MDBoxLayout:
                 orientation: "horizontal"
@@ -376,7 +369,7 @@ MDNavigationLayout:
                     opacity: 1 if self.visible else 0
                     disabled: not self.visible
                     icon: 'information'
-                    on_press: app.dialog_information("weight_shifting")
+                    on_press: app.dialog_information("car_track_width")
 
             MDBoxLayout:
                 orientation: "horizontal"
@@ -399,7 +392,7 @@ MDNavigationLayout:
                     opacity: 1 if self.visible else 0
                     disabled: not self.visible
                     icon: 'information'
-                    on_press: app.dialog_information("weight_shifting")
+                    on_press: app.dialog_information("car_roll_center_height")
 
             MDBoxLayout:
                 orientation: "horizontal"
@@ -422,7 +415,7 @@ MDNavigationLayout:
                     opacity: 1 if self.visible else 0
                     disabled: not self.visible
                     icon: 'information'
-                    on_press: app.dialog_information("weight_shifting")
+                    on_press: app.dialog_information("car_roll_stiffness")
 
 
 
@@ -465,7 +458,7 @@ MDNavigationLayout:
                 MDIconButton:
                     size_hint_x: .05
                     icon: 'information'
-                    on_press: app.dialog_information("weight_shifting")
+                    on_press: app.dialog_information("engine_idle_rpm")
 
                 MDTextField:
                     hint_text: "Redline RPM"
@@ -476,7 +469,7 @@ MDNavigationLayout:
                 MDIconButton:
                     size_hint_x: .05
                     icon: 'information'
-                    on_press: app.dialog_information("weight_shifting")
+                    on_press: app.dialog_information("engine_redline_rpm")
 
             MDBoxLayout:
                 orientation: "horizontal"
@@ -491,7 +484,7 @@ MDNavigationLayout:
                     size_hint_x: .05
                     icon: 'information'
                     pos_hint: {"center_y": 0.5}
-                    on_press: app.dialog_information("weight_shifting")
+                    on_press: app.dialog_information("add_rpm_torque_entries")
 
             MDBoxLayout:
                 orientation: "horizontal"
@@ -548,7 +541,7 @@ MDNavigationLayout:
                 MDIconButton:
                     size_hint_x: .05
                     icon: 'information'
-                    on_press: app.dialog_information("weight_shifting")
+                    on_press: app.dialog_information("tire_width")
 
             MDBoxLayout:
                 orientation: "horizontal"
@@ -564,7 +557,7 @@ MDNavigationLayout:
                 MDIconButton:
                     size_hint_x: .05
                     icon: 'information'
-                    on_press: app.dialog_information("weight_shifting")
+                    on_press: app.dialog_information("tire_aspect_ratio")
 
             MDBoxLayout:
                 orientation: "horizontal"
@@ -572,7 +565,7 @@ MDNavigationLayout:
                 spacing: sp(20)
 
                 MDTextField:
-                    hint_text: "Tire Radius"
+                    hint_text: "Wheel Diameter"
                     size_hint_x: .5
                     mode: "fill"
                     input_filter: 'int'
@@ -580,7 +573,7 @@ MDNavigationLayout:
                 MDIconButton:
                     size_hint_x: .05
                     icon: 'information'
-                    on_press: app.dialog_information("weight_shifting")
+                    on_press: app.dialog_information("tire_wheel_diameter")
 
             MDBoxLayout:
                 orientation: "horizontal"
@@ -596,7 +589,7 @@ MDNavigationLayout:
                 MDIconButton:
                     size_hint_x: .05
                     icon: 'information'
-                    on_press: app.dialog_information("weight_shifting")
+                    on_press: app.dialog_information("tire_friction_coeff")
 
             MDBoxLayout:
                 orientation: "horizontal"
@@ -612,7 +605,7 @@ MDNavigationLayout:
                 MDIconButton:
                     size_hint_x: .05
                     icon: 'information'
-                    on_press: app.dialog_information("weight_shifting")
+                    on_press: app.dialog_information("tire_rolling_res_coeff")
 
 
 
@@ -655,7 +648,7 @@ MDNavigationLayout:
                 MDIconButton:
                     size_hint_x: .05
                     icon: 'information'
-                    on_press: app.dialog_information("weight_shifting")
+                    on_press: app.dialog_information("aero_drag_coeff")
 
             MDBoxLayout:
                 orientation: "horizontal"
@@ -671,7 +664,7 @@ MDNavigationLayout:
                 MDIconButton:
                     size_hint_x: .05
                     icon: 'information'
-                    on_press: app.dialog_information("downforce")
+                    on_press: app.dialog_information("aero_frontal_area")
 
             MDBoxLayout:
                 orientation: "horizontal"
@@ -687,7 +680,7 @@ MDNavigationLayout:
                 MDIconButton:
                     size_hint_x: .05
                     icon: 'information'
-                    on_press: app.dialog_information("weight_shifting")
+                    on_press: app.dialog_information("aero_air_density")
 
 
             MDBoxLayout:
@@ -826,7 +819,7 @@ MDNavigationLayout:
                 MDIconButton:
                     size_hint_x: .05
                     icon: 'information'
-                    on_press: app.dialog_information("weight_shifting")
+                    on_press: app.dialog_information("results_initial_speed")
 
             MDBoxLayout:
                 orientation: "horizontal"
@@ -842,7 +835,7 @@ MDNavigationLayout:
                 MDIconButton:
                     size_hint_x: .05
                     icon: 'information'
-                    on_press: app.dialog_information("weight_shifting")
+                    on_press: app.dialog_information("results_final_speed")
 
             MDBoxLayout:
                 orientation: "horizontal"
