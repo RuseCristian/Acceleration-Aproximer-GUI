@@ -2,15 +2,16 @@
 
 
 
-TireScreen:
-    name: "TireScreen"
+
+EngineScreen:
+    name: "EngineScreen"
 
     ScrollView:
         pos_hint: {"center_x": 0.72}
         do_scroll_y: True
 
-
         MDBoxLayout:
+            id: engine_screen_vertical_boxlayout
             orientation: "vertical"
             spacing: sp(110)
             padding: sp(50)
@@ -23,7 +24,7 @@ TireScreen:
 
                 MDLabel:
                     pos_hint: {"center_x": 0.67}
-                    text: "Tire"
+                    text: "Engine"
                     font_style: "H4"
                     theme_text_color: "Secondary"
 
@@ -33,7 +34,18 @@ TireScreen:
                 spacing: sp(20)
 
                 MDTextField:
-                    hint_text: "Tire Width"
+                    hint_text: "Idle RPM"
+                    size_hint_x: .5
+                    mode: "fill"
+                    input_filter: 'int'
+
+                MDIconButton:
+                    size_hint_x: .05
+                    icon: 'information'
+                    on_press: app.dialog_information("weight_shifting")
+
+                MDTextField:
+                    hint_text: "Redline RPM"
                     size_hint_x: .5
                     mode: "fill"
                     input_filter: 'int'
@@ -48,15 +60,14 @@ TireScreen:
                 size_hint_x: .55
                 spacing: sp(20)
 
-                MDTextField:
-                    hint_text: "Tire Aspect Ratio"
-                    size_hint_x: .5
-                    mode: "fill"
-                    input_filter: lambda x,y: str(x) if str(self.text+x).isdigit() and 0 < int(self.text+x) < 100 else False
+                MDLabel:
+                    text: "Rpm/Torque Entries"
+                    pos_hint: {"center_y": 0.5}
 
                 MDIconButton:
                     size_hint_x: .05
                     icon: 'information'
+                    pos_hint: {"center_y": 0.5}
                     on_press: app.dialog_information("weight_shifting")
 
             MDBoxLayout:
@@ -64,45 +75,11 @@ TireScreen:
                 size_hint_x: .55
                 spacing: sp(20)
 
-                MDTextField:
-                    hint_text: "Tire Radius"
-                    size_hint_x: .5
-                    mode: "fill"
-                    input_filter: 'int'
 
-                MDIconButton:
-                    size_hint_x: .05
-                    icon: 'information'
-                    on_press: app.dialog_information("weight_shifting")
+                MDFillRoundFlatButton:
+                    text: "Add"
+                    on_release: app.add_rpm_torque_text_field()
 
-            MDBoxLayout:
-                orientation: "horizontal"
-                size_hint_x: .55
-                spacing: sp(20)
-
-                MDTextField:
-                    hint_text: "Tire Friction Coefficient (µ)"
-                    size_hint_x: .5
-                    mode: "fill"
-                    input_filter: 'int'
-
-                MDIconButton:
-                    size_hint_x: .05
-                    icon: 'information'
-                    on_press: app.dialog_information("weight_shifting")
-
-            MDBoxLayout:
-                orientation: "horizontal"
-                size_hint_x: .55
-                spacing: sp(20)
-
-                MDTextField:
-                    hint_text: "Rolling Resistance Coefficient (k)"
-                    size_hint_x: .5
-                    mode: "fill"
-                    input_filter: 'int'
-
-                MDIconButton:
-                    size_hint_x: .05
-                    icon: 'information'
-                    on_press: app.dialog_information("weight_shifting")
+                MDFillRoundFlatButton:
+                    text: "Remove"
+                    on_release: app.remove_rpm_torque_text_field()

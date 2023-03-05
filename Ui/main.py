@@ -62,7 +62,7 @@ class AccelerationApproximator(MDApp):
         self.dialog = None
         self.theme_cls.primary_palette = "BlueGray"
         self.theme_cls.theme_style = "Dark"
-        self.name1 = 0
+        self.rpm_torque_rows = 0
         Window.size = (1080, 2220)
         return Builder.load_file('aero_screen.kv')
 
@@ -91,6 +91,30 @@ class AccelerationApproximator(MDApp):
 
     def close_dialog(self):
         self.dialog.dismiss()
+
+    def add_rpm_torque_text_field(self):
+
+        self.rpm_torque_rows += 1
+        self.box_layout = MDBoxLayout(orientation='horizontal', size_hint_x=.493, spacing=dp(20), id=f"rpm_torque{self.rpm_torque_rows}_boxlayout")
+        self.rpm_text_field = MDTextField(hint_text=f"RPM", mode="fill", size_hint_x=.5, input_filter="float")
+        self.torque_text_field = MDTextField(hint_text=f"Torque", mode="fill", size_hint_x=.5, input_filter="float")
+        self.box_layout.add_widget(self.rpm_text_field)
+        self.box_layout.add_widget(self.torque_text_field)
+        self.root.ids.engine_screen_vertical_boxlayout.add_widget(self.box_layout)
+
+    def remove_rpm_torque_text_field(self):
+        try:
+            if len(self.root.ids.engine_screen_vertical_boxlayout.children) > 5:
+                # Get the first child widget and set its size_hint_y to None
+                first_child = self.root.ids.engine_screen_vertical_boxlayout.children[0]
+                first_child.size_hint_y = None
+
+                # Remove the first child widget
+                self.root.ids.engine_screen_vertical_boxlayout.remove_widget(first_child)
+                self.rpm_torque_rows -= 1
+        except Exception as e:
+            print(e)
+            pass
 
     def add_gear_text_fields(self):
         self.remove_gear_text_fields()
