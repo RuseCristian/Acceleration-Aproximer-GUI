@@ -13,8 +13,8 @@ ScreenManager:
 
             MDBoxLayout:
                 orientation: "vertical"
-                spacing: dp(110)
-                padding: dp(50)
+                spacing: sp(110)
+                padding: sp(50)
                 size_hint_y: None
                 height: self.minimum_height
 
@@ -31,7 +31,7 @@ ScreenManager:
                 MDBoxLayout:
                     orientation: "horizontal"
                     size_hint_x: .55
-                    spacing: 20
+                    spacing: sp(20)
 
                     MDTextField:
                         hint_text: "Coefficient of Drag"
@@ -47,7 +47,7 @@ ScreenManager:
                 MDBoxLayout:
                     orientation: "horizontal"
                     size_hint_x: .55
-                    spacing: 20
+                    spacing: sp(20)
 
                     MDTextField:
                         hint_text: "Frontal Area"
@@ -63,7 +63,7 @@ ScreenManager:
                 MDBoxLayout:
                     orientation: "horizontal"
                     size_hint_x: .55
-                    spacing: 20
+                    spacing: sp(20)
 
                     MDTextField:
                         hint_text: "Air Density"
@@ -79,10 +79,11 @@ ScreenManager:
 
                 MDBoxLayout:
                     orientation: "horizontal"
-                    padding_top: dp(40)
-                    padding_bottom: dp(40)
-                    size_hint_x: .55
-                    spacing: 20
+                    padding_top: sp(40)
+                    padding_bottom: sp(40)
+                    size_hint_x: None
+                    width: sp(400)
+                    spacing: sp(20)
 
                     MDLabel:
                         text: "Downforce Calculation"
@@ -106,7 +107,7 @@ ScreenManager:
                 MDBoxLayout:
                     orientation: "horizontal"
                     size_hint_x: .55
-                    spacing: 20
+                    spacing: sp(20)
 
                     MDTextField:
                         id: negative_lift_coefficient
@@ -129,7 +130,7 @@ ScreenManager:
                 MDBoxLayout:
                     orientation: "horizontal"
                     size_hint_x: .55
-                    spacing: 20
+                    spacing: sp(20)
 
                     MDTextField:
                         id: downforce_total_area
@@ -152,7 +153,7 @@ ScreenManager:
                 MDBoxLayout:
                     orientation: "horizontal"
                     size_hint_x: .55
-                    spacing: 20
+                    spacing: sp(20)
 
                     MDTextField:
                         id: downforce_distribution

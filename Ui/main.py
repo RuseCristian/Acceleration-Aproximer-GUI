@@ -1,7 +1,10 @@
-from kivy.properties import NumericProperty
-from kivy.uix.boxlayout import BoxLayout
-from kivymd.uix.boxlayout import MDBoxLayout
+from math import floor
+
+from kivy.core.window import Window
 from kivy.lang.builder import Builder
+from kivy.metrics import dp
+from kivy.properties import NumericProperty
+from kivy.uix.button import Button
 from kivy.uix.screenmanager import Screen
 from kivymd.app import MDApp
 from kivymd.uix.boxlayout import MDBoxLayout
@@ -9,7 +12,7 @@ from kivymd.uix.button import MDFlatButton
 from kivymd.uix.dialog import MDDialog
 from kivymd.uix.floatlayout import MDFloatLayout
 from kivymd.uix.tab import MDTabsBase
-from kivy.core.window import Window
+from kivymd.uix.textfield import MDTextField
 
 
 class Tab(MDFloatLayout, MDTabsBase):
@@ -58,9 +61,10 @@ class AccelerationApproximator(MDApp):
     def build(self):
         self.dialog = None
         self.theme_cls.primary_palette = "BlueGray"
-        self.theme_cls.theme_style = "Light"
+        self.theme_cls.theme_style = "Dark"
+        self.name1 = 0
         Window.size = (1080, 2220)
-        return Builder.load_file('drivetrain_screen.kv')
+        return Builder.load_file('aero_screen.kv')
 
     def show_hide_ui(self, switchObject, switchValue, *args):
         if switchValue:
@@ -88,5 +92,28 @@ class AccelerationApproximator(MDApp):
     def close_dialog(self):
         self.dialog.dismiss()
 
+    def add_gear_text_fields(self):
+        self.remove_gear_text_fields()
+        if len(self.root.ids.drivetrain_vertical_boxlayout.children) >= 10:
+            for i in range(2, floor(self.root.ids.number_of_gears_slider.value)):
+                self.box_layout = MDBoxLayout(orientation='horizontal', size_hint_x=.493, spacing=dp(20), id=f"gear_{i+1}_boxlayout")
+                self.gear_textfield = MDTextField(hint_text=f"Gear {i+1} Ratio", mode="fill", size_hint_x=.5, input_filter="float")
+                self.box_layout.add_widget(self.gear_textfield)
+                self.root.ids.drivetrain_vertical_boxlayout.add_widget(self.box_layout)
+        else:
+            for i in range(floor(self.root.ids.number_of_gears_slider.value)):
+                self.box_layout = MDBoxLayout(orientation='horizontal', size_hint_x=.493, spacing=dp(20), id=f"gear_{i + 1}_boxlayout")
+                self.gear_textfield = MDTextField(hint_text=f"Gear {i + 1} Ratio", mode="fill", size_hint_x=.5, input_filter="float")
+                self.box_layout.add_widget(self.gear_textfield)
+                self.root.ids.drivetrain_vertical_boxlayout.add_widget(self.box_layout)
+
+    def remove_gear_text_fields(self):
+        try:
+            if len(self.root.ids.drivetrain_vertical_boxlayout.children) > 10:
+                while len(self.root.ids.drivetrain_vertical_boxlayout.children) != 10:
+                    self.root.ids.drivetrain_vertical_boxlayout.remove_widget(self.root.ids.drivetrain_vertical_boxlayout.children[0])
+        except Exception as e:
+            print(e)
+            pass
 
 AccelerationApproximator().run()

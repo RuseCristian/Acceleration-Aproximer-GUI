@@ -12,9 +12,10 @@ ScreenManager:
 
 
             MDBoxLayout:
+                id: drivetrain_vertical_boxlayout
                 orientation: "vertical"
-                spacing: dp(110)
-                padding: dp(50)
+                spacing: sp(110)
+                padding: sp(50)
                 size_hint_y: None
                 height: self.minimum_height
 
@@ -31,7 +32,7 @@ ScreenManager:
                 MDBoxLayout:
                     orientation: "horizontal"
                     size_hint_x: .55
-                    spacing: 20
+                    spacing: sp(20)
 
                     MDTextField:
                         hint_text: "Layout"
@@ -46,7 +47,7 @@ ScreenManager:
                 MDBoxLayout:
                     orientation: "horizontal"
                     size_hint_x: .55
-                    spacing: 20
+                    spacing: sp(20)
 
                     MDTextField:
                         hint_text: "Drivetrain Loss"
@@ -62,7 +63,7 @@ ScreenManager:
                 MDBoxLayout:
                     orientation: "horizontal"
                     size_hint_x: .55
-                    spacing: 20
+                    spacing: sp(20)
 
                     MDTextField:
                         hint_text: "Shifting Time (s)"
@@ -78,7 +79,7 @@ ScreenManager:
                 MDBoxLayout:
                     orientation: "horizontal"
                     size_hint_x: .55
-                    spacing: 20
+                    spacing: sp(20)
 
                     MDTextField:
                         hint_text: "Off Clutch RPM"
@@ -95,7 +96,7 @@ ScreenManager:
                 MDBoxLayout:
                     orientation: "horizontal"
                     size_hint_x: .55
-                    spacing: 20
+                    spacing: sp(20)
 
                     MDTextField:
                         hint_text: "Gas Level"
@@ -108,10 +109,57 @@ ScreenManager:
                         icon: 'information'
                         on_press: app.dialog_information("weight_shifting")
 
+                MDBoxLayout:
+                    orientation: "horizontal"
+                    size_hint_x: .55
+                    spacing: sp(20)
+
+                    MDTextField:
+                        hint_text: "Final Drive Ratio"
+                        size_hint_x: .5
+                        mode: "fill"
+                        input_filter: "int"
+
+                    MDIconButton:
+                        size_hint_x: .05
+                        icon: 'information'
+                        on_press: app.dialog_information("weight_shifting")
+
+
+                MDBoxLayout:
+                    orientation: "horizontal"
+                    size_hint_x: None
+                    width: sp(400)
+                    spacing: sp(20)
+
+                    MDLabel:
+                        text: "Number of Gears"
+                        size_hint_x: None
+                        width: sp(150)
+                        pos_hint: {"center_y": 0.5}
+
+                    MDSlider:
+                        id: number_of_gears_slider
+                        show_off: False
+                        min: 2
+                        max: 8
+                        step: 1
+                        hint: True
+                        size_hint_x: None
+                        width: sp(200)
+                        hint_bg_color: "red"
+                        on_value: app.add_gear_text_fields()
+                        pos_hint: {"center_y": 0.5}
+
+                    MDIconButton:
+                        size_hint_x: None
+                        width: sp(50)
+                        icon: 'information'
+                        pos_hint: {"center_y": 0.5}
+                        on_press: app.dialog_information("weight_shifting")
 
 
     EngineScreen:
     DrivetrainScreen:
     AeroScreen:
     ResultsScreen:
-

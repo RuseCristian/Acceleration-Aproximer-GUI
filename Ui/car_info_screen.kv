@@ -13,15 +13,15 @@ ScreenManager:
 
             MDBoxLayout:
                 orientation: "vertical"
-                spacing: dp(110)
-                padding: dp(50)
+                spacing: sp(110)
+                padding: sp(50)
                 size_hint_y: None
                 height: self.minimum_height
 
                 MDBoxLayout:
                     orientation: "horizontal"
                     size_hint_x: .55
-                    spacing: 20
+                    spacing: sp(20)
 
                     MDLabel:
                         pos_hint: {"center_x": 0.67}
@@ -32,7 +32,7 @@ ScreenManager:
                 MDBoxLayout:
                     orientation: "horizontal"
                     size_hint_x: .55
-                    spacing: 20
+                    spacing: sp(20)
 
                     MDTextField:
                         hint_text: "Car Name"
@@ -47,7 +47,7 @@ ScreenManager:
                 MDBoxLayout:
                     orientation: "horizontal"
                     size_hint_x: .55
-                    spacing: 20
+                    spacing: sp(20)
 
                     MDTextField:
                         hint_text: "Car Mass"
@@ -63,7 +63,7 @@ ScreenManager:
                 MDBoxLayout:
                     orientation: "horizontal"
                     size_hint_x: .55
-                    spacing: 20
+                    spacing: sp(20)
 
                     MDTextField:
                         hint_text: "Car Mass Distribution"
@@ -82,10 +82,11 @@ ScreenManager:
 
                 MDBoxLayout:
                     orientation: "horizontal"
-                    padding_top: dp(40)
-                    padding_bottom: dp(40)
-                    size_hint_x: .55
-                    spacing: 20
+                    padding_top: sp(40)
+                    padding_bottom: sp(40)
+                    size_hint_x: None
+                    width: sp(400)
+                    spacing: sp(20)
 
                     MDLabel:
                         text: "Extra Calculations (Weight Shifting)"
@@ -108,7 +109,7 @@ ScreenManager:
                 MDBoxLayout:
                     orientation: "horizontal"
                     size_hint_x: .55
-                    spacing: 20
+                    spacing: sp(20)
 
                     MDTextField:
                         id: wheelbase_field
@@ -131,7 +132,7 @@ ScreenManager:
                 MDBoxLayout:
                     orientation: "horizontal"
                     size_hint_x: .55
-                    spacing: 20
+                    spacing: sp(20)
 
                     MDTextField:
                         id: track_width_field
@@ -154,7 +155,7 @@ ScreenManager:
                 MDBoxLayout:
                     orientation: "horizontal"
                     size_hint_x: .55
-                    spacing: 20
+                    spacing: sp(20)
 
                     MDTextField:
                         id: roll_center_height_field
@@ -177,7 +178,7 @@ ScreenManager:
                 MDBoxLayout:
                     orientation: "horizontal"
                     size_hint_x: .55
-                    spacing: 20
+                    spacing: sp(20)
 
                     MDTextField:
                         id: roll_stiffness_field
