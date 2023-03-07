@@ -1,0 +1,107 @@
+<TireScreen>:
+    name: "TireScreen"
+
+    ScrollView:
+        pos_hint: {"center_x": 0.72}
+        do_scroll_y: True
+
+
+        MDBoxLayout:
+            orientation: "vertical"
+            spacing: sp(110)
+            padding: sp(50)
+            size_hint_y: None
+            height: self.minimum_height
+
+            MDBoxLayout:
+                orientation: "horizontal"
+                size_hint_x: .5
+
+                MDLabel:
+                    pos_hint: {"center_x": 0.67}
+                    text: "Tire"
+                    font_style: "H4"
+                    theme_text_color: "Secondary"
+                    halign: 'center'
+                    anchor_x: 'center'
+                    width: self.parent.width
+
+            MDBoxLayout:
+                orientation: "horizontal"
+                size_hint_x: .55
+                spacing: sp(20)
+
+                MDTextField:
+                    hint_text: "Tire Width"
+                    size_hint_x: .5
+                    mode: "fill"
+                    input_filter: 'int'
+
+                MDIconButton:
+                    size_hint_x: .05
+                    icon: 'information'
+                    on_press: app.dialog_information("tire_width")
+
+            MDBoxLayout:
+                orientation: "horizontal"
+                size_hint_x: .55
+                spacing: sp(20)
+
+                MDTextField:
+                    hint_text: "Tire Aspect Ratio"
+                    size_hint_x: .5
+                    mode: "fill"
+                    input_filter: lambda x,y: str(x) if str(self.text+x).isdigit() and 0 < int(self.text+x) < 100 else False
+
+                MDIconButton:
+                    size_hint_x: .05
+                    icon: 'information'
+                    on_press: app.dialog_information("tire_aspect_ratio")
+
+            MDBoxLayout:
+                orientation: "horizontal"
+                size_hint_x: .55
+                spacing: sp(20)
+
+                MDTextField:
+                    hint_text: "Wheel Diameter"
+                    size_hint_x: .5
+                    mode: "fill"
+                    input_filter: 'int'
+
+                MDIconButton:
+                    size_hint_x: .05
+                    icon: 'information'
+                    on_press: app.dialog_information("tire_wheel_diameter")
+
+            MDBoxLayout:
+                orientation: "horizontal"
+                size_hint_x: .55
+                spacing: sp(20)
+
+                MDTextField:
+                    hint_text: "Tire Friction Coefficient (µ)"
+                    size_hint_x: .5
+                    mode: "fill"
+                    input_filter: 'int'
+
+                MDIconButton:
+                    size_hint_x: .05
+                    icon: 'information'
+                    on_press: app.dialog_information("tire_friction_coeff")
+
+            MDBoxLayout:
+                orientation: "horizontal"
+                size_hint_x: .55
+                spacing: sp(20)
+
+                MDTextField:
+                    hint_text: "Rolling Resistance Coefficient (k)"
+                    size_hint_x: .5
+                    mode: "fill"
+                    input_filter: 'int'
+
+                MDIconButton:
+                    size_hint_x: .05
+                    icon: 'information'
+                    on_press: app.dialog_information("tire_rolling_res_coeff")

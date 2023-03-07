@@ -1,0 +1,171 @@
+<AeroScreen>:
+    name: "AeroScreen"
+
+    ScrollView:
+        pos_hint: {"center_x": 0.72}
+        do_scroll_y: True
+
+
+        MDBoxLayout:
+            orientation: "vertical"
+            spacing: sp(110)
+            padding: sp(50)
+            size_hint_y: None
+            height: self.minimum_height
+
+            MDBoxLayout:
+                orientation: "horizontal"
+                size_hint_x: .5
+
+                MDLabel:
+                    text: "Aerodynamics"
+                    font_style: "H4"
+                    theme_text_color: "Secondary"
+                    halign: 'center'
+                    anchor_x: 'center'
+                    width: self.parent.width
+
+            MDBoxLayout:
+                orientation: "horizontal"
+                size_hint_x: .55
+                spacing: sp(20)
+
+                MDTextField:
+                    hint_text: "Coefficient of Drag"
+                    size_hint_x: .5
+                    mode: "fill"
+                    input_filter: "int"
+
+                MDIconButton:
+                    size_hint_x: .05
+                    icon: 'information'
+                    on_press: app.dialog_information("aero_drag_coeff")
+
+            MDBoxLayout:
+                orientation: "horizontal"
+                size_hint_x: .55
+                spacing: sp(20)
+
+                MDTextField:
+                    hint_text: "Frontal Area"
+                    size_hint_x: .5
+                    mode: "fill"
+                    input_filter: "int"
+
+                MDIconButton:
+                    size_hint_x: .05
+                    icon: 'information'
+                    on_press: app.dialog_information("aero_frontal_area")
+
+            MDBoxLayout:
+                orientation: "horizontal"
+                size_hint_x: .55
+                spacing: sp(20)
+
+                MDTextField:
+                    hint_text: "Air Density"
+                    size_hint_x: .5
+                    mode: "fill"
+                    input_filter: "int"
+
+                MDIconButton:
+                    size_hint_x: .05
+                    icon: 'information'
+                    on_press: app.dialog_information("aero_air_density")
+
+
+            MDBoxLayout:
+                orientation: "horizontal"
+                padding_top: sp(40)
+                padding_bottom: sp(40)
+                size_hint_x: None
+                width: sp(400)
+                spacing: sp(20)
+
+                MDLabel:
+                    text: "Downforce Calculation"
+                    size_hint_x: .4
+
+                MDIconButton:
+                    size_hint_x: .05
+                    pos_hint: {"center_x": 0.1, "center_y": 0.5}
+                    icon: 'information'
+                    on_press: app.dialog_information("downforce")
+
+                MDSwitch:
+                    id: downforce_switch
+                    thumb_color_down: 1,0,0,1
+                    pos_hint: {"center_y": 0.5}
+                    name: "downforce_switch"
+                    active: False
+                    on_active: app.show_hide_ui(self, self.active, negative_lift_coefficient, downforce_total_area, downforce_distribution, negative_lift_coefficient_info, downforce_total_area_info, downforce_distribution_info)
+
+
+            MDBoxLayout:
+                orientation: "horizontal"
+                size_hint_x: .55
+                spacing: sp(20)
+
+                MDTextField:
+                    id: negative_lift_coefficient
+                    visible: False
+                    opacity: 1 if self.visible else 0
+                    disabled: not self.visible
+                    hint_text: "Negative Lift Coefficient"
+                    size_hint_x: .5
+                    mode: "fill"
+
+                MDIconButton:
+                    size_hint_x: .05
+                    id: negative_lift_coefficient_info
+                    icon: 'information'
+                    visible: False
+                    opacity: 1 if self.visible else 0
+                    disabled: not self.visible
+                    on_press: app.dialog_information("weight_shifting")
+
+            MDBoxLayout:
+                orientation: "horizontal"
+                size_hint_x: .55
+                spacing: sp(20)
+
+                MDTextField:
+                    id: downforce_total_area
+                    visible: False
+                    opacity: 1 if self.visible else 0
+                    disabled: not self.visible
+                    hint_text: "Downforce Total Area"
+                    size_hint_x: .5
+                    mode: "fill"
+
+                MDIconButton:
+                    size_hint_x: .05
+                    id: downforce_total_area_info
+                    icon: 'information'
+                    visible: False
+                    opacity: 1 if self.visible else 0
+                    disabled: not self.visible
+                    on_press: app.dialog_information("weight_shifting")
+
+            MDBoxLayout:
+                orientation: "horizontal"
+                size_hint_x: .55
+                spacing: sp(20)
+
+                MDTextField:
+                    id: downforce_distribution
+                    visible: False
+                    opacity: 1 if self.visible else 0
+                    disabled: not self.visible
+                    hint_text: "Downforce Distribution"
+                    size_hint_x: .5
+                    mode: "fill"
+
+                MDIconButton:
+                    size_hint_x: .05
+                    id: downforce_distribution_info
+                    icon: 'information'
+                    visible: False
+                    opacity: 1 if self.visible else 0
+                    disabled: not self.visible
+                    on_press: app.dialog_information("weight_shifting")

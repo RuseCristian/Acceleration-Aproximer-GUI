@@ -1,4 +1,5 @@
 from math import floor
+
 from kivy.core.window import Window
 from kivy.lang.builder import Builder
 from kivy.metrics import dp
@@ -10,6 +11,7 @@ from kivymd.uix.dialog import MDDialog
 from kivymd.uix.floatlayout import MDFloatLayout
 from kivymd.uix.tab import MDTabsBase
 from kivymd.uix.textfield import MDTextField
+
 
 Builder.load_file("aero_screen.kv")
 Builder.load_file("car_info_screen.kv")

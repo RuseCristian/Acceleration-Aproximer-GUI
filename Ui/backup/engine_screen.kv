@@ -1,11 +1,13 @@
-<ResultsScreen>:
-    name: "ResultsScreen"
+
+<EngineScreen>:
+    name: "EngineScreen"
 
     ScrollView:
         pos_hint: {"center_x": 0.72}
         do_scroll_y: True
 
         MDBoxLayout:
+            id: engine_screen_vertical_boxlayout
             orientation: "vertical"
             spacing: sp(110)
             padding: sp(50)
@@ -18,7 +20,7 @@
 
                 MDLabel:
                     pos_hint: {"center_x": 0.67}
-                    text: "Results"
+                    text: "Engine"
                     font_style: "H4"
                     theme_text_color: "Secondary"
                     halign: 'center'
@@ -31,7 +33,7 @@
                 spacing: sp(20)
 
                 MDTextField:
-                    hint_text: "Initial Speed"
+                    hint_text: "Idle RPM"
                     size_hint_x: .5
                     mode: "fill"
                     input_filter: 'int'
@@ -39,36 +41,45 @@
                 MDIconButton:
                     size_hint_x: .05
                     icon: 'information'
-                    on_press: app.dialog_information("results_initial_speed")
+                    on_press: app.dialog_information("engine_idle_rpm")
+
+                MDTextField:
+                    hint_text: "Redline RPM"
+                    size_hint_x: .5
+                    mode: "fill"
+                    input_filter: 'int'
+
+                MDIconButton:
+                    size_hint_x: .05
+                    icon: 'information'
+                    on_press: app.dialog_information("engine_redline_rpm")
 
             MDBoxLayout:
                 orientation: "horizontal"
                 size_hint_x: .55
                 spacing: sp(20)
 
-                MDTextField:
-                    hint_text: "Final Speed"
-                    size_hint_x: .5
-                    mode: "fill"
-                    input_filter: 'int'
+                MDLabel:
+                    text: "Rpm/Torque Entries"
+                    pos_hint: {"center_y": 0.5}
 
                 MDIconButton:
                     size_hint_x: .05
                     icon: 'information'
-                    on_press: app.dialog_information("results_final_speed")
+                    pos_hint: {"center_y": 0.5}
+                    on_press: app.dialog_information("add_rpm_torque_entries")
 
             MDBoxLayout:
-                orientation: "vertical"
-                adaptive_width: False
+                orientation: "horizontal"
                 size_hint_x: .55
                 spacing: sp(20)
 
-                MDFillRoundFlatButton:
-                    text: "Estimate Acceleration"
-                    size_hint_x: None
-                    width: dp(200)
-                    pos_hint: {"center_x": 0.5} # Center the button horizontally
-                    md_bg_color: app.theme_cls.primary_color
-                    on_release: print("Button pressed!")
 
+                MDFillRoundFlatButton:
+                    text: "Add"
+                    on_release: app.add_rpm_torque_text_field()
+
+                MDFillRoundFlatButton:
+                    text: "Remove"
+                    on_release: app.remove_rpm_torque_text_field()
 

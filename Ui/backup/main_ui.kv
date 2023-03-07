@@ -1,0 +1,114 @@
+#:import MDDialog kivymd.uix.dialog.MDDialog
+
+
+Screen:
+    MDNavigationLayout:
+        ScreenManager:
+            id: manager
+
+            MainScreen:
+            SettingsScreen:
+            InfoScreen:
+
+        MDNavigationDrawer:
+            id: nav_drawer
+            name: nav_drawer
+            BoxLayout:
+                orientation: 'vertical'
+                spacing: '8dp'
+                padding: '8dp'
+
+                Image:
+                    source: 'logo.png'
+
+                MDLabel:
+                    text: "Acceleration Approximator"
+                    font_style: 'H5'
+                    size_hint_y: None
+                    height: self.texture_size[1]
+
+                MDLabel:
+                    text: "V0.1.0"
+                    font_style: 'Subtitle2'
+                    size_hint_y: None
+                    height: self.texture_size[1]
+
+                ScrollView:
+
+                    MDList:
+                        OneLineIconListItem:
+                            text: 'Settings'
+                            on_press:
+                                root.ids.nav_drawer.set_state("close")
+                                root.ids.manager.current = 'settings'
+                            IconLeftWidget:
+                                icon: 'settings'
+
+                        OneLineIconListItem:
+                            text: 'App Info'
+                            on_press:
+                                root.ids.nav_drawer.set_state("close")
+                                root.ids.manager.current = 'info'
+                            IconLeftWidget:
+                                icon: 'information'
+
+
+<MainScreen>:
+    id: main
+    MDTopAppBar:
+        title: "Acceleration Approximer"
+        pos_hint: {"top": 1}
+        size_hint_y: 0.05
+        elevation: 0
+        left_action_items: [['menu', lambda x: root.parent.parent.children[0].set_state("open")]]
+
+    MDTabs:
+        id: top_tabs
+        tab_indicator_anim: True
+        tab_hint_x: True
+        allow_stretch: True
+        pos_hint: {"top": 0.95}
+
+
+        Tab:
+            id: car_tab
+            icon: "car-sports"
+            CarScreen:
+                id: carscreen_1
+
+
+        Tab:
+            id: engine_tab
+            icon: "engine"
+            EngineScreen:
+                id: enginescreen_1
+
+
+        Tab:
+            id: drivetrain_tab
+            icon: "car-shift-pattern"
+            DrivetrainScreen:
+                id: drivetrainscreen_1
+
+
+        Tab:
+            id: tyre_tab
+            icon: "tire"
+            TireScreen:
+                id: tirescreen_1
+
+
+        Tab:
+            id: aero_tab
+            icon: "plane-car"
+            AeroScreen:
+                id: aeroscreen_1
+
+
+        Tab:
+            id: results_tab
+            icon: "chart-bell-curve-cumulative"
+            ResultsScreen:
+                id: resultscreen_1
+
+

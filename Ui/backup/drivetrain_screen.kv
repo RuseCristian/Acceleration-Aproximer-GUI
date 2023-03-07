@@ -1,0 +1,161 @@
+<DrivetrainScreen>:
+    name: "Drivetrain"
+
+    ScrollView:
+        pos_hint: {"center_x": 0.72}
+        do_scroll_y: True
+
+
+        MDBoxLayout:
+            id: drivetrain_vertical_boxlayout
+            orientation: "vertical"
+            spacing: sp(110)
+            padding: sp(50)
+            size_hint_y: None
+            height: self.minimum_height
+
+            MDBoxLayout:
+                orientation: "horizontal"
+                size_hint_x: .5
+
+                MDLabel:
+                    pos_hint: {"center_x": 0.67}
+                    text: "Drivetrain"
+                    font_style: "H4"
+                    theme_text_color: "Secondary"
+                    halign: 'center'
+                    anchor_x: 'center'
+                    width: self.parent.width
+
+            MDBoxLayout:
+                orientation: "horizontal"
+                size_hint_x: .55
+                spacing: sp(20)
+
+                MDTextField:
+                    hint_text: "Layout"
+                    size_hint_x: .5
+                    mode: "fill"
+                    helper_text: "Possible layouts: fwd, rwd, awd"
+                    helper_text_mode: "persistent"
+
+                MDIconButton:
+                    size_hint_x: .05
+                    icon: 'information'
+                    on_press: app.dialog_information("drivetrain_layout")
+
+            MDBoxLayout:
+                orientation: "horizontal"
+                size_hint_x: .55
+                spacing: sp(20)
+
+                MDTextField:
+                    hint_text: "Drivetrain Loss"
+                    size_hint_x: .5
+                    mode: "fill"
+                    input_filter: "int"
+
+                MDIconButton:
+                    size_hint_x: .05
+                    icon: 'information'
+                    on_press: app.dialog_information("drivetrain_loss")
+
+            MDBoxLayout:
+                orientation: "horizontal"
+                size_hint_x: .55
+                spacing: sp(20)
+
+                MDTextField:
+                    hint_text: "Shifting Time (s)"
+                    size_hint_x: .5
+                    mode: "fill"
+                    input_filter: "int"
+
+                MDIconButton:
+                    size_hint_x: .05
+                    icon: 'information'
+                    on_press: app.dialog_information("drivetrain_shift_time")
+
+            MDBoxLayout:
+                orientation: "horizontal"
+                size_hint_x: .55
+                spacing: sp(20)
+
+                MDTextField:
+                    hint_text: "Off Clutch RPM"
+                    size_hint_x: .5
+                    mode: "fill"
+                    input_filter: "int"
+
+                MDIconButton:
+                    size_hint_x: .05
+                    icon: 'information'
+                    on_press: app.dialog_information("drivetrain_off_clutch")
+
+
+            MDBoxLayout:
+                orientation: "horizontal"
+                size_hint_x: .55
+                spacing: sp(20)
+
+                MDTextField:
+                    hint_text: "Gas Level"
+                    size_hint_x: .5
+                    mode: "fill"
+                    input_filter: "int"
+
+                MDIconButton:
+                    size_hint_x: .05
+                    icon: 'information'
+                    on_press: app.dialog_information("drivetrain_gas_level")
+
+            MDBoxLayout:
+                orientation: "horizontal"
+                size_hint_x: .55
+                spacing: sp(20)
+
+                MDTextField:
+                    hint_text: "Final Drive Ratio"
+                    size_hint_x: .5
+                    mode: "fill"
+                    input_filter: "int"
+
+                MDIconButton:
+                    size_hint_x: .05
+                    icon: 'information'
+                    on_press: app.dialog_information("drivetrain_final_gear")
+
+
+            MDBoxLayout:
+                orientation: "horizontal"
+                size_hint_x: None
+                width: sp(400)
+                spacing: sp(20)
+
+                MDLabel:
+                    text: "Number of Gears"
+                    size_hint_x: None
+                    width: sp(150)
+                    pos_hint: {"center_y": 0.5}
+
+                MDSlider:
+                    id: number_of_gears_slider
+                    show_off: False
+                    min: 2
+                    max: 8
+                    step: 1
+                    hint: True
+                    size_hint_x: None
+                    width: sp(200)
+                    hint_bg_color: "red"
+                    on_value: app.add_gear_text_fields()
+                    pos_hint: {"center_y": 0.5}
+
+                MDIconButton:
+                    size_hint_x: None
+                    width: sp(50)
+                    icon: 'information'
+                    pos_hint: {"center_y": 0.5}
+                    on_press: app.dialog_information("add_gear")
+
+
