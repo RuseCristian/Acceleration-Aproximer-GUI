@@ -1,6 +1,3 @@
-#:import MDDialog kivymd.uix.dialog.MDDialog
-
-
 
 <EngineScreen>:
     name: "EngineScreen"
@@ -26,6 +23,9 @@
                     text: "Engine"
                     font_style: "H4"
                     theme_text_color: "Secondary"
+                    halign: 'center'
+                    anchor_x: 'center'
+                    width: self.parent.width
 
             MDBoxLayout:
                 orientation: "horizontal"
@@ -41,7 +41,7 @@
                 MDIconButton:
                     size_hint_x: .05
                     icon: 'information'
-                    on_press: app.dialog_information("weight_shifting")
+                    on_press: app.dialog_information("engine_idle_rpm")
 
                 MDTextField:
                     hint_text: "Redline RPM"
@@ -52,7 +52,7 @@
                 MDIconButton:
                     size_hint_x: .05
                     icon: 'information'
-                    on_press: app.dialog_information("weight_shifting")
+                    on_press: app.dialog_information("engine_redline_rpm")
 
             MDBoxLayout:
                 orientation: "horizontal"
@@ -67,7 +67,7 @@
                     size_hint_x: .05
                     icon: 'information'
                     pos_hint: {"center_y": 0.5}
-                    on_press: app.dialog_information("weight_shifting")
+                    on_press: app.dialog_information("add_rpm_torque_entries")
 
             MDBoxLayout:
                 orientation: "horizontal"
@@ -82,3 +82,4 @@
                 MDFillRoundFlatButton:
                     text: "Remove"
                     on_release: app.remove_rpm_torque_text_field()
+

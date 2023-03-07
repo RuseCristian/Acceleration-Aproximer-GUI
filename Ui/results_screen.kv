@@ -1,7 +1,3 @@
-#:import MDDialog kivymd.uix.dialog.MDDialog
-
-
-
 <ResultsScreen>:
     name: "ResultsScreen"
 
@@ -25,6 +21,9 @@
                     text: "Results"
                     font_style: "H4"
                     theme_text_color: "Secondary"
+                    halign: 'center'
+                    anchor_x: 'center'
+                    width: self.parent.width
 
             MDBoxLayout:
                 orientation: "horizontal"
@@ -40,7 +39,7 @@
                 MDIconButton:
                     size_hint_x: .05
                     icon: 'information'
-                    on_press: app.dialog_information("weight_shifting")
+                    on_press: app.dialog_information("results_initial_speed")
 
             MDBoxLayout:
                 orientation: "horizontal"
@@ -56,7 +55,7 @@
                 MDIconButton:
                     size_hint_x: .05
                     icon: 'information'
-                    on_press: app.dialog_information("weight_shifting")
+                    on_press: app.dialog_information("results_final_speed")
 
             MDBoxLayout:
                 orientation: "horizontal"

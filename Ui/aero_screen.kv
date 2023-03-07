@@ -1,7 +1,3 @@
-#:import MDDialog kivymd.uix.dialog.MDDialog
-
-
-
 <AeroScreen>:
     name: "AeroScreen"
 
@@ -22,10 +18,12 @@
                 size_hint_x: .5
 
                 MDLabel:
-                    pos_hint: {"center_x": 0.67}
                     text: "Aerodynamics"
                     font_style: "H4"
                     theme_text_color: "Secondary"
+                    halign: 'center'
+                    anchor_x: 'center'
+                    width: self.parent.width
 
             MDBoxLayout:
                 orientation: "horizontal"
@@ -41,7 +39,7 @@
                 MDIconButton:
                     size_hint_x: .05
                     icon: 'information'
-                    on_press: app.dialog_information("weight_shifting")
+                    on_press: app.dialog_information("aero_drag_coeff")
 
             MDBoxLayout:
                 orientation: "horizontal"
@@ -57,7 +55,7 @@
                 MDIconButton:
                     size_hint_x: .05
                     icon: 'information'
-                    on_press: app.dialog_information("weight_shifting")
+                    on_press: app.dialog_information("aero_frontal_area")
 
             MDBoxLayout:
                 orientation: "horizontal"
@@ -73,7 +71,7 @@
                 MDIconButton:
                     size_hint_x: .05
                     icon: 'information'
-                    on_press: app.dialog_information("weight_shifting")
+                    on_press: app.dialog_information("aero_air_density")
 
 
             MDBoxLayout:

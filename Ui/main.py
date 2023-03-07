@@ -3,8 +3,6 @@ from math import floor
 from kivy.core.window import Window
 from kivy.lang.builder import Builder
 from kivy.metrics import dp
-from kivy.properties import NumericProperty
-from kivy.uix.button import Button
 from kivy.uix.screenmanager import Screen
 from kivymd.app import MDApp
 from kivymd.uix.boxlayout import MDBoxLayout
@@ -15,11 +13,40 @@ from kivymd.uix.tab import MDTabsBase
 from kivymd.uix.textfield import MDTextField
 
 
+Builder.load_file("aero_screen.kv")
+Builder.load_file("car_info_screen.kv")
+Builder.load_file("drivetrain_screen.kv")
+Builder.load_file("engine_screen.kv")
+#Builder.load_file("info_screen.kv")
+Builder.load_file("results_screen.kv")
+Builder.load_file("settings_screen.kv")
+Builder.load_file("tire_screen.kv")
+
 class Tab(MDFloatLayout, MDTabsBase):
     '''Class implementing content for a tab.'''
 
 
 class ContentNavigationDrawer(MDBoxLayout):
+    pass
+
+
+class SettingsScreen(Screen):
+    pass
+    # switchTestMode = ObjectProperty(active=True)
+    # testModus = BooleanProperty(store.get('mode')['dev'])
+    #
+    # def save_settings(self):
+    #     print(self.switchTestMode.active)
+    #     store.put('mode', dev=self.switchTestMode.active)
+    #     print("saved settings")
+    #
+
+
+class InfoScreen(Screen):
+    pass
+
+
+class MainScreen(Screen):
     pass
 
 
@@ -72,7 +99,7 @@ dialog_text_dictionary = {
                        "is no load on the engine. In other words, it is the minimum speed at which the engine can operate without stalling.",
     "engine_redline_rpm": "The redline RPM is the maximum engine speed at which an engine can operate without causing damage to its internal components. ",
     "add_rpm_torque_entries": "Add RPM:Torque values for the engine horsepower and torque graphs. In the left field input the RPM and in the right filed input the torque at said "
-                 "RPM. RPM entries must be made in an increasing manner. I.e if RPM entry 1 is 3000, RPM entry 2 cannot be 2500.",
+                              "RPM. RPM entries must be made in an increasing manner. I.e if RPM entry 1 is 3000, RPM entry 2 cannot be 2500.",
     "drivetrain_layout": "A car's layout refers to how its drivetrain is configured to deliver power to the wheels. Rear-wheel drive (RWD) provides better handling but "
                          "can be less practical, front-wheel drive (FWD) provides better traction in slippery conditions, while all-wheel drive (AWD) delivers power to "
                          "all four wheels offers best all around traction, but usually comes with a bigger mass handicap.",
@@ -138,6 +165,8 @@ class AccelerationApproximator(MDApp):
         else:
             for i in args:
                 i.visible = False
+        for i in self.root.ids.items():
+            print(i)
 
     def dialog_information(self, dictionary_entry):
 

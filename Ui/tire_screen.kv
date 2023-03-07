@@ -1,7 +1,3 @@
-#:import MDDialog kivymd.uix.dialog.MDDialog
-
-
-
 <TireScreen>:
     name: "TireScreen"
 
@@ -26,6 +22,9 @@
                     text: "Tire"
                     font_style: "H4"
                     theme_text_color: "Secondary"
+                    halign: 'center'
+                    anchor_x: 'center'
+                    width: self.parent.width
 
             MDBoxLayout:
                 orientation: "horizontal"
@@ -41,7 +40,7 @@
                 MDIconButton:
                     size_hint_x: .05
                     icon: 'information'
-                    on_press: app.dialog_information("weight_shifting")
+                    on_press: app.dialog_information("tire_width")
 
             MDBoxLayout:
                 orientation: "horizontal"
@@ -57,7 +56,7 @@
                 MDIconButton:
                     size_hint_x: .05
                     icon: 'information'
-                    on_press: app.dialog_information("weight_shifting")
+                    on_press: app.dialog_information("tire_aspect_ratio")
 
             MDBoxLayout:
                 orientation: "horizontal"
@@ -65,7 +64,7 @@
                 spacing: sp(20)
 
                 MDTextField:
-                    hint_text: "Tire Radius"
+                    hint_text: "Wheel Diameter"
                     size_hint_x: .5
                     mode: "fill"
                     input_filter: 'int'
@@ -73,7 +72,7 @@
                 MDIconButton:
                     size_hint_x: .05
                     icon: 'information'
-                    on_press: app.dialog_information("weight_shifting")
+                    on_press: app.dialog_information("tire_wheel_diameter")
 
             MDBoxLayout:
                 orientation: "horizontal"
@@ -89,7 +88,7 @@
                 MDIconButton:
                     size_hint_x: .05
                     icon: 'information'
-                    on_press: app.dialog_information("weight_shifting")
+                    on_press: app.dialog_information("tire_friction_coeff")
 
             MDBoxLayout:
                 orientation: "horizontal"
@@ -105,4 +104,4 @@
                 MDIconButton:
                     size_hint_x: .05
                     icon: 'information'
-                    on_press: app.dialog_information("weight_shifting")
+                    on_press: app.dialog_information("tire_rolling_res_coeff")
