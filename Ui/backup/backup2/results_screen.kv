@@ -32,56 +32,35 @@
             MDBoxLayout:
                 orientation: "horizontal"
                 adaptive_width: False
-                size_hint_x: 0.5
                 spacing: sp(20)
-                pos_hint: {"center_x": 0.5, "center_y": 0.5}
-
-                Widget:
-                    size_hint_x: None
-                    width: (self.parent.width - sp(300) - sp(40)) / 2
 
                 MDTextField:
                     hint_text: "Initial Speed"
+                    size_hint_x: .5
                     mode: "fill"
                     input_filter: 'int'
-                    size_hint_x: None
-                    width: sp(300)
 
                 MDIconButton:
-                    size_hint_x: None
-                    width: sp(24)
+                    size_hint_x: .05
                     icon: 'information'
-                    padding: sp(2)
                     on_press: app.dialog_information("results_initial_speed")
 
 
             MDBoxLayout:
                 orientation: "horizontal"
                 adaptive_width: False
-                size_hint_x: 0.5
                 spacing: sp(20)
-                pos_hint: {"center_x": 0.5, "center_y": 0.5}
-
-                Widget:
-                    size_hint_x: None
-                    width: (self.parent.width - sp(300) - sp(40)) / 2
-                    # sp(300) text field width, sp(40) spacing is 20, so for the 2 elements is 40 because the first element
-                    # has 20 spacing to its right and the second element has spacing 20 to its left
 
                 MDTextField:
                     hint_text: "Final Speed"
+                    size_hint_x: .5
                     mode: "fill"
                     input_filter: 'int'
-                    size_hint_x: None
-                    width: sp(300)
 
                 MDIconButton:
-                    size_hint_x: None
-                    width: sp(24)
+                    size_hint_x: .05
                     icon: 'information'
-                    padding: sp(2)
                     on_press: app.dialog_information("results_final_speed")
-
 
 
 
@@ -93,7 +72,7 @@
                 MDFillRoundFlatButton:
                     text: "Estimate Acceleration"
                     size_hint_x: None
-                    width: sp(200)
+                    width: dp(200)
                     md_bg_color: app.theme_cls.primary_color
                     on_release: print("Button pressed!")
                     pos_hint: {"center_x": 0.5, "center_y": 0.5}

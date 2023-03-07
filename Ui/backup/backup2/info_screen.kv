@@ -1,0 +1,49 @@
+
+<InfoScreen>
+    name: 'info'
+    on_back_press:
+        app.root.current = "main"
+    BoxLayout:
+        orientation: 'vertical'
+
+        MDTopAppBar:
+            title: "Acceleration Approximator - Info"
+            pos_hint: {"top": 1}
+            size_hint_y: 0.1
+            elevation: 0
+            left_action_items: [['menu', lambda x: root.parent.parent.children[0].set_state("open")]]
+
+        BoxLayout:
+            orientation: 'vertical'
+
+            MDLabel:
+                text: "Boilerplate Scanner App"
+                halign: 'center'
+                font_style: 'H5'
+                height: self.texture_size[1]
+
+            MDCard:
+                orientation: "vertical"
+                padding: "20dp"
+                #size_hint: None, None
+                #size: "280dp", "180dp"
+                #pos_hint: {"center_x": .5, "center_y": .5}
+
+                MDLabel:
+                    text: "Version: V0.1.0"
+                    height: self.texture_size[1]
+
+                MDLabel:
+                    text: "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet."
+                    height: self.texture_size[1]
+
+            ScrollView:
+
+                MDList:
+
+                    TwoLineIconListItem:
+                        text: "Boilerplate Contact"
+                        secondary_text: "foo@bar.com"
+
+                        IconLeftWidget:
+                            icon: "email"

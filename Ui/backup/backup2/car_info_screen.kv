@@ -1,5 +1,5 @@
-<AeroScreen>:
-    name: "AeroScreen"
+<CarScreen>:
+    name: "CarScreen"
 
     ScrollView:
         do_scroll_y: True
@@ -19,9 +19,9 @@
                 adaptive_width: False
                 spacing: sp(20)
 
-
                 MDLabel:
-                    text: "Aerodynamics"
+                    pos_hint: {"center_x": 0.67}
+                    text: "Car Info"
                     font_style: "H4"
                     theme_text_color: "Secondary"
                     halign: 'center'
@@ -34,17 +34,10 @@
                 spacing: sp(20)
 
                 MDTextField:
-                    hint_text: "Coefficient of Drag"
+                    hint_text: "Car Name"
                     size_hint_x: .5
                     mode: "fill"
-                    input_filter: "int"
 
-                MDIconButton:
-                    size_hint_x: None
-                    width: sp(24)
-                    icon: 'information'
-                    padding: sp(2)
-                    on_press: app.dialog_information("aero_drag_coeff")
 
             MDBoxLayout:
                 orientation: "horizontal"
@@ -52,17 +45,10 @@
                 spacing: sp(20)
 
                 MDTextField:
-                    hint_text: "Frontal Area"
+                    hint_text: "Car Mass"
                     size_hint_x: .5
                     mode: "fill"
-                    input_filter: "int"
-
-                MDIconButton:
-                    size_hint_x: None
-                    width: sp(24)
-                    icon: 'information'
-                    padding: sp(2)
-                    on_press: app.dialog_information("aero_frontal_area")
+                    input_filter: 'int'
 
             MDBoxLayout:
                 orientation: "horizontal"
@@ -70,17 +56,18 @@
                 spacing: sp(20)
 
                 MDTextField:
-                    hint_text: "Air Density"
+                    hint_text: "Car Mass Distribution"
                     size_hint_x: .5
                     mode: "fill"
-                    input_filter: "int"
+                    helper_text: "Percentage of mass on the front axle of the car, between 0 and 100"
+                    helper_text_mode: "persistent"
+                    input_filter: lambda x,y: str(x) if str(self.text+x).isdigit() and 0 < int(self.text+x) < 100 else False
+
 
                 MDIconButton:
-                    size_hint_x: None
-                    width: sp(24)
+                    size_hint_x: .05
                     icon: 'information'
-                    padding: sp(2)
-                    on_press: app.dialog_information("aero_air_density")
+                    on_press: app.dialog_information("car_mass_distribution")
 
 
             MDBoxLayout:
@@ -89,24 +76,45 @@
                 spacing: sp(20)
 
                 MDLabel:
-                    text: "Downforce Calculation"
+                    text: "Extra Calculations (Weight Shifting)"
                     size_hint_x: .4
 
                 MDIconButton:
-                    size_hint_x: None
-                    width: sp(24)
+                    size_hint_x: .05
+                    pos_hint: {"center_x": 0.1, "center_y": 0.5}
                     icon: 'information'
-                    padding: sp(2)
-                    on_press: app.dialog_information("downforce")
+                    on_press: app.dialog_information("weight_shifting")
 
                 MDSwitch:
-                    id: downforce_switch
+                    id: weight_shifting_switch
                     thumb_color_down: 1,0,0,1
                     pos_hint: {"center_y": 0.5}
-                    name: "downforce_switch"
+                    name: "weight_shifting_calculations"
                     active: False
-                    on_active: app.show_hide_ui(self, self.active, negative_lift_coefficient, downforce_total_area, downforce_distribution, negative_lift_coefficient_info, downforce_total_area_info, downforce_distribution_info)
+                    on_active: app.show_hide_ui(self, self.active, wheelbase_field, track_width_field, roll_center_height_field, roll_stiffness_field, wheelbase_field_info, track_width_field_info, roll_center_height_field_info, roll_stiffness_field_info)
 
+            MDBoxLayout:
+                orientation: "horizontal"
+                size_hint_x: .55
+                spacing: sp(20)
+
+                MDTextField:
+                    id: wheelbase_field
+                    visible: False
+                    opacity: 1 if self.visible else 0
+                    disabled: not self.visible
+                    hint_text: "Wheel Base"
+                    size_hint_x: .5
+                    mode: "fill"
+
+                MDIconButton:
+                    size_hint_x: .05
+                    id: wheelbase_field_info
+                    visible: False
+                    opacity: 1 if self.visible else 0
+                    disabled: not self.visible
+                    icon: 'information'
+                    on_press: app.dialog_information("car_wheel_base")
 
             MDBoxLayout:
                 orientation: "horizontal"
@@ -114,26 +122,22 @@
                 spacing: sp(20)
 
                 MDTextField:
-                    id: negative_lift_coefficient
+                    id: track_width_field
                     visible: False
                     opacity: 1 if self.visible else 0
                     disabled: not self.visible
-                    hint_text: "Negative Lift Coefficient"
+                    hint_text: "Track Width"
                     size_hint_x: .5
                     mode: "fill"
 
-
                 MDIconButton:
-                    id: negative_lift_coefficient_info
-                    size_hint_x: None
-                    width: sp(24)
-                    icon: 'information'
-                    padding: sp(2)
+                    size_hint_x: .05
+                    id: track_width_field_info
                     visible: False
                     opacity: 1 if self.visible else 0
                     disabled: not self.visible
-                    on_press: app.dialog_information("weight_shifting")
-
+                    icon: 'information'
+                    on_press: app.dialog_information("car_track_width")
 
             MDBoxLayout:
                 orientation: "horizontal"
@@ -141,24 +145,22 @@
                 spacing: sp(20)
 
                 MDTextField:
-                    id: downforce_total_area
+                    id: roll_center_height_field
                     visible: False
                     opacity: 1 if self.visible else 0
                     disabled: not self.visible
-                    hint_text: "Downforce Total Area"
+                    hint_text: "Roll Center Height"
                     size_hint_x: .5
                     mode: "fill"
 
                 MDIconButton:
-                    id: downforce_total_area_info
-                    size_hint_x: None
-                    width: sp(24)
-                    icon: 'information'
-                    padding: sp(2)
+                    size_hint_x: .05
+                    id: roll_center_height_field_info
                     visible: False
                     opacity: 1 if self.visible else 0
                     disabled: not self.visible
-                    on_press: app.dialog_information("weight_shifting")
+                    icon: 'information'
+                    on_press: app.dialog_information("car_roll_center_height")
 
             MDBoxLayout:
                 orientation: "horizontal"
@@ -166,21 +168,19 @@
                 spacing: sp(20)
 
                 MDTextField:
-                    id: downforce_distribution
+                    id: roll_stiffness_field
                     visible: False
                     opacity: 1 if self.visible else 0
                     disabled: not self.visible
-                    hint_text: "Downforce Distribution"
+                    hint_text: "Roll Stiffness"
                     size_hint_x: .5
                     mode: "fill"
 
                 MDIconButton:
-                    id: downforce_distribution_info
-                    size_hint_x: None
-                    width: sp(24)
-                    icon: 'information'
-                    padding: sp(2)
+                    size_hint_x: .05
+                    id: roll_stiffness_field_info
                     visible: False
                     opacity: 1 if self.visible else 0
                     disabled: not self.visible
-                    on_press: app.dialog_information("weight_shifting")
+                    icon: 'information'
+                    on_press: app.dialog_information("car_roll_stiffness")

@@ -1,5 +1,4 @@
 from math import floor
-
 from kivy.core.window import Window
 from kivy.lang.builder import Builder
 from kivy.metrics import dp

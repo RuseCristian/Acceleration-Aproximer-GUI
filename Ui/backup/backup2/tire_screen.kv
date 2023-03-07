@@ -40,10 +40,8 @@
                     input_filter: 'int'
 
                 MDIconButton:
-                    size_hint_x: None
-                    width: sp(24)
+                    size_hint_x: .05
                     icon: 'information'
-                    padding: sp(2)
                     on_press: app.dialog_information("tire_width")
 
             MDBoxLayout:
@@ -58,10 +56,8 @@
                     input_filter: lambda x,y: str(x) if str(self.text+x).isdigit() and 0 < int(self.text+x) < 100 else False
 
                 MDIconButton:
-                    size_hint_x: None
-                    width: sp(24)
+                    size_hint_x: .05
                     icon: 'information'
-                    padding: sp(2)
                     on_press: app.dialog_information("tire_aspect_ratio")
 
             MDBoxLayout:
@@ -76,10 +72,8 @@
                     input_filter: 'int'
 
                 MDIconButton:
-                    size_hint_x: None
-                    width: sp(24)
+                    size_hint_x: .05
                     icon: 'information'
-                    padding: sp(2)
                     on_press: app.dialog_information("tire_wheel_diameter")
 
             MDBoxLayout:
@@ -94,10 +88,8 @@
                     input_filter: 'int'
 
                 MDIconButton:
-                    size_hint_x: None
-                    width: sp(24)
+                    size_hint_x: .05
                     icon: 'information'
-                    padding: sp(2)
                     on_press: app.dialog_information("tire_friction_coeff")
 
             MDBoxLayout:
@@ -112,8 +104,6 @@
                     input_filter: 'int'
 
                 MDIconButton:
-                    size_hint_x: None
-                    width: sp(24)
+                    size_hint_x: .05
                     icon: 'information'
-                    padding: sp(2)
                     on_press: app.dialog_information("tire_rolling_res_coeff")

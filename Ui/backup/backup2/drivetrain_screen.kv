@@ -41,10 +41,8 @@
                     helper_text_mode: "persistent"
 
                 MDIconButton:
-                    size_hint_x: None
-                    width: sp(24)
+                    size_hint_x: .05
                     icon: 'information'
-                    padding: sp(2)
                     on_press: app.dialog_information("drivetrain_layout")
 
             MDBoxLayout:
@@ -59,10 +57,8 @@
                     input_filter: "int"
 
                 MDIconButton:
-                    size_hint_x: None
-                    width: sp(24)
+                    size_hint_x: .05
                     icon: 'information'
-                    padding: sp(2)
                     on_press: app.dialog_information("drivetrain_loss")
 
             MDBoxLayout:
@@ -77,10 +73,8 @@
                     input_filter: "int"
 
                 MDIconButton:
-                    size_hint_x: None
-                    width: sp(24)
+                    size_hint_x: .05
                     icon: 'information'
-                    padding: sp(2)
                     on_press: app.dialog_information("drivetrain_shift_time")
 
             MDBoxLayout:
@@ -95,10 +89,8 @@
                     input_filter: "int"
 
                 MDIconButton:
-                    size_hint_x: None
-                    width: sp(24)
+                    size_hint_x: .05
                     icon: 'information'
-                    padding: sp(2)
                     on_press: app.dialog_information("drivetrain_off_clutch")
 
 
@@ -114,10 +106,8 @@
                     input_filter: "int"
 
                 MDIconButton:
-                    size_hint_x: None
-                    width: sp(24)
+                    size_hint_x: .05
                     icon: 'information'
-                    padding: sp(2)
                     on_press: app.dialog_information("drivetrain_gas_level")
 
             MDBoxLayout:
@@ -132,10 +122,8 @@
                     input_filter: "int"
 
                 MDIconButton:
-                    size_hint_x: None
-                    width: sp(24)
+                    size_hint_x: .05
                     icon: 'information'
-                    padding: sp(2)
                     on_press: app.dialog_information("drivetrain_final_gear")
 
 
@@ -165,9 +153,9 @@
 
                 MDIconButton:
                     size_hint_x: None
-                    width: sp(24)
+                    width: sp(50)
                     icon: 'information'
-                    padding: sp(2)
+                    pos_hint: {"center_y": 0.5}
                     on_press: app.dialog_information("add_gear")
 
 

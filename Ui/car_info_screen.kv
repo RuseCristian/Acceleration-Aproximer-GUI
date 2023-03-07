@@ -2,20 +2,21 @@
     name: "CarScreen"
 
     ScrollView:
-        pos_hint: {"center_x": 0.72}
         do_scroll_y: True
 
 
         MDBoxLayout:
             orientation: "vertical"
+            adaptive_width: False
             spacing: sp(110)
             padding: sp(50)
             size_hint_y: None
-            height: self.minimum_height
+            size: self.minimum_size
+            pos_hint: {'center_x': 0.5}
 
             MDBoxLayout:
                 orientation: "horizontal"
-                size_hint_x: .55
+                adaptive_width: False
                 spacing: sp(20)
 
                 MDLabel:
@@ -29,7 +30,7 @@
 
             MDBoxLayout:
                 orientation: "horizontal"
-                size_hint_x: .488
+                adaptive_width: False
                 spacing: sp(20)
 
                 MDTextField:
@@ -40,7 +41,7 @@
 
             MDBoxLayout:
                 orientation: "horizontal"
-                size_hint_x: .488
+                adaptive_width: False
                 spacing: sp(20)
 
                 MDTextField:
@@ -51,7 +52,7 @@
 
             MDBoxLayout:
                 orientation: "horizontal"
-                size_hint_x: .55
+                adaptive_width: False
                 spacing: sp(20)
 
                 MDTextField:
@@ -64,17 +65,16 @@
 
 
                 MDIconButton:
-                    size_hint_x: .05
+                    size_hint_x: None
+                    width: sp(24)
                     icon: 'information'
+                    padding: sp(2)
                     on_press: app.dialog_information("car_mass_distribution")
 
 
             MDBoxLayout:
                 orientation: "horizontal"
-                padding_top: sp(40)
-                padding_bottom: sp(40)
-                size_hint_x: None
-                width: sp(400)
+                adaptive_width: False
                 spacing: sp(20)
 
                 MDLabel:
@@ -82,9 +82,10 @@
                     size_hint_x: .4
 
                 MDIconButton:
-                    size_hint_x: .05
-                    pos_hint: {"center_x": 0.1, "center_y": 0.5}
+                    size_hint_x: None
+                    width: sp(24)
                     icon: 'information'
+                    padding: sp(2)
                     on_press: app.dialog_information("weight_shifting")
 
                 MDSwitch:
@@ -110,17 +111,19 @@
                     mode: "fill"
 
                 MDIconButton:
-                    size_hint_x: .05
                     id: wheelbase_field_info
+                    size_hint_x: None
+                    width: sp(24)
+                    icon: 'information'
+                    padding: sp(2)
                     visible: False
                     opacity: 1 if self.visible else 0
                     disabled: not self.visible
-                    icon: 'information'
                     on_press: app.dialog_information("car_wheel_base")
 
             MDBoxLayout:
                 orientation: "horizontal"
-                size_hint_x: .55
+                adaptive_width: False
                 spacing: sp(20)
 
                 MDTextField:
@@ -133,17 +136,20 @@
                     mode: "fill"
 
                 MDIconButton:
-                    size_hint_x: .05
                     id: track_width_field_info
+                    size_hint_x: None
+                    width: sp(24)
+                    icon: 'information'
+                    padding: sp(2)
                     visible: False
                     opacity: 1 if self.visible else 0
                     disabled: not self.visible
-                    icon: 'information'
                     on_press: app.dialog_information("car_track_width")
+
 
             MDBoxLayout:
                 orientation: "horizontal"
-                size_hint_x: .55
+                adaptive_width: False
                 spacing: sp(20)
 
                 MDTextField:
@@ -155,18 +161,22 @@
                     size_hint_x: .5
                     mode: "fill"
 
+
                 MDIconButton:
-                    size_hint_x: .05
                     id: roll_center_height_field_info
+                    size_hint_x: None
+                    width: sp(24)
+                    icon: 'information'
+                    padding: sp(2)
                     visible: False
                     opacity: 1 if self.visible else 0
                     disabled: not self.visible
-                    icon: 'information'
                     on_press: app.dialog_information("car_roll_center_height")
+
 
             MDBoxLayout:
                 orientation: "horizontal"
-                size_hint_x: .55
+                adaptive_width: False
                 spacing: sp(20)
 
                 MDTextField:
@@ -179,10 +189,13 @@
                     mode: "fill"
 
                 MDIconButton:
-                    size_hint_x: .05
                     id: roll_stiffness_field_info
+                    size_hint_x: None
+                    width: sp(24)
+                    icon: 'information'
+                    padding: sp(2)
                     visible: False
                     opacity: 1 if self.visible else 0
                     disabled: not self.visible
-                    icon: 'information'
                     on_press: app.dialog_information("car_roll_stiffness")
+

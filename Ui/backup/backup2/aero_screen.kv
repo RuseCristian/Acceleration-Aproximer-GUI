@@ -40,10 +40,8 @@
                     input_filter: "int"
 
                 MDIconButton:
-                    size_hint_x: None
-                    width: sp(24)
+                    size_hint_x: .05
                     icon: 'information'
-                    padding: sp(2)
                     on_press: app.dialog_information("aero_drag_coeff")
 
             MDBoxLayout:
@@ -58,10 +56,8 @@
                     input_filter: "int"
 
                 MDIconButton:
-                    size_hint_x: None
-                    width: sp(24)
+                    size_hint_x: .05
                     icon: 'information'
-                    padding: sp(2)
                     on_press: app.dialog_information("aero_frontal_area")
 
             MDBoxLayout:
@@ -76,10 +72,8 @@
                     input_filter: "int"
 
                 MDIconButton:
-                    size_hint_x: None
-                    width: sp(24)
+                    size_hint_x: .05
                     icon: 'information'
-                    padding: sp(2)
                     on_press: app.dialog_information("aero_air_density")
 
 
@@ -93,10 +87,9 @@
                     size_hint_x: .4
 
                 MDIconButton:
-                    size_hint_x: None
-                    width: sp(24)
+                    size_hint_x: .05
+                    pos_hint: {"center_x": 0.1, "center_y": 0.5}
                     icon: 'information'
-                    padding: sp(2)
                     on_press: app.dialog_information("downforce")
 
                 MDSwitch:
@@ -122,18 +115,14 @@
                     size_hint_x: .5
                     mode: "fill"
 
-
                 MDIconButton:
+                    size_hint_x: .05
                     id: negative_lift_coefficient_info
-                    size_hint_x: None
-                    width: sp(24)
                     icon: 'information'
-                    padding: sp(2)
                     visible: False
                     opacity: 1 if self.visible else 0
                     disabled: not self.visible
                     on_press: app.dialog_information("weight_shifting")
-
 
             MDBoxLayout:
                 orientation: "horizontal"
@@ -150,11 +139,9 @@
                     mode: "fill"
 
                 MDIconButton:
+                    size_hint_x: .05
                     id: downforce_total_area_info
-                    size_hint_x: None
-                    width: sp(24)
                     icon: 'information'
-                    padding: sp(2)
                     visible: False
                     opacity: 1 if self.visible else 0
                     disabled: not self.visible
@@ -175,11 +162,9 @@
                     mode: "fill"
 
                 MDIconButton:
+                    size_hint_x: .05
                     id: downforce_distribution_info
-                    size_hint_x: None
-                    width: sp(24)
                     icon: 'information'
-                    padding: sp(2)
                     visible: False
                     opacity: 1 if self.visible else 0
                     disabled: not self.visible
