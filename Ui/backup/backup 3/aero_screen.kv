@@ -31,20 +31,13 @@
             MDBoxLayout:
                 orientation: "horizontal"
                 adaptive_width: False
-                size_hint_x: 0.5
                 spacing: sp(20)
-                pos_hint: {"center_x": 0.5, "center_y": 0.5}
-
-                Widget:
-                    size_hint_x: None
-                    width: (self.parent.width - sp(300) - sp(40)) / 2
 
                 MDTextField:
                     hint_text: "Coefficient of Drag"
+                    size_hint_x: .5
                     mode: "fill"
-                    input_filter: 'int'
-                    size_hint_x: None
-                    width: sp(300)
+                    input_filter: "int"
 
                 MDIconButton:
                     size_hint_x: None
@@ -53,24 +46,16 @@
                     padding: sp(2)
                     on_press: app.dialog_information("aero_drag_coeff")
 
-
             MDBoxLayout:
                 orientation: "horizontal"
                 adaptive_width: False
-                size_hint_x: 0.5
                 spacing: sp(20)
-                pos_hint: {"center_x": 0.5, "center_y": 0.5}
-
-                Widget:
-                    size_hint_x: None
-                    width: (self.parent.width - sp(300) - sp(40)) / 2
 
                 MDTextField:
                     hint_text: "Frontal Area"
+                    size_hint_x: .5
                     mode: "fill"
-                    input_filter: 'int'
-                    size_hint_x: None
-                    width: sp(300)
+                    input_filter: "int"
 
                 MDIconButton:
                     size_hint_x: None
@@ -79,24 +64,16 @@
                     padding: sp(2)
                     on_press: app.dialog_information("aero_frontal_area")
 
-
             MDBoxLayout:
                 orientation: "horizontal"
                 adaptive_width: False
-                size_hint_x: 0.5
                 spacing: sp(20)
-                pos_hint: {"center_x": 0.5, "center_y": 0.5}
-
-                Widget:
-                    size_hint_x: None
-                    width: (self.parent.width - sp(300) - sp(40)) / 2
 
                 MDTextField:
                     hint_text: "Air Density"
+                    size_hint_x: .5
                     mode: "fill"
-                    input_filter: 'int'
-                    size_hint_x: None
-                    width: sp(300)
+                    input_filter: "int"
 
                 MDIconButton:
                     size_hint_x: None
@@ -105,23 +82,22 @@
                     padding: sp(2)
                     on_press: app.dialog_information("aero_air_density")
 
+
             MDBoxLayout:
                 orientation: "horizontal"
-                size_hint_x: 0.5
+                adaptive_width: False
                 spacing: sp(20)
-                pos_hint: {"center_x": 0.5, "center_y": 0.5}
-
-                Widget:
-                    size_hint_x: None
-                    width: (self.parent.width - sp(300) - sp(40)) / 2
-
 
                 MDLabel:
                     text: "Downforce Calculation"
-                    size_hint: None, None
-                    size: self.texture_size
-                    pos_hint: {"center_y": 0.5}
-                    width: sp(245)
+                    size_hint_x: .4
+
+                MDIconButton:
+                    size_hint_x: None
+                    width: sp(24)
+                    icon: 'information'
+                    padding: sp(2)
+                    on_press: app.dialog_information("downforce")
 
                 MDSwitch:
                     id: downforce_switch
@@ -131,36 +107,21 @@
                     active: False
                     on_active: app.show_hide_ui(self, self.active, negative_lift_coefficient, downforce_total_area, downforce_distribution, negative_lift_coefficient_info, downforce_total_area_info, downforce_distribution_info)
 
-                MDIconButton:
-                    size_hint_x: None
-                    width: sp(24)
-                    icon: 'information'
-                    padding: sp(2)
-                    pos_hint: {"center_y": 0.5}
-                    on_press: app.dialog_information("downforce")
-
 
             MDBoxLayout:
                 orientation: "horizontal"
                 adaptive_width: False
-                size_hint_x: 0.5
                 spacing: sp(20)
-                pos_hint: {"center_x": 0.5, "center_y": 0.5}
-
-                Widget:
-                    size_hint_x: None
-                    width: (self.parent.width - sp(300) - sp(40)) / 2
 
                 MDTextField:
                     id: negative_lift_coefficient
-                    hint_text: "Negative Lift Coefficient"
-                    mode: "fill"
-                    input_filter: 'int'
-                    size_hint_x: None
                     visible: False
                     opacity: 1 if self.visible else 0
                     disabled: not self.visible
-                    width: sp(300)
+                    hint_text: "Negative Lift Coefficient"
+                    size_hint_x: .5
+                    mode: "fill"
+
 
                 MDIconButton:
                     id: negative_lift_coefficient_info
@@ -173,27 +134,20 @@
                     disabled: not self.visible
                     on_press: app.dialog_information("weight_shifting")
 
+
             MDBoxLayout:
                 orientation: "horizontal"
                 adaptive_width: False
-                size_hint_x: 0.5
                 spacing: sp(20)
-                pos_hint: {"center_x": 0.5, "center_y": 0.5}
-
-                Widget:
-                    size_hint_x: None
-                    width: (self.parent.width - sp(300) - sp(40)) / 2
 
                 MDTextField:
                     id: downforce_total_area
-                    hint_text: "Downforce Total Area"
-                    mode: "fill"
-                    input_filter: 'int'
-                    size_hint_x: None
                     visible: False
                     opacity: 1 if self.visible else 0
                     disabled: not self.visible
-                    width: sp(300)
+                    hint_text: "Downforce Total Area"
+                    size_hint_x: .5
+                    mode: "fill"
 
                 MDIconButton:
                     id: downforce_total_area_info
@@ -209,24 +163,16 @@
             MDBoxLayout:
                 orientation: "horizontal"
                 adaptive_width: False
-                size_hint_x: 0.5
                 spacing: sp(20)
-                pos_hint: {"center_x": 0.5, "center_y": 0.5}
-
-                Widget:
-                    size_hint_x: None
-                    width: (self.parent.width - sp(300) - sp(40)) / 2
 
                 MDTextField:
                     id: downforce_distribution
-                    hint_text: "Downforce Distribution"
-                    mode: "fill"
-                    input_filter: 'int'
-                    size_hint_x: None
                     visible: False
                     opacity: 1 if self.visible else 0
                     disabled: not self.visible
-                    width: sp(300)
+                    hint_text: "Downforce Distribution"
+                    size_hint_x: .5
+                    mode: "fill"
 
                 MDIconButton:
                     id: downforce_distribution_info

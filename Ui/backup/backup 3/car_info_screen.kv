@@ -28,61 +28,37 @@
                     anchor_x: 'center'
                     width: self.parent.width
 
-
             MDBoxLayout:
                 orientation: "horizontal"
                 adaptive_width: False
-                size_hint_x: 0.5
                 spacing: sp(20)
-                pos_hint: {"center_x": 0.5, "center_y": 0.5}
-
-                Widget:
-                    size_hint_x: None
-                    width: (self.parent.width - sp(300) - sp(40)) / 2
 
                 MDTextField:
                     hint_text: "Car Name"
+                    size_hint_x: .5
                     mode: "fill"
-                    input_filter: 'int'
-                    size_hint_x: None
-                    width: sp(300)
 
 
             MDBoxLayout:
                 orientation: "horizontal"
                 adaptive_width: False
-                size_hint_x: 0.5
                 spacing: sp(20)
-                pos_hint: {"center_x": 0.5, "center_y": 0.5}
-
-                Widget:
-                    size_hint_x: None
-                    width: (self.parent.width - sp(300) - sp(40)) / 2
 
                 MDTextField:
                     hint_text: "Car Mass"
+                    size_hint_x: .5
                     mode: "fill"
                     input_filter: 'int'
-                    size_hint_x: None
-                    width: sp(300)
-
 
             MDBoxLayout:
                 orientation: "horizontal"
                 adaptive_width: False
-                size_hint_x: 0.5
                 spacing: sp(20)
-                pos_hint: {"center_x": 0.5, "center_y": 0.5}
-
-                Widget:
-                    size_hint_x: None
-                    width: (self.parent.width - sp(300) - sp(40)) / 2
 
                 MDTextField:
                     hint_text: "Car Mass Distribution"
+                    size_hint_x: .5
                     mode: "fill"
-                    size_hint_x: None
-                    width: sp(300)
                     helper_text: "Percentage of mass on the front axle of the car, between 0 and 100"
                     helper_text_mode: "persistent"
                     input_filter: lambda x,y: str(x) if str(self.text+x).isdigit() and 0 < int(self.text+x) < 100 else False
@@ -98,20 +74,19 @@
 
             MDBoxLayout:
                 orientation: "horizontal"
-                size_hint_x: 0.5
+                adaptive_width: False
                 spacing: sp(20)
-                pos_hint: {"center_x": 0.5, "center_y": 0.5}
-
-                Widget:
-                    size_hint_x: None
-                    width: (self.parent.width - sp(300) - sp(40)) / 2
 
                 MDLabel:
-                    text: "Extra Calculations"
-                    size_hint: None, None
-                    size: self.texture_size
-                    pos_hint: {"center_y": 0.5}
-                    width: sp(245)
+                    text: "Extra Calculations (Weight Shifting)"
+                    size_hint_x: .4
+
+                MDIconButton:
+                    size_hint_x: None
+                    width: sp(24)
+                    icon: 'information'
+                    padding: sp(2)
+                    on_press: app.dialog_information("weight_shifting")
 
                 MDSwitch:
                     id: weight_shifting_switch
@@ -119,34 +94,12 @@
                     pos_hint: {"center_y": 0.5}
                     name: "weight_shifting_calculations"
                     active: False
-                    on_active: app.show_hide_ui(self, self.active, wheelbase_field, track_width_field, roll_center_height_field, roll_stiffness_field, wheelbase_field_info, track_width_field_info, roll_center_height_field_info, roll_stiffness_field_info,widget_extra_calc_1,widget_extra_calc_2,widget_extra_calc_3,widget_extra_calc_4)
-
-                MDIconButton:
-                    size_hint_x: None
-                    width: sp(24)
-                    icon: 'information'
-                    padding: sp(2)
-                    pos_hint: {"center_y": 0.5}
-                    on_press: app.dialog_information("weight_shifting")
-
-
+                    on_active: app.show_hide_ui(self, self.active, wheelbase_field, track_width_field, roll_center_height_field, roll_stiffness_field, wheelbase_field_info, track_width_field_info, roll_center_height_field_info, roll_stiffness_field_info)
 
             MDBoxLayout:
                 orientation: "horizontal"
-                adaptive_width: False
-                spacing: sp(110)
-                padding: sp(50)
-                size_hint_y: None
-                size: self.minimum_size
-                pos_hint: {'center_x': 0.5}
-
-                Widget:
-                    id: widget_extra_calc_1
-                    visible: False
-                    opacity: 1 if self.visible else 0
-                    disabled: not self.visible
-                    size_hint_x: None
-                    width: (self.parent.width - sp(300) - sp(40)) / 2
+                size_hint_x: .55
+                spacing: sp(20)
 
                 MDTextField:
                     id: wheelbase_field
@@ -154,8 +107,7 @@
                     opacity: 1 if self.visible else 0
                     disabled: not self.visible
                     hint_text: "Wheel Base"
-                    size_hint_x: None
-                    width: sp(300)
+                    size_hint_x: .5
                     mode: "fill"
 
                 MDIconButton:
@@ -172,19 +124,7 @@
             MDBoxLayout:
                 orientation: "horizontal"
                 adaptive_width: False
-                spacing: sp(110)
-                padding: sp(50)
-                size_hint_y: None
-                size: self.minimum_size
-                pos_hint: {'center_x': 0.5}
-
-                Widget:
-                    id: widget_extra_calc_2
-                    visible: False
-                    opacity: 1 if self.visible else 0
-                    disabled: not self.visible
-                    size_hint_x: None
-                    width: (self.parent.width - sp(300) - sp(40)) / 2
+                spacing: sp(20)
 
                 MDTextField:
                     id: track_width_field
@@ -192,8 +132,7 @@
                     opacity: 1 if self.visible else 0
                     disabled: not self.visible
                     hint_text: "Track Width"
-                    size_hint_x: None
-                    width: sp(300)
+                    size_hint_x: .5
                     mode: "fill"
 
                 MDIconButton:
@@ -211,19 +150,7 @@
             MDBoxLayout:
                 orientation: "horizontal"
                 adaptive_width: False
-                spacing: sp(110)
-                padding: sp(50)
-                size_hint_y: None
-                size: self.minimum_size
-                pos_hint: {'center_x': 0.5}
-
-                Widget:
-                    id: widget_extra_calc_3
-                    visible: False
-                    opacity: 1 if self.visible else 0
-                    disabled: not self.visible
-                    size_hint_x: None
-                    width: (self.parent.width - sp(300) - sp(40)) / 2
+                spacing: sp(20)
 
                 MDTextField:
                     id: roll_center_height_field
@@ -231,8 +158,7 @@
                     opacity: 1 if self.visible else 0
                     disabled: not self.visible
                     hint_text: "Roll Center Height"
-                    size_hint_x: None
-                    width: sp(300)
+                    size_hint_x: .5
                     mode: "fill"
 
 
@@ -251,19 +177,7 @@
             MDBoxLayout:
                 orientation: "horizontal"
                 adaptive_width: False
-                spacing: sp(110)
-                padding: sp(50)
-                size_hint_y: None
-                size: self.minimum_size
-                pos_hint: {'center_x': 0.5}
-
-                Widget:
-                    id: widget_extra_calc_4
-                    visible: False
-                    opacity: 1 if self.visible else 0
-                    disabled: not self.visible
-                    size_hint_x: None
-                    width: (self.parent.width - sp(300) - sp(40)) / 2
+                spacing: sp(20)
 
                 MDTextField:
                     id: roll_stiffness_field
@@ -271,8 +185,7 @@
                     opacity: 1 if self.visible else 0
                     disabled: not self.visible
                     hint_text: "Roll Stiffness"
-                    size_hint_x: None
-                    width: sp(300)
+                    size_hint_x: .5
                     mode: "fill"
 
                 MDIconButton:

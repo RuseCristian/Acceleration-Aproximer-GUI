@@ -1,5 +1,5 @@
-<TireScreen>:
-    name: "TireScreen"
+<DrivetrainScreen>:
+    name: "Drivetrain"
 
     ScrollView:
         do_scroll_y: True
@@ -14,7 +14,6 @@
             size: self.minimum_size
             pos_hint: {'center_x': 0.5}
 
-
             MDBoxLayout:
                 orientation: "horizontal"
                 adaptive_width: False
@@ -22,138 +21,153 @@
 
                 MDLabel:
                     pos_hint: {"center_x": 0.67}
-                    text: "Tire"
+                    text: "Drivetrain"
                     font_style: "H4"
                     theme_text_color: "Secondary"
                     halign: 'center'
                     anchor_x: 'center'
                     width: self.parent.width
 
-
             MDBoxLayout:
                 orientation: "horizontal"
                 adaptive_width: False
-                size_hint_x: 0.5
                 spacing: sp(20)
-                pos_hint: {"center_x": 0.5, "center_y": 0.5}
-
-                Widget:
-                    size_hint_x: None
-                    width: (self.parent.width - sp(300) - sp(40)) / 2
 
                 MDTextField:
-                    hint_text: "Tire Width"
+                    hint_text: "Layout"
+                    size_hint_x: .5
                     mode: "fill"
-                    input_filter: 'int'
-                    size_hint_x: None
-                    width: sp(300)
+                    helper_text: "Possible layouts: fwd, rwd, awd"
+                    helper_text_mode: "persistent"
 
                 MDIconButton:
                     size_hint_x: None
                     width: sp(24)
                     icon: 'information'
                     padding: sp(2)
-                    on_press: app.dialog_information("tire_width")
+                    on_press: app.dialog_information("drivetrain_layout")
 
             MDBoxLayout:
                 orientation: "horizontal"
                 adaptive_width: False
-                size_hint_x: 0.5
                 spacing: sp(20)
-                pos_hint: {"center_x": 0.5, "center_y": 0.5}
-
-                Widget:
-                    size_hint_x: None
-                    width: (self.parent.width - sp(300) - sp(40)) / 2
 
                 MDTextField:
-                    hint_text: "Tire Aspect Ratio"
+                    hint_text: "Drivetrain Loss"
+                    size_hint_x: .5
                     mode: "fill"
-                    input_filter: lambda x,y: str(x) if str(self.text+x).isdigit() and 0 < int(self.text+x) < 100 else False
-                    size_hint_x: None
-                    width: sp(300)
+                    input_filter: "int"
 
                 MDIconButton:
                     size_hint_x: None
                     width: sp(24)
                     icon: 'information'
                     padding: sp(2)
-                    on_press: app.dialog_information("tire_aspect_ratio")
-
+                    on_press: app.dialog_information("drivetrain_loss")
 
             MDBoxLayout:
                 orientation: "horizontal"
                 adaptive_width: False
-                size_hint_x: 0.5
                 spacing: sp(20)
-                pos_hint: {"center_x": 0.5, "center_y": 0.5}
-
-                Widget:
-                    size_hint_x: None
-                    width: (self.parent.width - sp(300) - sp(40)) / 2
 
                 MDTextField:
-                    hint_text: "Wheel Diameter"
+                    hint_text: "Shifting Time (s)"
+                    size_hint_x: .5
                     mode: "fill"
-                    input_filter: 'int'
-                    size_hint_x: None
-                    width: sp(300)
+                    input_filter: "int"
 
                 MDIconButton:
                     size_hint_x: None
                     width: sp(24)
                     icon: 'information'
                     padding: sp(2)
-                    on_press: app.dialog_information("tire_wheel_diameter")
-
+                    on_press: app.dialog_information("drivetrain_shift_time")
 
             MDBoxLayout:
                 orientation: "horizontal"
                 adaptive_width: False
-                size_hint_x: 0.5
                 spacing: sp(20)
-                pos_hint: {"center_x": 0.5, "center_y": 0.5}
-
-                Widget:
-                    size_hint_x: None
-                    width: (self.parent.width - sp(300) - sp(40)) / 2
 
                 MDTextField:
-                    hint_text: "Tire Friction Coefficient (µ)"
+                    hint_text: "Off Clutch RPM"
+                    size_hint_x: .5
                     mode: "fill"
-                    input_filter: 'int'
-                    size_hint_x: None
-                    width: sp(300)
+                    input_filter: "int"
 
                 MDIconButton:
                     size_hint_x: None
                     width: sp(24)
                     icon: 'information'
                     padding: sp(2)
-                    on_press: app.dialog_information("tire_friction_coeff")
+                    on_press: app.dialog_information("drivetrain_off_clutch")
 
 
             MDBoxLayout:
                 orientation: "horizontal"
                 adaptive_width: False
-                size_hint_x: 0.5
                 spacing: sp(20)
-                pos_hint: {"center_x": 0.5, "center_y": 0.5}
-
-                Widget:
-                    size_hint_x: None
-                    width: (self.parent.width - sp(300) - sp(40)) / 2
 
                 MDTextField:
-                    hint_text: "Rolling Resistance Coefficient (k)"
+                    hint_text: "Gas Level"
+                    size_hint_x: .5
                     mode: "fill"
-                    input_filter: 'int'
-                    size_hint_x: None
-                    width: sp(300)
+                    input_filter: "int"
 
                 MDIconButton:
                     size_hint_x: None
                     width: sp(24)
                     icon: 'information'
                     padding: sp(2)
-                    on_press: app.dialog_information("tire_rolling_res_coeff")
+                    on_press: app.dialog_information("drivetrain_gas_level")
+
+            MDBoxLayout:
+                orientation: "horizontal"
+                adaptive_width: False
+                spacing: sp(20)
+
+                MDTextField:
+                    hint_text: "Final Drive Ratio"
+                    size_hint_x: .5
+                    mode: "fill"
+                    input_filter: "int"
+
+                MDIconButton:
+                    size_hint_x: None
+                    width: sp(24)
+                    icon: 'information'
+                    padding: sp(2)
+                    on_press: app.dialog_information("drivetrain_final_gear")
+
+
+            MDBoxLayout:
+                orientation: "horizontal"
+                adaptive_width: False
+                spacing: sp(20)
+
+                MDLabel:
+                    text: "Number of Gears"
+                    size_hint_x: None
+                    width: sp(150)
+                    pos_hint: {"center_y": 0.5}
+
+                MDSlider:
+                    id: number_of_gears_slider
+                    show_off: False
+                    min: 2
+                    max: 8
+                    step: 1
+                    hint: True
+                    size_hint_x: None
+                    width: sp(200)
+                    hint_bg_color: "red"
+                    on_value: app.add_gear_text_fields()
+                    pos_hint: {"center_y": 0.5}
+
+                MDIconButton:
+                    size_hint_x: None
+                    width: sp(24)
+                    icon: 'information'
+                    padding: sp(2)
+                    on_press: app.dialog_information("add_gear")
+
+

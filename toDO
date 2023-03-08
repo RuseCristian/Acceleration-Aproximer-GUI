@@ -11,80 +11,7 @@ suport diferential?
 
 
 
-titlurile din tab uri sunt puse pe centru la boxlayout uri, dar nu sunt puse pe centru la text fields
-sa fac text fields pe centru si iconitele on the side ?
 
-
-
-MDBoxLayout:
-    orientation: "vertical"
-    adaptive_width: False
-    spacing: sp(110)
-    padding: sp(50)
-    size_hint_y: None
-    size: self.minimum_size
-    pos_hint: {'center_x': 0.5}
-
-    MDBoxLayout:
-        orientation: "vertical"
-        adaptive_width: False
-        spacing: sp(20)
-
-        MDFillRoundFlatButton:
-            text: "Estimate Acceleration"
-            size_hint_x: None
-            width: dp(200)
-            md_bg_color: app.theme_cls.primary_color
-            on_release: print("Button pressed!")
-            pos_hint: {"center_x": 0.5, "center_y": 0.5}
-
-
-
-
-            MDBoxLayout:
-                orientation: "horizontal"
-                #size_hint_x: .5
-
-                MDLabel:
-                    pos_hint: {"center_x": 0.67}
-                    text: "Results"
-                    font_style: "H4"
-                    theme_text_color: "Secondary"
-                    halign: 'center'
-                    anchor_x: 'center'
-                    width: self.parent.width
-
-            MDBoxLayout:
-                orientation: "horizontal"
-                size_hint_x: .55
-                spacing: sp(20)
-
-                MDTextField:
-                    hint_text: "Initial Speed"
-                    size_hint_x: .5
-                    mode: "fill"
-                    input_filter: 'int'
-
-                MDIconButton:
-                    size_hint_x: .05
-                    icon: 'information'
-                    on_press: app.dialog_information("results_initial_speed")
-
-            MDBoxLayout:
-                orientation: "horizontal"
-                size_hint_x: .55
-                spacing: sp(20)
-
-                MDTextField:
-                    hint_text: "Final Speed"
-                    size_hint_x: .5
-                    mode: "fill"
-                    input_filter: 'int'
-
-                MDIconButton:
-                    size_hint_x: .05
-                    icon: 'information'
-                    on_press: app.dialog_information("results_final_speed")
             MDBoxLayout:
                 orientation: "horizontal"
                 adaptive_width: False
@@ -94,16 +21,53 @@ MDBoxLayout:
 
                 Widget:
                     size_hint_x: None
-                    width: (self.parent.width - dp(300) - sp(20)) / 2
+                    width: (self.parent.width - sp(300) - sp(40)) / 2
 
                 MDTextField:
-                    hint_text: "Final Speed"
+                    hint_text: "Car Mass Distribution"
                     mode: "fill"
-                    input_filter: 'int'
                     size_hint_x: None
-                    width: dp(300)
+                    width: sp(300)
+                    helper_text: "Percentage of mass on the front axle of the car, between 0 and 100"
+                    helper_text_mode: "persistent"
+                    input_filter: lambda x,y: str(x) if str(self.text+x).isdigit() and 0 < int(self.text+x) < 100 else False
+
 
                 MDIconButton:
-                    size_hint_x: .05
+                    size_hint_x: None
+                    width: sp(24)
                     icon: 'information'
-                    on_press: app.dialog_information("results_final_speed")
+                    padding: sp(2)
+                    on_press: app.dialog_information("car_mass_distribution")
+
+
+            MDBoxLayout:
+                orientation: "horizontal"
+                size_hint_x: 0.5
+                spacing: sp(20)
+                pos_hint: {"center_x": 0.5, "center_y": 0.5}
+
+                Widget:
+                    size_hint_x: None
+                    width: (self.parent.width - sp(300) - sp(40)) / 2
+
+                MDLabel:
+                    text: "Extra Calculations (Weight Shifting)"
+                    size_hint: None, None
+                    size: self.texture_size
+                    width: sp(300)
+
+                MDSwitch:
+                    id: weight_shifting_switch
+                    thumb_color_down: 1,0,0,1
+                    pos_hint: {"center_y": 0.5}
+                    name: "weight_shifting_calculations"
+                    active: False
+                    on_active: app.show_hide_ui(self, self.active, wheelbase_field, track_width_field, roll_center_height_field, roll_stiffness_field, wheelbase_field_info, track_width_field_info, roll_center_height_field_info, roll_stiffness_field_info)
+
+                MDIconButton:
+                    size_hint_x: None
+                    width: sp(24)
+                    icon: 'information'
+                    padding: sp(2)
+                    on_press: app.dialog_information("weight_shifting")

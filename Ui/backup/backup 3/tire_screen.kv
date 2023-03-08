@@ -14,7 +14,6 @@
             size: self.minimum_size
             pos_hint: {'center_x': 0.5}
 
-
             MDBoxLayout:
                 orientation: "horizontal"
                 adaptive_width: False
@@ -29,24 +28,16 @@
                     anchor_x: 'center'
                     width: self.parent.width
 
-
             MDBoxLayout:
                 orientation: "horizontal"
                 adaptive_width: False
-                size_hint_x: 0.5
                 spacing: sp(20)
-                pos_hint: {"center_x": 0.5, "center_y": 0.5}
-
-                Widget:
-                    size_hint_x: None
-                    width: (self.parent.width - sp(300) - sp(40)) / 2
 
                 MDTextField:
                     hint_text: "Tire Width"
+                    size_hint_x: .5
                     mode: "fill"
                     input_filter: 'int'
-                    size_hint_x: None
-                    width: sp(300)
 
                 MDIconButton:
                     size_hint_x: None
@@ -58,20 +49,13 @@
             MDBoxLayout:
                 orientation: "horizontal"
                 adaptive_width: False
-                size_hint_x: 0.5
                 spacing: sp(20)
-                pos_hint: {"center_x": 0.5, "center_y": 0.5}
-
-                Widget:
-                    size_hint_x: None
-                    width: (self.parent.width - sp(300) - sp(40)) / 2
 
                 MDTextField:
                     hint_text: "Tire Aspect Ratio"
+                    size_hint_x: .5
                     mode: "fill"
                     input_filter: lambda x,y: str(x) if str(self.text+x).isdigit() and 0 < int(self.text+x) < 100 else False
-                    size_hint_x: None
-                    width: sp(300)
 
                 MDIconButton:
                     size_hint_x: None
@@ -80,24 +64,16 @@
                     padding: sp(2)
                     on_press: app.dialog_information("tire_aspect_ratio")
 
-
             MDBoxLayout:
                 orientation: "horizontal"
                 adaptive_width: False
-                size_hint_x: 0.5
                 spacing: sp(20)
-                pos_hint: {"center_x": 0.5, "center_y": 0.5}
-
-                Widget:
-                    size_hint_x: None
-                    width: (self.parent.width - sp(300) - sp(40)) / 2
 
                 MDTextField:
                     hint_text: "Wheel Diameter"
+                    size_hint_x: .5
                     mode: "fill"
                     input_filter: 'int'
-                    size_hint_x: None
-                    width: sp(300)
 
                 MDIconButton:
                     size_hint_x: None
@@ -106,24 +82,16 @@
                     padding: sp(2)
                     on_press: app.dialog_information("tire_wheel_diameter")
 
-
             MDBoxLayout:
                 orientation: "horizontal"
                 adaptive_width: False
-                size_hint_x: 0.5
                 spacing: sp(20)
-                pos_hint: {"center_x": 0.5, "center_y": 0.5}
-
-                Widget:
-                    size_hint_x: None
-                    width: (self.parent.width - sp(300) - sp(40)) / 2
 
                 MDTextField:
                     hint_text: "Tire Friction Coefficient (µ)"
+                    size_hint_x: .5
                     mode: "fill"
                     input_filter: 'int'
-                    size_hint_x: None
-                    width: sp(300)
 
                 MDIconButton:
                     size_hint_x: None
@@ -132,24 +100,16 @@
                     padding: sp(2)
                     on_press: app.dialog_information("tire_friction_coeff")
 
-
             MDBoxLayout:
                 orientation: "horizontal"
                 adaptive_width: False
-                size_hint_x: 0.5
                 spacing: sp(20)
-                pos_hint: {"center_x": 0.5, "center_y": 0.5}
-
-                Widget:
-                    size_hint_x: None
-                    width: (self.parent.width - sp(300) - sp(40)) / 2
 
                 MDTextField:
                     hint_text: "Rolling Resistance Coefficient (k)"
+                    size_hint_x: .5
                     mode: "fill"
                     input_filter: 'int'
-                    size_hint_x: None
-                    width: sp(300)
 
                 MDIconButton:
                     size_hint_x: None

@@ -1,6 +1,5 @@
-
-<EngineScreen>:
-    name: "EngineScreen"
+<ResultsScreen>:
+    name: "ResultsScreen"
 
     ScrollView:
         do_scroll_y: True
@@ -14,6 +13,7 @@
             size: self.minimum_size
             pos_hint: {'center_x': 0.5}
 
+
             MDBoxLayout:
                 orientation: "horizontal"
                 adaptive_width: False
@@ -21,39 +21,13 @@
 
                 MDLabel:
                     pos_hint: {"center_x": 0.67}
-                    text: "Engine"
+                    text: "Results"
                     font_style: "H4"
                     theme_text_color: "Secondary"
                     halign: 'center'
                     anchor_x: 'center'
                     width: self.parent.width
 
-            MDBoxLayout:
-                orientation: "horizontal"
-                adaptive_width: False
-                size_hint_x: 0.5
-                spacing: sp(20)
-                pos_hint: {"center_x": 0.5, "center_y": 0.5}
-
-                Widget:
-                    size_hint_x: None
-                    width: (self.parent.width - sp(300) - sp(40)) / 2
-
-                MDTextField:
-                    hint_text: "Idle RPM"
-                    mode: "fill"
-                    input_filter: 'int'
-                    size_hint_x: None
-                    width: sp(300)
-                    helper_text_mode: "persistent"
-
-                MDIconButton:
-                    size_hint_x: None
-                    width: sp(24)
-                    icon: 'information'
-                    padding: sp(2)
-                    on_press: app.dialog_information("engine_idle_rpm")
-
 
             MDBoxLayout:
                 orientation: "horizontal"
@@ -67,79 +41,59 @@
                     width: (self.parent.width - sp(300) - sp(40)) / 2
 
                 MDTextField:
-                    hint_text: "Redline RPM"
+                    hint_text: "Initial Speed"
                     mode: "fill"
                     input_filter: 'int'
                     size_hint_x: None
                     width: sp(300)
-                    helper_text_mode: "persistent"
 
                 MDIconButton:
                     size_hint_x: None
                     width: sp(24)
                     icon: 'information'
                     padding: sp(2)
-                    on_press: app.dialog_information("engine_redline_rpm")
-
-
-            MDBoxLayout:
-                orientation: "horizontal"
-                adaptive_width: True
-                size_hint_x: None
-                width: self.minimum_width
-                spacing: dp(20)
-                pos_hint: {"center_x": 0.5, "center_y": 0.5}
-
-                Widget:
-                    size_hint_x: None
-                    width: (self.parent.width - sp(300) - sp(40)) / 2
-
-                MDLabel:
-                    text: "Rpm/Torque Entries"
-                    halign: "center"
-                    adaptive_width: True
-                    pos_hint: {"center_y": 0.5}
-
-                Widget:
-                    id: test1
-                    size_hint_x: None
-                    width: sp(180)
-
-                MDIconButton:
-                    size_hint_x: None
-                    width: dp(24)
-                    icon: 'information'
-                    padding: dp(2)
-                    pos_hint: {"center_y": 0.5}
-                    on_press: app.dialog_information("add_rpm_torque_entries")
-
-
-
+                    on_press: app.dialog_information("results_initial_speed")
 
 
             MDBoxLayout:
                 orientation: "horizontal"
                 adaptive_width: False
-                size_hint_x: None
-                width: self.minimum_width
+                size_hint_x: 0.5
                 spacing: sp(20)
-                pos_hint: {"center_x": 0.5}
+                pos_hint: {"center_x": 0.5, "center_y": 0.5}
+
+                Widget:
+                    size_hint_x: None
+                    width: (self.parent.width - sp(300) - sp(40)) / 2
+                    # sp(300) text field width, sp(40) spacing is 20, so for the 2 elements is 40 because the first element
+                    # has 20 spacing to its right and the second element has spacing 20 to its left
+
+                MDTextField:
+                    hint_text: "Final Speed"
+                    mode: "fill"
+                    input_filter: 'int'
+                    size_hint_x: None
+                    width: sp(300)
+
+                MDIconButton:
+                    size_hint_x: None
+                    width: sp(24)
+                    icon: 'information'
+                    padding: sp(2)
+                    on_press: app.dialog_information("results_final_speed")
+
+
+
+
+            MDBoxLayout:
+                orientation: "vertical"
+                adaptive_width: False
+                spacing: sp(20)
 
                 MDFillRoundFlatButton:
-                    text: "Add"
+                    text: "Estimate Acceleration"
                     size_hint_x: None
                     width: sp(200)
                     md_bg_color: app.theme_cls.primary_color
-                    pos_hint: {"center_y": 0.5}
-                    on_release: app.add_rpm_torque_text_field()
-
-                MDFillRoundFlatButton:
-                    text: "Remove"
-                    size_hint_x: None
-                    width: sp(200)
-                    md_bg_color: app.theme_cls.primary_color
-                    pos_hint: {"center_y": 0.5}
-                    on_release: app.remove_rpm_torque_text_field()
-
-
-
+                    on_release: print("Button pressed!")
+                    pos_hint: {"center_x": 0.5, "center_y": 0.5}

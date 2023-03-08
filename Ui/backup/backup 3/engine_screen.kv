@@ -14,6 +14,7 @@
             size: self.minimum_size
             pos_hint: {'center_x': 0.5}
 
+
             MDBoxLayout:
                 orientation: "horizontal"
                 adaptive_width: False
@@ -31,21 +32,13 @@
             MDBoxLayout:
                 orientation: "horizontal"
                 adaptive_width: False
-                size_hint_x: 0.5
                 spacing: sp(20)
-                pos_hint: {"center_x": 0.5, "center_y": 0.5}
-
-                Widget:
-                    size_hint_x: None
-                    width: (self.parent.width - sp(300) - sp(40)) / 2
 
                 MDTextField:
                     hint_text: "Idle RPM"
+                    size_hint_x: .5
                     mode: "fill"
                     input_filter: 'int'
-                    size_hint_x: None
-                    width: sp(300)
-                    helper_text_mode: "persistent"
 
                 MDIconButton:
                     size_hint_x: None
@@ -58,21 +51,13 @@
             MDBoxLayout:
                 orientation: "horizontal"
                 adaptive_width: False
-                size_hint_x: 0.5
                 spacing: sp(20)
-                pos_hint: {"center_x": 0.5, "center_y": 0.5}
-
-                Widget:
-                    size_hint_x: None
-                    width: (self.parent.width - sp(300) - sp(40)) / 2
 
                 MDTextField:
                     hint_text: "Redline RPM"
+                    size_hint_x: .5
                     mode: "fill"
                     input_filter: 'int'
-                    size_hint_x: None
-                    width: sp(300)
-                    helper_text_mode: "persistent"
 
                 MDIconButton:
                     size_hint_x: None
@@ -81,65 +66,40 @@
                     padding: sp(2)
                     on_press: app.dialog_information("engine_redline_rpm")
 
-
-            MDBoxLayout:
-                orientation: "horizontal"
-                adaptive_width: True
-                size_hint_x: None
-                width: self.minimum_width
-                spacing: dp(20)
-                pos_hint: {"center_x": 0.5, "center_y": 0.5}
-
-                Widget:
-                    size_hint_x: None
-                    width: (self.parent.width - sp(300) - sp(40)) / 2
-
-                MDLabel:
-                    text: "Rpm/Torque Entries"
-                    halign: "center"
-                    adaptive_width: True
-                    pos_hint: {"center_y": 0.5}
-
-                Widget:
-                    id: test1
-                    size_hint_x: None
-                    width: sp(180)
-
-                MDIconButton:
-                    size_hint_x: None
-                    width: dp(24)
-                    icon: 'information'
-                    padding: dp(2)
-                    pos_hint: {"center_y": 0.5}
-                    on_press: app.dialog_information("add_rpm_torque_entries")
-
-
-
-
-
             MDBoxLayout:
                 orientation: "horizontal"
                 adaptive_width: False
-                size_hint_x: None
-                width: self.minimum_width
                 spacing: sp(20)
-                pos_hint: {"center_x": 0.5}
 
-                MDFillRoundFlatButton:
-                    text: "Add"
-                    size_hint_x: None
-                    width: sp(200)
-                    md_bg_color: app.theme_cls.primary_color
+                MDLabel:
+                    text: "Rpm/Torque Entries"
                     pos_hint: {"center_y": 0.5}
-                    on_release: app.add_rpm_torque_text_field()
+
+                MDIconButton:
+                    size_hint_x: None
+                    width: sp(24)
+                    icon: 'information'
+                    padding: sp(2)
+                    on_press: app.dialog_information("add_rpm_torque_entries")
+
+
+            MDBoxLayout:
+                orientation: "vertical"
+                adaptive_width: False
+                spacing: sp(20)
 
                 MDFillRoundFlatButton:
                     text: "Remove"
                     size_hint_x: None
                     width: sp(200)
                     md_bg_color: app.theme_cls.primary_color
-                    pos_hint: {"center_y": 0.5}
+                    pos_hint: {"center_x": 0.5, "center_y": 0.5}
                     on_release: app.remove_rpm_torque_text_field()
 
-
-
+                MDFillRoundFlatButton:
+                        text: "Add"
+                        size_hint_x: None
+                        width: sp(200)
+                        md_bg_color: app.theme_cls.primary_color
+                        pos_hint: {"center_x": 0.5, "center_y": 0.5}
+                        on_release: app.add_rpm_torque_text_field()
