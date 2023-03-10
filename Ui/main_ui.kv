@@ -7,8 +7,11 @@ Screen:
             id: manager
 
             MainScreen:
+                id: main_screen
             SettingsScreen:
+                id: settings_screen
             InfoScreen:
+                id: info_screen
 
         MDNavigationDrawer:
             id: nav_drawer
@@ -54,7 +57,6 @@ Screen:
 
 
 <MainScreen>:
-    id: main
     MDTopAppBar:
         title: "Acceleration Approximer"
         pos_hint: {"top": 1}
@@ -112,3 +114,7 @@ Screen:
                 id: resultscreen_1
 
 
+<IconListItem>
+
+    IconLeftWidget:
+        icon: root.icon

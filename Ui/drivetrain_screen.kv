@@ -203,24 +203,12 @@
                     size_hint_x: None
                     width: (self.parent.width - sp(300) - sp(40)) / 2
 
-                MDLabel:
-                    text: "Number of Gears"
-                    size_hint_x: None
-                    width: sp(150)
-                    pos_hint: {"center_y": 0.5}
+                MDIconButton:
+                    id: button
+                    icon: "language-python"
+                    pos_hint: {"center_x": .5, "center_y": .5}
+                    on_release: app.dropdown1.open()
 
-                MDSlider:
-                    id: number_of_gears_slider
-                    show_off: False
-                    min: 2
-                    max: 8
-                    step: 1
-                    hint: True
-                    size_hint_x: None
-                    width: sp(130)
-                    hint_bg_color: "red"
-                    on_value: app.add_gear_text_fields()
-                    pos_hint: {"center_y": 0.5}
 
                 MDIconButton:
                     size_hint_x: None
@@ -229,5 +217,3 @@
                     pos_hint: {"center_y": 0.5}
                     padding: sp(2)
                     on_press: app.dialog_information("add_gear")
-
-

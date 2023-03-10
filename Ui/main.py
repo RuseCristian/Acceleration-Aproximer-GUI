@@ -2,13 +2,17 @@ from math import floor
 
 from kivy.core.window import Window
 from kivy.lang.builder import Builder
-from kivy.metrics import dp
+from kivy.metrics import dp, sp
+from kivy.properties import StringProperty
 from kivy.uix.screenmanager import Screen
+from kivy.uix.widget import Widget
 from kivymd.app import MDApp
 from kivymd.uix.boxlayout import MDBoxLayout
 from kivymd.uix.button import MDFlatButton
 from kivymd.uix.dialog import MDDialog
 from kivymd.uix.floatlayout import MDFloatLayout
+from kivymd.uix.list import OneLineIconListItem
+from kivymd.uix.menu import MDDropdownMenu
 from kivymd.uix.tab import MDTabsBase
 from kivymd.uix.textfield import MDTextField
 
@@ -16,10 +20,11 @@ Builder.load_file("aero_screen.kv")
 Builder.load_file("car_info_screen.kv")
 Builder.load_file("drivetrain_screen.kv")
 Builder.load_file("engine_screen.kv")
-#Builder.load_file("info_screen.kv")
+# Builder.load_file("info_screen.kv")
 Builder.load_file("results_screen.kv")
 Builder.load_file("settings_screen.kv")
 Builder.load_file("tire_screen.kv")
+
 
 class Tab(MDFloatLayout, MDTabsBase):
     '''Class implementing content for a tab.'''
@@ -147,15 +152,59 @@ dialog_text_dictionary = {
 }
 
 
+class IconListItem(OneLineIconListItem):
+    icon = StringProperty()
+
+
 class AccelerationApproximator(MDApp):
 
     def build(self):
-        self.dialog = None
         self.theme_cls.primary_palette = "BlueGray"
         self.theme_cls.theme_style = "Dark"
+        self.screen = Builder.load_file('main_ui.kv')
+        self.dialog = None
         self.rpm_torque_rows = 0
+
+        menu_items = [
+            {
+                "viewclass": "OneLineListItem",
+                "text": "2",
+                "on_release": lambda *args: self.callback()
+            },
+            {
+                "viewclass": "OneLineListItem",
+                "text": "3",
+                "on_release": lambda *args: self.callback()
+            },
+            {
+                "viewclass": "OneLineListItem",
+                "text": "4",
+                "on_release": lambda *args: self.callback()
+            },
+            {
+                "viewclass": "OneLineListItem",
+                "text": "5",
+                "on_release": lambda *args: self.callback()
+            },
+            {
+                "viewclass": "OneLineListItem",
+                "text": "6",
+                "on_release": lambda *args: self.callback()
+            },
+            {
+                "viewclass": "OneLineListItem",
+                "text": "7",
+                "on_release": lambda *args: self.callback()
+            }
+        ]
+
+        self.dropdown1 = MDDropdownMenu(items=menu_items, width_mult=4, caller=self.screen.ids.main_screen.ids.drivetrainscreen_1.ids.button)
         Window.size = (1080, 2220)
-        return Builder.load_file('main_ui.kv')
+        return self.screen
+    def callback(self):
+        print("Current selection:", self.dropdown1.caller.text)
+        self.dropdown1.dismiss()
+
 
     def show_hide_ui(self, switchObject, switchValue, *args):
         if switchValue:
@@ -164,7 +213,7 @@ class AccelerationApproximator(MDApp):
         else:
             for i in args:
                 i.visible = False
-        for i in self.root.ids.items():
+        for i in args:
             print(i)
 
     def dialog_information(self, dictionary_entry):
@@ -190,22 +239,27 @@ class AccelerationApproximator(MDApp):
     def add_rpm_torque_text_field(self):
 
         self.rpm_torque_rows += 1
-        self.box_layout = MDBoxLayout(orientation='horizontal', size_hint_x=.493, spacing=dp(20), id=f"rpm_torque{self.rpm_torque_rows}_boxlayout")
-        self.rpm_text_field = MDTextField(hint_text=f"RPM", mode="fill", size_hint_x=.5, input_filter="float")
-        self.torque_text_field = MDTextField(hint_text=f"Torque", mode="fill", size_hint_x=.5, input_filter="float")
+        self.box_layout = MDBoxLayout(orientation='horizontal', size_hint_x=.5, spacing=sp(20), id=f"rpm_torque{self.rpm_torque_rows}_boxlayout",
+                                      pos_hint={"center_x": 0.5, "center_y": 0.5}, adaptive_width=False)
+        self.widget = Widget(size_hint_x=0.1)
+        self.rpm_text_field = MDTextField(hint_text=f"RPM", mode="fill", width=sp(150), size_hint_x=None, input_filter="float")
+        self.torque_text_field = MDTextField(hint_text=f"Torque", mode="fill", width=sp(150), size_hint_x=None, input_filter="float")
+        self.box_layout.add_widget(self.widget)
         self.box_layout.add_widget(self.rpm_text_field)
         self.box_layout.add_widget(self.torque_text_field)
-        self.root.ids.enginescreen_1.ids.engine_screen_vertical_boxlayout.add_widget(self.box_layout)
+        engine_screen = self.root.ids.main_screen.ids.enginescreen_1.ids.vertical_box_layout
+        engine_screen.add_widget(self.box_layout)
 
     def remove_rpm_torque_text_field(self):
+        engine_screen = self.root.ids.main_screen.ids.enginescreen_1.ids.vertical_box_layout
         try:
-            if len(self.root.ids.enginescreen_1.ids.engine_screen_vertical_boxlayout.children) > 6:
+            if len(engine_screen.children) > 7:
                 # Get the first child widget and set its size_hint_y to None
-                first_child = self.root.ids.enginescreen_1.ids.engine_screen_vertical_boxlayout.children[0]
+                first_child = engine_screen.children[0]
                 first_child.size_hint_y = None
 
                 # Remove the first child widget
-                self.root.ids.enginescreen_1.ids.engine_screen_vertical_boxlayout.remove_widget(first_child)
+                engine_screen.remove_widget(first_child)
                 self.rpm_torque_rows -= 1
         except Exception as e:
             print(e)

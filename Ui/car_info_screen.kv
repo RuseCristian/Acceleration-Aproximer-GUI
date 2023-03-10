@@ -119,7 +119,7 @@
                     pos_hint: {"center_y": 0.5}
                     name: "weight_shifting_calculations"
                     active: False
-                    on_active: app.show_hide_ui(self, self.active, wheelbase_field, track_width_field, roll_center_height_field, roll_stiffness_field, wheelbase_field_info, track_width_field_info, roll_center_height_field_info, roll_stiffness_field_info,widget_extra_calc_1,widget_extra_calc_2,widget_extra_calc_3,widget_extra_calc_4)
+                    on_active: app.show_hide_ui(self, self.active, wheelbase_field, track_width_field, roll_center_height_field, roll_stiffness_field, wheelbase_field_info, track_width_field_info, roll_center_height_field_info, roll_stiffness_field_info)
 
                 MDIconButton:
                     size_hint_x: None
@@ -133,18 +133,13 @@
 
             MDBoxLayout:
                 orientation: "horizontal"
+                orientation: "horizontal"
                 adaptive_width: False
-                spacing: sp(110)
-                padding: sp(50)
-                size_hint_y: None
-                size: self.minimum_size
-                pos_hint: {'center_x': 0.5}
+                size_hint_x: 0.5
+                spacing: sp(20)
+                pos_hint: {"center_x": 0.5, "center_y": 0.5}
 
                 Widget:
-                    id: widget_extra_calc_1
-                    visible: False
-                    opacity: 1 if self.visible else 0
-                    disabled: not self.visible
                     size_hint_x: None
                     width: (self.parent.width - sp(300) - sp(40)) / 2
 
@@ -171,18 +166,13 @@
 
             MDBoxLayout:
                 orientation: "horizontal"
+                orientation: "horizontal"
                 adaptive_width: False
-                spacing: sp(110)
-                padding: sp(50)
-                size_hint_y: None
-                size: self.minimum_size
-                pos_hint: {'center_x': 0.5}
+                size_hint_x: 0.5
+                spacing: sp(20)
+                pos_hint: {"center_x": 0.5, "center_y": 0.5}
 
                 Widget:
-                    id: widget_extra_calc_2
-                    visible: False
-                    opacity: 1 if self.visible else 0
-                    disabled: not self.visible
                     size_hint_x: None
                     width: (self.parent.width - sp(300) - sp(40)) / 2
 
@@ -210,18 +200,13 @@
 
             MDBoxLayout:
                 orientation: "horizontal"
+                orientation: "horizontal"
                 adaptive_width: False
-                spacing: sp(110)
-                padding: sp(50)
-                size_hint_y: None
-                size: self.minimum_size
-                pos_hint: {'center_x': 0.5}
+                size_hint_x: 0.5
+                spacing: sp(20)
+                pos_hint: {"center_x": 0.5, "center_y": 0.5}
 
                 Widget:
-                    id: widget_extra_calc_3
-                    visible: False
-                    opacity: 1 if self.visible else 0
-                    disabled: not self.visible
                     size_hint_x: None
                     width: (self.parent.width - sp(300) - sp(40)) / 2
 
@@ -251,17 +236,12 @@
             MDBoxLayout:
                 orientation: "horizontal"
                 adaptive_width: False
-                spacing: sp(110)
-                padding: sp(50)
-                size_hint_y: None
-                size: self.minimum_size
-                pos_hint: {'center_x': 0.5}
+                size_hint_x: 0.5
+                spacing: sp(20)
+                pos_hint: {"center_x": 0.5, "center_y": 0.5}
+
 
                 Widget:
-                    id: widget_extra_calc_4
-                    visible: False
-                    opacity: 1 if self.visible else 0
-                    disabled: not self.visible
                     size_hint_x: None
                     width: (self.parent.width - sp(300) - sp(40)) / 2
 
