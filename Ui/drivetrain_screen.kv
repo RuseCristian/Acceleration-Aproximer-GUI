@@ -6,6 +6,7 @@
 
 
         MDBoxLayout:
+            id: drivetrain_vertical_boxlayout
             orientation: "vertical"
             adaptive_width: False
             spacing: sp(110)
@@ -205,7 +206,7 @@
 
                 MDIconButton:
                     id: button
-                    icon: "language-python"
+                    icon: "car-shift-pattern"
                     pos_hint: {"center_x": .5, "center_y": .5}
                     on_release: app.dropdown1.open()
 
@@ -217,3 +218,4 @@
                     pos_hint: {"center_y": 0.5}
                     padding: sp(2)
                     on_press: app.dialog_information("add_gear")
+

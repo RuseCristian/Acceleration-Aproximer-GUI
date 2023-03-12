@@ -1,62 +1,55 @@
-from kivymd.app import MDApp
-from kivymd.uix.menu import MDDropdownMenu
-
-from kivy.properties import StringProperty
 from kivy.lang import Builder
+from kivy.properties import ObjectProperty
+from math import floor
 
-KV = """
-Screen:
+from kivy.core.window import Window
+from kivy.lang.builder import Builder
+from kivy.metrics import dp, sp
+from kivy.properties import StringProperty
+from kivy.uix.screenmanager import Screen
+from kivy.uix.widget import Widget
+from kivymd.app import MDApp
+from kivymd.uix.boxlayout import MDBoxLayout
+from kivymd.uix.button import MDFlatButton
+from kivymd.uix.dialog import MDDialog
+from kivymd.uix.floatlayout import MDFloatLayout
+from kivymd.uix.list import OneLineIconListItem
+from kivymd.uix.menu import MDDropdownMenu
+from kivymd.uix.tab import MDTabsBase
+from kivymd.uix.textfield import MDTextField
+
+KV = '''
+MDScreen:
+
+    MDDropdownMenu:
+        id: dropdown_menu
+        items: ["Item 1", "Item 2", "Item 3"]
+        pos_hint: {'center_x': 0.5, 'center_y': 0.5}
+        width: 200
+        caller: app.root.ids.text_field
+
     MDTextField:
-        id: fahrenheit
-        hint_text:"Enter Fahrenheit"
-        helper_text: "Once you enter the fahrenheit the press submit"
-        helper_text_mode: "on_focus"
-        icon_right: "temperature-fahrenheit"
-        pos_hint: {'center_x': 0.5, 'center_y': 0.9}
-        size: 200, 25
-        size_hint: None, None
-
-    MDRoundFlatButton:
-        text: "Enter"
-        pos_hint: {'center': (0.5,0.2)}
-        text_color: 0, 1, 0, 1
-        size_hint: 0.25, 0.20
-        on_release: app.show_data()
-
-    MDIconButton:
-        id: button
-        icon: "language-python"
-        pos_hint: {"center_x": .5, "center_y": .5}
-        on_release: app.dropdown1.open()
-"""
+        id: text_field
+        hint_text: "Selected Item"
+        pos_hint: {'center_x': 0.5, 'center_y': 0.3}
+        size_hint_x: None
+        width: 200
+'''
 
 
-class DemoApp(MDApp):
-
-    def __init__(self, **kwargs):
-        super().__init__(**kwargs)
-        self.screen = Builder.load_string(KV)
-
-        menu_items = [
-            {
-                "viewclass": "OneLineListItem",
-                "text": "Option1",
-                "on_release": lambda *args: self.callback()
-            }
-        ]
-
-        self.dropdown1 = MDDropdownMenu(items=menu_items, width_mult=4, caller=self.screen.ids.button)
+class TestApp(MDApp):
+    dropdown_menu = ObjectProperty()
 
     def build(self):
-        return self.screen
+        self.root = Builder.load_string(KV)
+        self.dropdown_menu = self.root.ids.dropdown_menu
+        return self.root
 
-    def show_data(self):
-        input_fahrenheit = self.root.ids.fahrenheit.text
-        print(input_fahrenheit)
+    def on_start(self):
+        self.dropdown_menu.menu.bind(on_release=self.print_current_item)
 
-    @staticmethod
-    def callback():
-        print("cookies")
+    def print_current_item(self, instance):
+        print(f"Current item: {instance.current_item}")
 
 
-DemoApp().run()
+TestApp().run()

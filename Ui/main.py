@@ -169,42 +169,44 @@ class AccelerationApproximator(MDApp):
             {
                 "viewclass": "OneLineListItem",
                 "text": "2",
-                "on_release": lambda *args: self.callback()
+                "on_release": lambda item=self.screen.ids.main_screen.ids.drivetrainscreen_1.ids.button, text="2": self.callback(item, text)
             },
             {
                 "viewclass": "OneLineListItem",
                 "text": "3",
-                "on_release": lambda *args: self.callback()
+                "on_release": lambda item=self.screen.ids.main_screen.ids.drivetrainscreen_1.ids.button, text="3": self.callback(item, text)
             },
             {
                 "viewclass": "OneLineListItem",
                 "text": "4",
-                "on_release": lambda *args: self.callback()
+                "on_release": lambda item=self.screen.ids.main_screen.ids.drivetrainscreen_1.ids.button, text="4": self.callback(item, text)
             },
             {
                 "viewclass": "OneLineListItem",
                 "text": "5",
-                "on_release": lambda *args: self.callback()
+                "on_release": lambda item=self.screen.ids.main_screen.ids.drivetrainscreen_1.ids.button, text="5": self.callback(item, text)
             },
             {
                 "viewclass": "OneLineListItem",
                 "text": "6",
-                "on_release": lambda *args: self.callback()
+                "on_release": lambda item=self.screen.ids.main_screen.ids.drivetrainscreen_1.ids.button, text="6": self.callback(item, text)
             },
             {
                 "viewclass": "OneLineListItem",
                 "text": "7",
-                "on_release": lambda *args: self.callback()
+                "on_release": lambda item=self.screen.ids.main_screen.ids.drivetrainscreen_1.ids.button, text="7": self.callback(item, text)
             }
         ]
 
         self.dropdown1 = MDDropdownMenu(items=menu_items, width_mult=4, caller=self.screen.ids.main_screen.ids.drivetrainscreen_1.ids.button)
         Window.size = (1080, 2220)
         return self.screen
-    def callback(self):
-        print("Current selection:", self.dropdown1.caller.text)
-        self.dropdown1.dismiss()
 
+    def callback(self, item, text):
+        print(f"{text} was selected from dropdown menu triggered by {text}")
+        self.number_of_gears = int(text)
+        self.remove_gear_text_fields()
+        self.add_gear_text_fields()
 
     def show_hide_ui(self, switchObject, switchValue, *args):
         if switchValue:
@@ -266,25 +268,22 @@ class AccelerationApproximator(MDApp):
             pass
 
     def add_gear_text_fields(self):
-        self.remove_gear_text_fields()
-        if len(self.root.ids.drivetrainscreen_1.ids.drivetrain_vertical_boxlayout.children) >= 10:
-            for i in range(2, floor(self.root.ids.drivetrainscreen_1.ids.number_of_gears_slider.value)):
-                self.box_layout = MDBoxLayout(orientation='horizontal', size_hint_x=.493, spacing=dp(20), id=f"gear_{i + 1}_boxlayout")
-                self.gear_textfield = MDTextField(hint_text=f"Gear {i + 1} Ratio", mode="fill", size_hint_x=.5, input_filter="float")
-                self.box_layout.add_widget(self.gear_textfield)
-                self.root.ids.drivetrainscreen_1.ids.drivetrain_vertical_boxlayout.add_widget(self.box_layout)
-        else:
-            for i in range(floor(self.root.ids.drivetrainscreen_1.ids.ids.number_of_gears_slider.value)):
-                self.box_layout = MDBoxLayout(orientation='horizontal', size_hint_x=.493, spacing=dp(20), id=f"gear_{i + 1}_boxlayout")
-                self.gear_textfield = MDTextField(hint_text=f"Gear {i + 1} Ratio", mode="fill", size_hint_x=.5, input_filter="float")
-                self.box_layout.add_widget(self.gear_textfield)
-                self.root.ids.drivetrainscreen_1.ids.drivetrain_vertical_boxlayout.add_widget(self.box_layout)
+        # for i in self.root.ids.main_screen.ids.drivetrainscreen_1.ids.drivetrain_vertical_boxlayout.children:
+        #     print(i)
+        parent_widget = self.root.ids.main_screen.ids.drivetrainscreen_1.ids.drivetrain_vertical_boxlayout
+        print(len(parent_widget.children))
+        for i in range(0, self.number_of_gears):
+            self.box_layout = MDBoxLayout(orientation='horizontal', size_hint_x=.5, spacing=sp(20), id=f"gear_{i + 1}_boxlayout", adaptive_width=False,pos_hint={"center_x":.5, "center_y":5})
+            self.gear_textfield = MDTextField(hint_text=f"Gear {i + 1} Ratio", mode="fill", size_hint_x=None, input_filter="float", width=sp(300))
+            self.box_layout.add_widget(self.gear_textfield)
+            parent_widget.add_widget(self.box_layout)
 
     def remove_gear_text_fields(self):
+        parent_widget = self.root.ids.main_screen.ids.drivetrainscreen_1.ids.drivetrain_vertical_boxlayout
         try:
-            if len(self.root.ids.drivetrain_vertical_boxlayout.children) > 10:
-                while len(self.root.ids.drivetrain_vertical_boxlayout.children) != 10:
-                    self.root.ids.drivetrain_vertical_boxlayout.remove_widget(self.root.ids.drivetrain_vertical_boxlayout.children[0])
+            if len(parent_widget.children) > 8:
+                while len(parent_widget.children) != 8:
+                    parent_widget.remove_widget(parent_widget.children[0])
         except Exception as e:
             print(e)
             pass
