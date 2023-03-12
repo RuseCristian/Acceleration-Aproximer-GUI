@@ -43,8 +43,9 @@
                 MDTextField:
                     hint_text: "Coefficient of Drag"
                     mode: "fill"
-                    input_filter: 'int'
+                    input_filter: 'float'
                     size_hint_x: None
+                    on_text_validate: app.next_text_field(self)
                     width: sp(300)
 
                 MDIconButton:
@@ -69,8 +70,9 @@
                 MDTextField:
                     hint_text: "Frontal Area"
                     mode: "fill"
-                    input_filter: 'int'
+                    input_filter: 'float'
                     size_hint_x: None
+                    on_text_validate: app.next_text_field(self)
                     width: sp(300)
 
                 MDIconButton:
@@ -95,8 +97,9 @@
                 MDTextField:
                     hint_text: "Air Density"
                     mode: "fill"
-                    input_filter: 'int'
+                    input_filter: 'float'
                     size_hint_x: None
+                    on_text_validate: app.next_text_field(self)
                     width: sp(300)
 
                 MDIconButton:
@@ -161,6 +164,7 @@
                     visible: False
                     opacity: 1 if self.visible else 0
                     disabled: not self.visible
+                    on_text_validate: app.next_text_field(self)
                     width: sp(300)
 
                 MDIconButton:
@@ -194,6 +198,7 @@
                     visible: False
                     opacity: 1 if self.visible else 0
                     disabled: not self.visible
+                    on_text_validate: app.next_text_field(self)
                     width: sp(300)
 
                 MDIconButton:
@@ -227,6 +232,7 @@
                     visible: False
                     opacity: 1 if self.visible else 0
                     disabled: not self.visible
+                    on_text_validate: app.next_text_field(self)
                     width: sp(300)
 
                 MDIconButton:

@@ -47,6 +47,7 @@
                     mode: "fill"
                     input_filter: 'int'
                     size_hint_x: None
+                    on_text_validate: app.next_text_field(self)
                     width: sp(300)
 
                 MDIconButton:
@@ -72,6 +73,7 @@
                     mode: "fill"
                     input_filter: lambda x,y: str(x) if str(self.text+x).isdigit() and 0 < int(self.text+x) < 100 else False
                     size_hint_x: None
+                    on_text_validate: app.next_text_field(self)
                     width: sp(300)
 
                 MDIconButton:
@@ -98,6 +100,7 @@
                     mode: "fill"
                     input_filter: 'int'
                     size_hint_x: None
+                    on_text_validate: app.next_text_field(self)
                     width: sp(300)
 
                 MDIconButton:
@@ -122,8 +125,9 @@
                 MDTextField:
                     hint_text: "Tire Friction Coefficient (µ)"
                     mode: "fill"
-                    input_filter: 'int'
+                    input_filter: 'float'
                     size_hint_x: None
+                    on_text_validate: app.next_text_field(self)
                     width: sp(300)
 
                 MDIconButton:
@@ -148,8 +152,9 @@
                 MDTextField:
                     hint_text: "Rolling Resistance Coefficient (k)"
                     mode: "fill"
-                    input_filter: 'int'
+                    input_filter: 'float'
                     size_hint_x: None
+                    on_text_validate: app.next_text_field(self)
                     width: sp(300)
 
                 MDIconButton:

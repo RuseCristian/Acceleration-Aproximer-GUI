@@ -1,8 +1,8 @@
-from math import floor
-
+import numpy as np
+import plotly.graph_objects as go
 from kivy.core.window import Window
 from kivy.lang.builder import Builder
-from kivy.metrics import dp, sp
+from kivy.metrics import sp
 from kivy.properties import StringProperty
 from kivy.uix.screenmanager import Screen
 from kivy.uix.widget import Widget
@@ -15,6 +15,8 @@ from kivymd.uix.list import OneLineIconListItem
 from kivymd.uix.menu import MDDropdownMenu
 from kivymd.uix.tab import MDTabsBase
 from kivymd.uix.textfield import MDTextField
+from plotly.subplots import make_subplots
+from scipy.interpolate import interp1d
 
 Builder.load_file("aero_screen.kv")
 Builder.load_file("car_info_screen.kv")
@@ -203,7 +205,6 @@ class AccelerationApproximator(MDApp):
         return self.screen
 
     def callback(self, item, text):
-        print(f"{text} was selected from dropdown menu triggered by {text}")
         self.number_of_gears = int(text)
         self.remove_gear_text_fields()
         self.add_gear_text_fields()
@@ -215,13 +216,10 @@ class AccelerationApproximator(MDApp):
         else:
             for i in args:
                 i.visible = False
-        for i in args:
-            print(i)
 
     def dialog_information(self, dictionary_entry):
 
         if not self.dialog:
-            print(dialog_text_dictionary[dictionary_entry])
             self.dialog = MDDialog(
                 text=dialog_text_dictionary[dictionary_entry],
                 buttons=[
@@ -244,8 +242,18 @@ class AccelerationApproximator(MDApp):
         self.box_layout = MDBoxLayout(orientation='horizontal', size_hint_x=.5, spacing=sp(20), id=f"rpm_torque{self.rpm_torque_rows}_boxlayout",
                                       pos_hint={"center_x": 0.5, "center_y": 0.5}, adaptive_width=False)
         self.widget = Widget(size_hint_x=0.1)
-        self.rpm_text_field = MDTextField(hint_text=f"RPM", mode="fill", width=sp(150), size_hint_x=None, input_filter="float")
-        self.torque_text_field = MDTextField(hint_text=f"Torque", mode="fill", width=sp(150), size_hint_x=None, input_filter="float")
+        self.rpm_text_field = MDTextField(hint_text=f"RPM",
+                                          on_text_validate=lambda widget: self.next_text_field(widget, True),
+                                          mode="fill", width=sp(150),
+                                          size_hint_x=None,
+                                          input_filter="float")
+
+        self.torque_text_field = MDTextField(hint_text=f"Torque",
+                                             on_text_validate=lambda widget: self.next_text_field(widget, True),
+                                             mode="fill", width=sp(150),
+                                             size_hint_x=None,
+                                             input_filter="float")
+
         self.box_layout.add_widget(self.widget)
         self.box_layout.add_widget(self.rpm_text_field)
         self.box_layout.add_widget(self.torque_text_field)
@@ -268,14 +276,21 @@ class AccelerationApproximator(MDApp):
             pass
 
     def add_gear_text_fields(self):
-        # for i in self.root.ids.main_screen.ids.drivetrainscreen_1.ids.drivetrain_vertical_boxlayout.children:
-        #     print(i)
         parent_widget = self.root.ids.main_screen.ids.drivetrainscreen_1.ids.drivetrain_vertical_boxlayout
-        print(len(parent_widget.children))
         for i in range(0, self.number_of_gears):
-            self.box_layout = MDBoxLayout(orientation='horizontal', size_hint_x=.5, spacing=sp(20), id=f"gear_{i + 1}_boxlayout", adaptive_width=False,
+            self.box_layout = MDBoxLayout(orientation='horizontal',
+                                          size_hint_x=.5,
+                                          spacing=sp(20),
+                                          id=f"gear_{i + 1}_boxlayout",
+                                          adaptive_width=False,
                                           pos_hint={"center_x": .5, "center_y": 5})
-            self.gear_textfield = MDTextField(hint_text=f"Gear {i + 1} Ratio", mode="fill", size_hint_x=None, input_filter="float", width=sp(300))
+
+            self.gear_textfield = MDTextField(hint_text=f"Gear {i + 1} Ratio",
+                                              mode="fill",
+                                              size_hint_x=None,
+                                              on_text_validate=self.next_text_field,
+                                              input_filter="float",
+                                              width=sp(300))
             self.box_layout.add_widget(self.gear_textfield)
             parent_widget.add_widget(self.box_layout)
 
@@ -289,8 +304,27 @@ class AccelerationApproximator(MDApp):
             print(e)
             pass
 
+    def next_text_field(self, *args, same_box=False):
+        current_text_field = args[0]
+        boxlayout = current_text_field.parent
+        vertical_boxlayout = boxlayout.parent
+        current_id = vertical_boxlayout.children.index(boxlayout)
+        current_id -= 1
+
+        found_text_field = False
+        while (current_id >= 0):
+            if isinstance(vertical_boxlayout.children[current_id], MDBoxLayout):
+                for i in reversed(vertical_boxlayout.children[current_id].children):
+                    if isinstance(i, MDTextField):
+                        found_text_field = True
+                        i.focus = True
+                        break
+                if found_text_field: break
+
+            current_id -= 1
+
     def get_tab_data(self):
-        tab_data = {"car_info": {}, "engine_info": {}, "drivetrain_info": {}, "tire_info": {}, "aero_info": {}}
+        tab_data = {"car_info": {}, "engine_info": {}, "drivetrain_info": {}, "tire_info": {}, "aero_info": {}, "results_info": {}}
 
         # car info
         widget_parent = self.root.ids.main_screen.ids.carscreen_1.ids.carScreen_vertical_layout
@@ -346,12 +380,362 @@ class AccelerationApproximator(MDApp):
                     else:
                         tab_data["aero_info"][j._MDTextField__hint_text] = None
 
+        widget_parent = self.root.ids.main_screen.ids.resultscreen_1.ids.resultsscreen_vertical_boxlayout
+        for i in widget_parent.children:
+            for j in i.children:
+                if isinstance(j, MDTextField):
+                    if j.text != "":
+                        tab_data["results_info"][j._MDTextField__hint_text] = j.text
+                    else:
+                        tab_data["results_info"][j._MDTextField__hint_text] = None
+
         return tab_data
 
     def estimate_acceleration(self):
 
-        ui_data = self.get_tab_data()
-        print(ui_data)
+        # ui_data = self.get_tab_data()
+        # print(ui_data)
+
+        ui_data = {
+            'car_info': {'Roll Stiffness': None, 'Roll Center Height': None, 'Track Width': None, 'Wheel Base': None, 'Car Mass Distribution': '50', 'Car Mass': '1035',
+                         'Car Name': 'Mx5 nd 2015'},
+            'engine_info': {'Idle RPM': '1000', 'Redline RPM': '7500', 'Torque_0': '150', 'RPM_1': '1000', 'Torque_1': '162', 'RPM_2': '2000', 'Torque_2': '170',
+                            'RPM_3': '2500', 'Torque_3': '183', 'RPM_4': '3000', 'Torque_4': '191', 'RPM_5': '3500', 'Torque_5': '194', 'RPM_6': '4000',
+                            'Torque_6': '189', 'RPM_7': '4500', 'Torque_7': '192', 'RPM_8': '5000', 'Torque_8': '185', 'RPM_9': '5500', 'Torque_9': '173',
+                            'RPM_10': '6000', 'Torque_10': '165', 'RPM_11': '6500', 'Torque_11': '160', 'RPM_12': '7000', 'Torque_12': '152', 'RPM_13': '7500'},
+            'drivetrain_info': {'Gear 6 Ratio': '0.58', 'Gear 5 Ratio': '0.71', 'Gear 4 Ratio': '1', 'Gear 3 Ratio': '1.4', 'Gear 2 Ratio': '2.06',
+                                'Gear 1 Ratio': '3.54', 'Final Drive Ratio': '4.1', 'Gas Level': '0.3', 'Off Clutch RPM': '1400', 'Shifting Time (s)': '0.5',
+                                'Drivetrain Loss': '12', 'Layout': 'rwd'},
+            'tire_info': {'Rolling Resistance Coefficient (k)': '0.01', 'Tire Friction Coefficient (µ)': '0.92', 'Wheel Diameter': '16', 'Tire Aspect Ratio': '45',
+                          'Tire Width': '195'},
+            'aero_info': {'Downforce Distribution': '0', 'Downforce Total Area': '0', 'Negative Lift Coefficient': '0', 'Air Density': '1.225', 'Frontal Area': '1.82',
+                          'Coefficient of Drag': '0.33'}, 'results_info': {'Final Speed': '100', 'Initial Speed': '0'}}
+
+        def estimate_weight_shift(acceleration_value, wheelbase, track_width, roll_center_height, roll_stiffness):
+
+            # Compute the roll angle caused by the weight shift
+            roll_angle = acceleration_value * wheelbase / (2 * roll_stiffness)
+
+            # Compute the weight shift as a fraction of the track width
+            weight_shift = roll_angle * track_width / 2 * roll_center_height
+
+            return weight_shift
+
+        def find_accel_from_speed(speed, speed_values, accel_values):
+            # acceleration is stored on an index based on the rpm, but because gears have different gear ratios
+            # in each gear you will have different rpm at the same speed, this function, returns the acceleration value of the next gear
+            # at the current speed
+            rpm = np.searchsorted(speed_values, speed)
+            return accel_values[rpm - 1]
+
+        def find_optimum_upshift_point(gears_data):
+            optimum_shift_points = []
+
+            for i in range(len(gears_data) - 1):
+                current_gear_acceleration = gears_data[i].accel
+
+                next_gear_acceleration = []
+                for j in range(len(current_gear_acceleration)):
+                    if j >= len(gears_data[i + 1].accel):
+                        break
+                    next_gear_acceleration.append(find_accel_from_speed(gears_data[i].speed[j], gears_data[i + 1].speed, gears_data[i + 1].accel))
+                next_gear_acceleration = np.array(next_gear_acceleration)
+
+                for index, j in enumerate(range(min(len(current_gear_acceleration), len(next_gear_acceleration)))):
+                    if current_gear_acceleration[j] < next_gear_acceleration[j]:
+                        optimum_shift_points.append(index)
+                else:
+                    optimum_shift_points.append(len(current_gear_acceleration))
+
+            return optimum_shift_points
+
+        def find_starting_parameters(speed_value):
+            for i in range(0, number_of_gears):
+                idx = np.searchsorted(gears[i].speed, speed_value, side='right')
+                if idx < len(gears[i].speed):
+                    gear_value = i
+                    rpm_value = idx
+                    break
+            return gear_value, rpm_value
+
+        def upshift_lift_off(gear, index, initial_velocity, t):
+            time_elapsed = 0
+            count = 0
+            while time_elapsed <= t:
+                initial_velocity = gear.speed[index - 1]
+                aux_velocity = initial_velocity - gear.speed[index]
+                time_elapsed += abs(aux_velocity) / abs(
+                    gear.accel[index - 1] - gear.torque_at_the_wheels[index - 1] / car_mass - gear.accel[index] - gear.torque_at_the_wheels[index] / car_mass)
+                count += 1
+                index -= 1
+            return index, initial_velocity
+
+        fig = make_subplots(rows=2, cols=3)
+
+        # for weight shifting extra calculations
+        car_extra_calculations = False
+        car_wheelbase = None  # meters
+        car_track_width = None  # meters
+        car_roll_center_height = None  # meters
+        car_roll_stiffness = None  # Nm/rad
+
+        # target speeds
+        initial_speed_kmh = int(ui_data["results_info"]["Initial Speed"])
+        final_speed_kmh = int(ui_data["results_info"]["Final Speed"])
+
+        # drivetrain info
+        drivetrain_loss_percentage = float(ui_data["drivetrain_info"]["Drivetrain Loss"])
+        layout = ui_data["drivetrain_info"]["Layout"]
+        shift_time_s = float(ui_data["drivetrain_info"]["Shifting Time (s)"])
+        disengagement_rpm = float(ui_data["drivetrain_info"]["Off Clutch RPM"])
+        idle_rpm = int(ui_data["engine_info"]["Idle RPM"])
+        redline_rpm = int(ui_data["engine_info"]["Redline RPM"])
+        gas_level_data = float(ui_data["drivetrain_info"]["Gas Level"])
+
+        # tire data
+        tire_width = float(ui_data["tire_info"]["Tire Width"])
+        tire_aspect = float(ui_data["tire_info"]["Tire Aspect Ratio"]) / 100
+        tire_radial = float(ui_data["tire_info"]["Wheel Diameter"])
+        tire_mu = float(ui_data["tire_info"]["Tire Friction Coefficient (µ)"])
+        rolling_k = float(ui_data["tire_info"]["Rolling Resistance Coefficient (k)"])
+
+        # general car data
+        car_name = ui_data["car_info"]["Car Name"]
+        car_mass = int(ui_data["car_info"]["Car Mass"])
+        front_weight_distribution = int(ui_data["car_info"]["Car Mass Distribution"]) / 100
+        cd_car = float(ui_data["aero_info"]["Coefficient of Drag"])
+        frontal_area = float(ui_data["aero_info"]["Frontal Area"])
+        air_density = float(ui_data["aero_info"]["Air Density"])
+        lift_coefficient = float(ui_data["aero_info"]["Negative Lift Coefficient"])
+        downforce_total_area = float(ui_data["aero_info"]["Downforce Total Area"])
+        downforce_distribution = float(ui_data["aero_info"]["Downforce Distribution"])
+
+        # gravitational acceleration m/s^2
+        g = 9.81
+
+        # transforming from km/h to m/s (SI units)
+        initial_speed_ms = initial_speed_kmh / 3.6
+        final_speed_ms = final_speed_kmh / 3.6
+
+        # tire diameter in inch
+        tire_diameter = (tire_width * tire_aspect * 2) / 25.4 + tire_radial
+
+        # tire radius in meters (diameter in inch divided by 2 to get the radius)
+        tire_radius = tire_diameter / 39.37 / 2
+
+        # engine curves
+        rpm_curve = np.array([])
+        horsepower_curve = np.array([])
+        torque_curve = np.array([])
+
+        for key in ui_data["engine_info"].keys():
+            # Check if key starts with "RPM_"
+            if key.startswith("RPM_"):
+                rpm_curve = np.append(rpm_curve, int(ui_data["engine_info"][key]))
+
+        for key in ui_data["engine_info"].keys():
+            # Check if key starts with "RPM_"
+            if key.startswith("Torque_"):
+                torque_curve = np.append(torque_curve, int(ui_data["engine_info"][key]))
+
+        # data interpolation
+        max_rpm = int(rpm_curve[len(rpm_curve) - 1])
+        torque_curve = [x * (1 - drivetrain_loss_percentage / 100) for x in torque_curve]
+        rpm_torque_interpolation = interp1d(rpm_curve, torque_curve, kind="cubic")
+        rpm_curve = np.linspace(np.min(rpm_curve), np.max(rpm_curve), max_rpm - idle_rpm)
+        torque_curve = rpm_torque_interpolation(rpm_curve)[:redline_rpm + 1]
+        horsepower_curve = np.array([torque * rpm / 7127 for torque, rpm in zip(torque_curve, rpm_curve)])
+        rpm_torque_interpolation = interp1d(rpm_curve, torque_curve, kind="cubic")
+        torque_curve = rpm_torque_interpolation(rpm_curve)[:redline_rpm + 1]
+        horsepower_interpolation = interp1d(rpm_curve, horsepower_curve, kind="cubic")
+        horsepower_curve = horsepower_interpolation(rpm_curve)[:redline_rpm + 1]
+
+        # gear ratios
+        gear_ratios = []
+        for key in reversed(ui_data["drivetrain_info"].keys()):
+            if key.startswith("Gear "):
+                gear_ratios.append(float(ui_data["drivetrain_info"][key]))
+        gear_ratios.append(float(ui_data["drivetrain_info"]["Final Drive Ratio"]))
+        number_of_gears = len(gear_ratios) - 1
+
+        # limit of adhesion of tires in terms of max allowed force before entering dynamic friction
+        if layout == "rwd":
+            max_tractive_force = g * car_mass * (1 - front_weight_distribution) * tire_mu
+        elif layout == "fwd":
+            max_tractive_force = g * car_mass * front_weight_distribution * tire_mu
+
+        class Gear:
+            def __init__(self, ratio, accel, rpm, speed, torque_at_the_wheels, air_resistance_curve, downforce_curve):
+                self.dropdown_rpm = None
+                self.max_speed = None
+                self.optimum_upshift = None
+                self.ratio = ratio
+                self.accel = accel
+                self.rpm = rpm
+                self.speed = speed
+                self.torque_at_the_wheels = torque_at_the_wheels
+                self.air_resistance = air_resistance_curve
+                self.downforce_curve = downforce_curve
+
+            def add_optimum_upshift(self, value):
+                self.optimum_upshift = value
+                self.max_speed = self.speed[min(value, len(self.accel) - 1)]
+
+            def add_dropdown_rpm(self, value):
+                self.dropdown_rpm = value
+
+        # calculating relevant gear information
+        gears = []
+        for i in range(0, number_of_gears):
+
+            # maximum speed at each rpm for specified gear, in m/s
+            specific_speed = np.array([(x * tire_diameter) / (gear_ratios[i] * gear_ratios[len(gear_ratios) - 1] * 336) * 1.609 / 3.6 for x in rpm_curve])
+
+            # air resistance in relation to speed, in Newtons
+            air_resistance_curve = np.array([(cd_car * frontal_area * air_density * (x ** 2)) / 2 for x in specific_speed])
+
+            # downforce in relation to speed, in Newtons
+            downforce_curve = np.array([(lift_coefficient * downforce_total_area * air_density * (x ** 2)) / 2 for x in specific_speed])
+
+            # torque at the wheels in Nm
+            torque_at_the_wheels = np.array([x * gear_ratios[i] * gear_ratios[len(gear_ratios) - 1] for x in torque_curve])
+
+            acceleration = np.array([])
+            for index in range(0, len(torque_curve) - 1):
+                downforce = downforce_curve[index] * (downforce_distribution if layout == 'fwd' else (1 - downforce_distribution))
+                air_resistance = air_resistance_curve[index]
+                rolling_resistance = rolling_k * g * car_mass
+
+                aux_acceleration = (torque_at_the_wheels[index] / tire_radius - air_resistance - rolling_resistance) / car_mass
+                if car_extra_calculations:
+                    traction = min((max_tractive_force + downforce + estimate_weight_shift(aux_acceleration, car_wheelbase, car_track_width, car_roll_center_height,
+                                                                                           car_roll_stiffness)) * tire_mu, aux_acceleration * car_mass)
+                else:
+                    traction = min((max_tractive_force + downforce) * tire_mu, aux_acceleration * car_mass)
+
+                acceleration_at_specific_rpm = traction / car_mass
+                if acceleration_at_specific_rpm > 0:
+                    acceleration = np.append(acceleration, acceleration_at_specific_rpm)
+
+            # putting together all the info
+            gear_info = Gear(gear_ratios[i], acceleration, rpm_curve, specific_speed, torque_at_the_wheels, air_resistance_curve,
+                             downforce_curve)
+            gears.append(gear_info)
+
+        # finding the optimum upshift shift points for each gear
+        optimum_upshift = find_optimum_upshift_point(gears)
+        for i in range(len(gears) - 1):
+            gears[i].add_optimum_upshift(optimum_upshift[i])
+
+        # calculating gear rpm dropdown when upshifting
+        for i in range(len(gears) - 2):
+            gears[i].add_dropdown_rpm(np.searchsorted(gears[i + 1].speed, gears[i].max_speed))
+
+        # finding initial starting parameters
+        current_speed_ms = initial_speed_ms
+        current_gear, current_rpm = find_starting_parameters(current_speed_ms)
+        total_time = 0
+        standing_conditions = False
+
+        while current_speed_ms <= final_speed_ms and current_rpm != -1 and current_gear != -1:
+
+            # upshift
+            if current_rpm == gears[current_gear].optimum_upshift:
+                total_time += shift_time_s
+                current_rpm = gears[current_gear].dropdown_rpm
+                current_gear += 1
+
+                idx, current_speed_ms = upshift_lift_off(gears[current_gear], current_rpm, current_speed_ms, shift_time_s)
+                current_rpm = idx
+
+            # standing start
+            if current_gear == 0 and current_rpm <= disengagement_rpm - idle_rpm:
+
+                # disengagement_rpm - idle_rpm because current_rpm is an index, and we store rpm values starting from idle_rpm, not 0
+                while current_rpm <= disengagement_rpm - idle_rpm:
+                    if not standing_conditions:
+                        rolling_resistance = rolling_k * car_mass * g
+                        rpm_delta = disengagement_rpm - idle_rpm
+
+                        # uses the highest gas level either from the minimum necessary to start moving the car
+                        # or the driver defined gas level, if higher
+                        for i in range(len(gears[0].torque_at_the_wheels)):
+                            if rolling_resistance < gears[0].torque_at_the_wheels[i] / tire_radius:
+                                first_torque_entry = gears[0].torque_at_the_wheels[i] // tire_radius
+                                current_rpm = i
+                                break
+                        gas_level = max(rolling_resistance / first_torque_entry, gas_level_data)
+                        gas_level_step = (1 - gas_level) / rpm_delta
+                        standing_conditions = True
+
+                    current_rpm += 1
+                    aux_time = (gears[current_gear].speed[current_rpm] - gears[current_gear].speed[current_rpm - 1]) / (
+                            gears[current_gear].accel[current_rpm] * gas_level)
+                    gas_level += gas_level_step
+                    total_time += aux_time
+                    current_speed_ms = gears[current_gear].speed[current_rpm]
+
+            # accelerating
+            if current_rpm != 0:  # 0 meaning idle_rpm
+                total_time += ((gears[current_gear].speed[current_rpm] - gears[current_gear].speed[current_rpm - 1]) / gears[current_gear].accel[current_rpm])
+            else:
+                total_time += (gears[current_gear].speed[current_rpm] / gears[current_gear].accel[current_rpm])
+            current_speed_ms = gears[current_gear].speed[current_rpm]
+            current_rpm += 1
+
+        for i in range(len(gears)):
+            fig.add_trace(
+                go.Scatter(x=gears[i].speed * 3.6, y=gears[i].torque_at_the_wheels,
+                           name="Gear {}".format(i + 1)
+                           ), row=2, col=2
+            )
+            # torque vs speed in each gear (max potential speed)
+
+            fig.add_trace(
+                go.Scatter(x=gears[i].speed * 3.6, y=gears[i].accel / g,
+                           name="Gear {}".format(i + 1)
+                           ), row=1, col=2
+            )
+            # acceleration vs speed graph
+
+            # graphs
+            # torque vs rpm graph
+            fig = make_subplots(rows=2, cols=3)
+            fig.add_trace(
+                go.Scatter(x=rpm_curve, y=torque_curve,
+                           name="Torque(Nm)"
+                           ), row=1, col=1
+            )
+
+            # horsepower vs rpm graph
+            fig.add_trace(
+                go.Scatter(x=rpm_curve, y=horsepower_curve,
+                           name='HP'
+                           ), row=1, col=1
+            )
+
+        count2 = 1
+        for i in gears:
+            fig.add_trace(
+                go.Scatter(x=i.speed * 3.6, y=i.torque_at_the_wheels,
+                           name="Gear {}".format(count2)
+                           ), row=2, col=2
+            )
+            # torque vs speed in each gear (max potential speed)
+
+            fig.add_trace(
+                go.Scatter(x=i.speed * 3.6, y=i.accel / g,
+                           name="Gear {}".format(count2)
+                           ), row=1, col=2
+            )
+            count2 += 1
+            # acceleration vs speed graph
+
+        for i in range(0, number_of_gears - 1):
+            print(f"Gear {i + 1} Optimum Upshift - {gears[i].optimum_upshift + 1 + idle_rpm} RPM")
+        print(f"{initial_speed_kmh} - {final_speed_kmh} km/h in {round(total_time, 3)} seconds")
+        fig.update_layout(showlegend=False)
+        fig.show()
 
 
 AccelerationApproximator().run()

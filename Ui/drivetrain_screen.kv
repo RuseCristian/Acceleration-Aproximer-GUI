@@ -43,10 +43,10 @@
                 MDTextField:
                     hint_text: "Layout"
                     mode: "fill"
-                    input_filter: 'int'
                     size_hint_x: None
                     width: sp(300)
                     helper_text: "Possible layouts: fwd, rwd, awd"
+                    on_text_validate: app.next_text_field(self)
                     helper_text_mode: "persistent"
 
                 MDIconButton:
@@ -74,6 +74,7 @@
                     input_filter: 'int'
                     size_hint_x: None
                     width: sp(300)
+                    on_text_validate: app.next_text_field(self)
                     helper_text_mode: "persistent"
 
                 MDIconButton:
@@ -98,9 +99,10 @@
                 MDTextField:
                     hint_text: "Shifting Time (s)"
                     mode: "fill"
-                    input_filter: 'int'
+                    input_filter: 'float'
                     size_hint_x: None
                     width: sp(300)
+                    on_text_validate: app.next_text_field(self)
                     helper_text_mode: "persistent"
 
                 MDIconButton:
@@ -128,6 +130,7 @@
                     input_filter: 'int'
                     size_hint_x: None
                     width: sp(300)
+                    on_text_validate: app.next_text_field(self)
                     helper_text_mode: "persistent"
 
                 MDIconButton:
@@ -152,9 +155,10 @@
                 MDTextField:
                     hint_text: "Gas Level"
                     mode: "fill"
-                    input_filter: 'int'
+                    input_filter: 'float'
                     size_hint_x: None
                     width: sp(300)
+                    on_text_validate: app.next_text_field(self)
                     helper_text_mode: "persistent"
 
                 MDIconButton:
@@ -179,9 +183,10 @@
                 MDTextField:
                     hint_text: "Final Drive Ratio"
                     mode: "fill"
-                    input_filter: 'int'
+                    input_filter: 'float'
                     size_hint_x: None
                     width: sp(300)
+                    on_text_validate: app.next_text_field(self)
                     helper_text_mode: "persistent"
 
                 MDIconButton:

@@ -4,6 +4,7 @@
 
     ScrollView:
         do_scroll_y: True
+        padding: 0, 0, 0, dp(500)
 
         MDBoxLayout:
             id: engine_vertical_box_layout
@@ -47,6 +48,7 @@
                     size_hint_x: None
                     width: sp(300)
                     helper_text_mode: "persistent"
+                    on_text_validate: app.next_text_field(self)
 
                 MDIconButton:
                     size_hint_x: None
@@ -73,6 +75,7 @@
                     input_filter: 'int'
                     size_hint_x: None
                     width: sp(300)
+                    on_text_validate: app.next_text_field(self)
                     helper_text_mode: "persistent"
 
                 MDIconButton:
@@ -115,9 +118,6 @@
                     on_press: app.dialog_information("add_rpm_torque_entries")
 
 
-
-
-
             MDBoxLayout:
                 orientation: "horizontal"
                 adaptive_width: False
@@ -141,6 +141,5 @@
                     md_bg_color: app.theme_cls.primary_color
                     pos_hint: {"center_y": 0.5}
                     on_release: app.remove_rpm_torque_text_field()
-
 
 

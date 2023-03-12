@@ -298,12 +298,15 @@ class INIEditor(tk.Tk):
             rpm_curve = np.append(rpm_curve, (int(rpm_torque[0])))
             torque_curve = np.append(torque_curve, (int((rpm_torque[1]))))
 
+
         # data interpolation
         max_rpm = int(rpm_curve[len(rpm_curve) - 1])
         torque_curve = [x * (1 - drivetrain_loss_percentage / 100) for x in torque_curve]
         rpm_torque_interpolation = interp1d(rpm_curve, torque_curve, kind="cubic")
         rpm_curve = np.linspace(np.min(rpm_curve), np.max(rpm_curve), max_rpm - idle_rpm)
         torque_curve = rpm_torque_interpolation(rpm_curve)[:redline_rpm + 1]
+        print("torque curve len", len(torque_curve))
+        print("rpm curve len", len(rpm_curve))
         horsepower_curve = np.array([torque * rpm / 7127 for torque, rpm in zip(torque_curve, rpm_curve)])
         rpm_torque_interpolation = interp1d(rpm_curve, torque_curve, kind="cubic")
         torque_curve = rpm_torque_interpolation(rpm_curve)[:redline_rpm + 1]

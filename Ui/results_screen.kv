@@ -5,6 +5,7 @@
         do_scroll_y: True
 
         MDBoxLayout:
+            id: resultsscreen_vertical_boxlayout
             orientation: "vertical"
             adaptive_width: False
             spacing: sp(110)
@@ -45,6 +46,7 @@
                     mode: "fill"
                     input_filter: 'int'
                     size_hint_x: None
+                    on_text_validate: app.next_text_field(self)
                     width: sp(300)
 
                 MDIconButton:
@@ -73,6 +75,7 @@
                     mode: "fill"
                     input_filter: 'int'
                     size_hint_x: None
+                    on_text_validate: app.next_text_field(self)
                     width: sp(300)
 
                 MDIconButton:

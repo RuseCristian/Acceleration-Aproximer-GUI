@@ -43,6 +43,7 @@
 
                 MDTextField:
                     hint_text: "Car Name"
+                    on_text_validate: app.next_text_field(self)
                     mode: "fill"
                     size_hint_x: None
                     width: sp(300)
@@ -64,6 +65,7 @@
                     mode: "fill"
                     input_filter: 'int'
                     size_hint_x: None
+                    on_text_validate: app.next_text_field(self)
                     width: sp(300)
 
 
@@ -83,8 +85,10 @@
                     mode: "fill"
                     size_hint_x: None
                     width: sp(300)
+                    on_text_validate: app.next_text_field(self)
                     helper_text: "Percentage of mass on the front axle of the car, between 0 and 100"
                     helper_text_mode: "persistent"
+                    on_text_validate: app.next_text_field(self)
                     input_filter: lambda x,y: str(x) if str(self.text+x).isdigit() and 0 < int(self.text+x) < 100 else False
 
 
@@ -151,6 +155,7 @@
                     hint_text: "Wheel Base"
                     size_hint_x: None
                     width: sp(300)
+                    on_text_validate: app.next_text_field(self)
                     mode: "fill"
 
                 MDIconButton:
@@ -184,6 +189,7 @@
                     hint_text: "Track Width"
                     size_hint_x: None
                     width: sp(300)
+                    on_text_validate: app.next_text_field(self)
                     mode: "fill"
 
                 MDIconButton:
@@ -218,6 +224,7 @@
                     hint_text: "Roll Center Height"
                     size_hint_x: None
                     width: sp(300)
+                    on_text_validate: app.next_text_field(self)
                     mode: "fill"
 
 
@@ -253,6 +260,7 @@
                     hint_text: "Roll Stiffness"
                     size_hint_x: None
                     width: sp(300)
+                    on_text_validate: app.next_text_field(self)
                     mode: "fill"
 
                 MDIconButton:
@@ -265,4 +273,3 @@
                     opacity: 1 if self.visible else 0
                     disabled: not self.visible
                     on_press: app.dialog_information("car_roll_stiffness")
-
