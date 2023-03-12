@@ -249,11 +249,11 @@ class AccelerationApproximator(MDApp):
         self.box_layout.add_widget(self.widget)
         self.box_layout.add_widget(self.rpm_text_field)
         self.box_layout.add_widget(self.torque_text_field)
-        engine_screen = self.root.ids.main_screen.ids.enginescreen_1.ids.vertical_box_layout
+        engine_screen = self.root.ids.main_screen.ids.enginescreen_1.ids.engine_vertical_box_layout
         engine_screen.add_widget(self.box_layout)
 
     def remove_rpm_torque_text_field(self):
-        engine_screen = self.root.ids.main_screen.ids.enginescreen_1.ids.vertical_box_layout
+        engine_screen = self.root.ids.main_screen.ids.enginescreen_1.ids.engine_vertical_box_layout
         try:
             if len(engine_screen.children) > 7:
                 # Get the first child widget and set its size_hint_y to None
@@ -273,7 +273,8 @@ class AccelerationApproximator(MDApp):
         parent_widget = self.root.ids.main_screen.ids.drivetrainscreen_1.ids.drivetrain_vertical_boxlayout
         print(len(parent_widget.children))
         for i in range(0, self.number_of_gears):
-            self.box_layout = MDBoxLayout(orientation='horizontal', size_hint_x=.5, spacing=sp(20), id=f"gear_{i + 1}_boxlayout", adaptive_width=False,pos_hint={"center_x":.5, "center_y":5})
+            self.box_layout = MDBoxLayout(orientation='horizontal', size_hint_x=.5, spacing=sp(20), id=f"gear_{i + 1}_boxlayout", adaptive_width=False,
+                                          pos_hint={"center_x": .5, "center_y": 5})
             self.gear_textfield = MDTextField(hint_text=f"Gear {i + 1} Ratio", mode="fill", size_hint_x=None, input_filter="float", width=sp(300))
             self.box_layout.add_widget(self.gear_textfield)
             parent_widget.add_widget(self.box_layout)
@@ -287,6 +288,70 @@ class AccelerationApproximator(MDApp):
         except Exception as e:
             print(e)
             pass
+
+    def get_tab_data(self):
+        tab_data = {"car_info": {}, "engine_info": {}, "drivetrain_info": {}, "tire_info": {}, "aero_info": {}}
+
+        # car info
+        widget_parent = self.root.ids.main_screen.ids.carscreen_1.ids.carScreen_vertical_layout
+        for i in widget_parent.children:
+            for j in i.children:
+                if isinstance(j, MDTextField):
+                    if j.text != "":
+                        tab_data["car_info"][j._MDTextField__hint_text] = j.text
+                    else:
+                        tab_data["car_info"][j._MDTextField__hint_text] = None
+
+        # engine info
+        widget_parent = self.root.ids.main_screen.ids.enginescreen_1.ids.engine_vertical_box_layout
+        rpm_torque_index = 0
+        for i in reversed(widget_parent.children):
+            for j in i.children:
+                if isinstance(j, MDTextField):
+                    if j._MDTextField__hint_text == "RPM":
+                        tab_data["engine_info"][f"RPM_{rpm_torque_index}"] = j.text
+                    elif j._MDTextField__hint_text == "Torque":
+                        tab_data["engine_info"][f"Torque_{rpm_torque_index}"] = j.text
+                        rpm_torque_index += 1
+                    else:
+                        if j.text != "":
+                            tab_data["engine_info"][j._MDTextField__hint_text] = j.text
+                        else:
+                            tab_data["engine_info"][j._MDTextField__hint_text] = None
+
+        widget_parent = self.root.ids.main_screen.ids.drivetrainscreen_1.ids.drivetrain_vertical_boxlayout
+        for i in widget_parent.children:
+            for j in i.children:
+                if isinstance(j, MDTextField):
+                    if j.text != "":
+                        tab_data["drivetrain_info"][j._MDTextField__hint_text] = j.text
+                    else:
+                        tab_data["drivetrain_info"][j._MDTextField__hint_text] = None
+
+        widget_parent = self.root.ids.main_screen.ids.tirescreen_1.ids.tire_vertical_boxlayout
+        for i in widget_parent.children:
+            for j in i.children:
+                if isinstance(j, MDTextField):
+                    if j.text != "":
+                        tab_data["tire_info"][j._MDTextField__hint_text] = j.text
+                    else:
+                        tab_data["tire_info"][j._MDTextField__hint_text] = None
+
+        widget_parent = self.root.ids.main_screen.ids.aeroscreen_1.ids.aero_vertical_boxlayout
+        for i in widget_parent.children:
+            for j in i.children:
+                if isinstance(j, MDTextField):
+                    if j.text != "":
+                        tab_data["aero_info"][j._MDTextField__hint_text] = j.text
+                    else:
+                        tab_data["aero_info"][j._MDTextField__hint_text] = None
+
+        return tab_data
+
+    def estimate_acceleration(self):
+
+        ui_data = self.get_tab_data()
+        print(ui_data)
 
 
 AccelerationApproximator().run()

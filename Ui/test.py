@@ -1,55 +1,51 @@
-from kivy.lang import Builder
-from kivy.properties import ObjectProperty
-from math import floor
-
-from kivy.core.window import Window
-from kivy.lang.builder import Builder
-from kivy.metrics import dp, sp
-from kivy.properties import StringProperty
-from kivy.uix.screenmanager import Screen
-from kivy.uix.widget import Widget
 from kivymd.app import MDApp
-from kivymd.uix.boxlayout import MDBoxLayout
-from kivymd.uix.button import MDFlatButton
-from kivymd.uix.dialog import MDDialog
-from kivymd.uix.floatlayout import MDFloatLayout
-from kivymd.uix.list import OneLineIconListItem
-from kivymd.uix.menu import MDDropdownMenu
-from kivymd.uix.tab import MDTabsBase
-from kivymd.uix.textfield import MDTextField
-
-KV = '''
-MDScreen:
-
-    MDDropdownMenu:
-        id: dropdown_menu
-        items: ["Item 1", "Item 2", "Item 3"]
-        pos_hint: {'center_x': 0.5, 'center_y': 0.5}
-        width: 200
-        caller: app.root.ids.text_field
-
-    MDTextField:
-        id: text_field
-        hint_text: "Selected Item"
-        pos_hint: {'center_x': 0.5, 'center_y': 0.3}
-        size_hint_x: None
-        width: 200
-'''
+from kivy.uix.screenmanager import Screen, ScreenManager
+from kivy.properties import ObjectProperty
 
 
-class TestApp(MDApp):
-    dropdown_menu = ObjectProperty()
+class MainScreen(Screen):
+    pass
 
+
+class SettingsScreen(Screen):
+    pass
+
+
+class InfoScreen(Screen):
+    pass
+
+
+class TabbedScreen(Screen):
+    tab_content = ObjectProperty()
+
+    def on_pre_enter(self):
+        # Bind the button to the get_tab_data method
+        self.ids.get_data_button.bind(on_press=self.get_tab_data)
+
+    def get_tab_data(self, *args):
+        data = {}
+        for tab in self.tab_content.tab_list:
+            for child in tab.content.children:
+                if hasattr(child, "text"):
+                    data.setdefault(tab.text, {})[child.id] = child.text
+        print(data)
+
+
+class MyApp(MDApp):
     def build(self):
-        self.root = Builder.load_string(KV)
-        self.dropdown_menu = self.root.ids.dropdown_menu
-        return self.root
+        sm = ScreenManager()
+        sm.add_widget(MainScreen(name="main"))
+        sm.add_widget(SettingsScreen(name="settings"))
+        sm.add_widget(InfoScreen(name="info"))
+        sm.add_widget(TabbedScreen(name="tabbed"))
+        return sm
 
-    def on_start(self):
-        self.dropdown_menu.menu.bind(on_release=self.print_current_item)
+    def get_tab_data(self, *args):
+        # Get the current screen and call its get_tab_data method
+        screen = self.root.current_screen
+        if isinstance(screen, TabbedScreen):
+            screen.get_tab_data()
 
-    def print_current_item(self, instance):
-        print(f"Current item: {instance.current_item}")
 
-
-TestApp().run()
+if __name__ == "__main__":
+    MyApp().run()
