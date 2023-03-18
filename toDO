@@ -11,63 +11,7 @@ suport diferential?
 
 
 
-
-            MDBoxLayout:
-                orientation: "horizontal"
-                adaptive_width: False
-                size_hint_x: 0.5
-                spacing: sp(20)
-                pos_hint: {"center_x": 0.5, "center_y": 0.5}
-
-                Widget:
-                    size_hint_x: None
-                    width: (self.parent.width - sp(300) - sp(40)) / 2
-
-                MDTextField:
-                    hint_text: "Car Mass Distribution"
-                    mode: "fill"
-                    size_hint_x: None
-                    width: sp(300)
-                    helper_text: "Percentage of mass on the front axle of the car, between 0 and 100"
-                    helper_text_mode: "persistent"
-                    input_filter: lambda x,y: str(x) if str(self.text+x).isdigit() and 0 < int(self.text+x) < 100 else False
-
-
-                MDIconButton:
-                    size_hint_x: None
-                    width: sp(24)
-                    icon: 'information'
-                    padding: sp(2)
-                    on_press: app.dialog_information("car_mass_distribution")
-
-
-            MDBoxLayout:
-                orientation: "horizontal"
-                size_hint_x: 0.5
-                spacing: sp(20)
-                pos_hint: {"center_x": 0.5, "center_y": 0.5}
-
-                Widget:
-                    size_hint_x: None
-                    width: (self.parent.width - sp(300) - sp(40)) / 2
-
-                MDLabel:
-                    text: "Extra Calculations (Weight Shifting)"
-                    size_hint: None, None
-                    size: self.texture_size
-                    width: sp(300)
-
-                MDSwitch:
-                    id: weight_shifting_switch
-                    thumb_color_down: 1,0,0,1
-                    pos_hint: {"center_y": 0.5}
-                    name: "weight_shifting_calculations"
-                    active: False
-                    on_active: app.show_hide_ui(self, self.active, wheelbase_field, track_width_field, roll_center_height_field, roll_stiffness_field, wheelbase_field_info, track_width_field_info, roll_center_height_field_info, roll_stiffness_field_info)
-
-                MDIconButton:
-                    size_hint_x: None
-                    width: sp(24)
-                    icon: 'information'
-                    padding: sp(2)
-                    on_press: app.dialog_information("weight_shifting")
+centreaza alea, fale scalable, fa scroll ul sa lase spatiu in jos
+fa sa poti sa treci din tab in tab
+pune grafic
+demo pe telefon

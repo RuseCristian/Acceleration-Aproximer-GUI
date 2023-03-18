@@ -17,6 +17,8 @@ from kivymd.uix.tab import MDTabsBase
 from kivymd.uix.textfield import MDTextField
 from plotly.subplots import make_subplots
 from scipy.interpolate import interp1d
+from kivy_garden.graph import Graph, MeshLinePlot
+
 
 Builder.load_file("aero_screen.kv")
 Builder.load_file("car_info_screen.kv")
@@ -26,6 +28,7 @@ Builder.load_file("engine_screen.kv")
 Builder.load_file("results_screen.kv")
 Builder.load_file("settings_screen.kv")
 Builder.load_file("tire_screen.kv")
+Builder.load_file("graph_screen.kv")
 
 
 class Tab(MDFloatLayout, MDTabsBase):
@@ -35,6 +38,8 @@ class Tab(MDFloatLayout, MDTabsBase):
 class ContentNavigationDrawer(MDBoxLayout):
     pass
 
+class GraphScreen(Screen):
+    pass
 
 class SettingsScreen(Screen):
     pass
@@ -167,7 +172,7 @@ class AccelerationApproximator(MDApp):
         self.dialog = None
         self.rpm_torque_rows = 0
 
-        menu_items = [
+        dropdown_gear_items = [
             {
                 "viewclass": "OneLineListItem",
                 "text": "2",
@@ -199,15 +204,42 @@ class AccelerationApproximator(MDApp):
                 "on_release": lambda item=self.screen.ids.main_screen.ids.drivetrainscreen_1.ids.button, text="7": self.callback(item, text)
             }
         ]
+        dropdown_graph_items = [
+            {
+                "viewclass": "OneLineListItem",
+                "text": "2",
+                "on_release": lambda item=self.screen.ids.main_screen.ids.resultscreen_1.ids.button, text="2": self.show_graph(item, text),
+            },
+            {
+                "viewclass": "OneLineListItem",
+                "text": "3",
+                "on_release": lambda item=self.screen.ids.main_screen.ids.resultscreen_1.ids.button, text="3": self.show_graph(item, text)
+            }
 
-        self.dropdown1 = MDDropdownMenu(items=menu_items, width_mult=4, caller=self.screen.ids.main_screen.ids.drivetrainscreen_1.ids.button)
+        ]
+
+        self.dropdown_menu_graphs = MDDropdownMenu(items=dropdown_graph_items, width_mult=4, caller=self.screen.ids.main_screen.ids.resultscreen_1.ids.button)
+        self.dropdown_menu_gears = MDDropdownMenu(items=dropdown_gear_items, width_mult=4, caller=self.screen.ids.main_screen.ids.drivetrainscreen_1.ids.button)
+
         Window.size = (1080, 2220)
         return self.screen
+
+    def go_back(self):
+        screen_manager = self.root.ids.manager
+        screen_manager.current = "MainScreen"
+        print("tewst")
+
+    def show_graph(self, item, text):
+        screen_manager = self.root.ids.manager
+        screen_manager.current = "GraphScreen"
+
+        self.dropdown_menu_graphs.dismiss()
 
     def callback(self, item, text):
         self.number_of_gears = int(text)
         self.remove_gear_text_fields()
         self.add_gear_text_fields()
+        self.dropdown_menu_gears.dismiss()
 
     def show_hide_ui(self, switchObject, switchValue, *args):
         if switchValue:
@@ -241,7 +273,7 @@ class AccelerationApproximator(MDApp):
         self.rpm_torque_rows += 1
         self.box_layout = MDBoxLayout(orientation='horizontal', size_hint_x=.5, spacing=sp(20), id=f"rpm_torque{self.rpm_torque_rows}_boxlayout",
                                       pos_hint={"center_x": 0.5, "center_y": 0.5}, adaptive_width=False)
-        self.widget = Widget(size_hint_x=0.1)
+        self.widget = Widget(size_hint_x=None, width=(self.box_layout.width - sp(300) - sp(40)/2))
         self.rpm_text_field = MDTextField(hint_text=f"RPM",
                                           on_text_validate=lambda widget: self.next_text_field(widget, True),
                                           mode="fill", width=sp(150),
@@ -276,6 +308,7 @@ class AccelerationApproximator(MDApp):
             pass
 
     def add_gear_text_fields(self):
+
         parent_widget = self.root.ids.main_screen.ids.drivetrainscreen_1.ids.drivetrain_vertical_boxlayout
         for i in range(0, self.number_of_gears):
             self.box_layout = MDBoxLayout(orientation='horizontal',
@@ -736,6 +769,6 @@ class AccelerationApproximator(MDApp):
         print(f"{initial_speed_kmh} - {final_speed_kmh} km/h in {round(total_time, 3)} seconds")
         fig.update_layout(showlegend=False)
         fig.show()
-
+        self.root.ids.manager.switch_screen('graph_screen')
 
 AccelerationApproximator().run()

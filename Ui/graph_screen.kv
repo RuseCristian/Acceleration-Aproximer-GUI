@@ -1,0 +1,28 @@
+<GraphScreen>:
+    name: "GraphScreen"
+
+    MDTopAppBar:
+        title: "Acceleration Approximer"
+        pos_hint: {"top": 1}
+        size_hint_y: 0.05
+        elevation: 0
+        #left_action_items: [['menu', lambda x: root.parent.parent.children[0].set_state("open")]]
+        right_action_items: [["arrow-left", lambda x: print("Button clicked")]]
+
+    ScrollView:
+        do_scroll_y: True
+
+        MDBoxLayout:
+            id: graph_vertical_boxlayout
+            orientation: "vertical"
+            adaptive_width: False
+            spacing: sp(110)
+            padding: sp(50)
+            size_hint_y: None
+            size: self.minimum_size
+            pos_hint: {'center_x': 0.5}
+
+            MDBoxLayout:
+                orientation: "horizontal"
+                adaptive_width: False
+                spacing: sp(20)
