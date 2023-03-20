@@ -1,7 +1,8 @@
+import matplotlib.pyplot as plt
 import numpy as np
 import plotly.graph_objects as go
 from kivy.core.window import Window
-from kivy.lang.builder import Builder
+from kivy.lang import Builder
 from kivy.metrics import sp
 from kivy.properties import StringProperty
 from kivy.uix.screenmanager import Screen
@@ -17,8 +18,7 @@ from kivymd.uix.tab import MDTabsBase
 from kivymd.uix.textfield import MDTextField
 from plotly.subplots import make_subplots
 from scipy.interpolate import interp1d
-from kivy_garden.graph import Graph, MeshLinePlot
-
+from kivy.garden.matplotlib.backend_kivyagg import FigureCanvasKivyAgg
 
 Builder.load_file("aero_screen.kv")
 Builder.load_file("car_info_screen.kv")
@@ -30,7 +30,6 @@ Builder.load_file("settings_screen.kv")
 Builder.load_file("tire_screen.kv")
 
 
-
 class Tab(MDFloatLayout, MDTabsBase):
     '''Class implementing content for a tab.'''
 
@@ -38,8 +37,10 @@ class Tab(MDFloatLayout, MDTabsBase):
 class ContentNavigationDrawer(MDBoxLayout):
     pass
 
+
 class GraphScreen(Screen):
     pass
+
 
 class SettingsScreen(Screen):
     pass
@@ -208,7 +209,7 @@ class AccelerationApproximator(MDApp):
             {
                 "viewclass": "OneLineListItem",
                 "text": "2",
-                "on_release": lambda item=self.screen.ids.main_screen.ids.resultscreen_1.ids.button, text="2": self.show_graph(item, text),
+                "on_release": lambda item=self.screen.ids.main_screen.ids.resultscreen_1.ids.button, text="Horsepower": self.show_graph(item, text),
             },
             {
                 "viewclass": "OneLineListItem",
@@ -233,6 +234,17 @@ class AccelerationApproximator(MDApp):
     def show_graph(self, item, text):
         screen_manager = self.root.ids.manager
         screen_manager.current = "graph_screen"
+
+        if text == "Horsepower":
+            y = self.gear_information[0].torque_at_the_wheels / self.gear_information[0].ratio / 4.1
+            x = self.gear_information[0].rpm
+
+        plt.plot(x, y)
+        plt.ylabel("This is MY Y Axis")
+        plt.xlabel("X Axis")
+
+        box = self.root.ids.graph_box
+        box.add_widget(FigureCanvasKivyAgg(plt.gcf()))
 
         self.dropdown_menu_graphs.dismiss()
 
@@ -274,7 +286,7 @@ class AccelerationApproximator(MDApp):
         self.rpm_torque_rows += 1
         self.box_layout = MDBoxLayout(orientation='horizontal', size_hint_x=.5, spacing=sp(20), id=f"rpm_torque{self.rpm_torque_rows}_boxlayout",
                                       pos_hint={"center_x": 0.5, "center_y": 0.5}, adaptive_width=False)
-        self.widget = Widget(size_hint_x=None, width=(self.box_layout.width - sp(300) - sp(40)/2))
+        self.widget = Widget(size_hint_x=None, width=(self.box_layout.width - sp(300) - sp(40) / 2))
         self.rpm_text_field = MDTextField(hint_text=f"RPM",
                                           on_text_validate=lambda widget: self.next_text_field(widget, True),
                                           mode="fill", width=sp(150),
@@ -770,7 +782,9 @@ class AccelerationApproximator(MDApp):
         print(f"{initial_speed_kmh} - {final_speed_kmh} km/h in {round(total_time, 3)} seconds")
         fig.update_layout(showlegend=False)
         fig.show()
-        screen_manager = self.root.ids.manager
-        screen_manager.current = "graph_screen"
+        self.gear_information = gears
+        # screen_manager = self.root.ids.manager
+        # screen_manager.current = "graph_screen"
+
 
 AccelerationApproximator().run()
