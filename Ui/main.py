@@ -28,7 +28,7 @@ Builder.load_file("engine_screen.kv")
 Builder.load_file("results_screen.kv")
 Builder.load_file("settings_screen.kv")
 Builder.load_file("tire_screen.kv")
-Builder.load_file("graph_screen.kv")
+
 
 
 class Tab(MDFloatLayout, MDTabsBase):
@@ -226,12 +226,13 @@ class AccelerationApproximator(MDApp):
 
     def go_back(self):
         screen_manager = self.root.ids.manager
-        screen_manager.current = "MainScreen"
-        print("tewst")
+        screen_names = [screen.name for screen in screen_manager.screens]
+        screen_manager.current = "main_screen"
+        print(screen_names)
 
     def show_graph(self, item, text):
         screen_manager = self.root.ids.manager
-        screen_manager.current = "GraphScreen"
+        screen_manager.current = "graph_screen"
 
         self.dropdown_menu_graphs.dismiss()
 
@@ -769,6 +770,7 @@ class AccelerationApproximator(MDApp):
         print(f"{initial_speed_kmh} - {final_speed_kmh} km/h in {round(total_time, 3)} seconds")
         fig.update_layout(showlegend=False)
         fig.show()
-        self.root.ids.manager.switch_screen('graph_screen')
+        screen_manager = self.root.ids.manager
+        screen_manager.current = "graph_screen"
 
 AccelerationApproximator().run()

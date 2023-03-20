@@ -7,12 +7,59 @@ Screen:
             id: manager
 
             MainScreen:
+                name: 'main_screen'
                 id: main_screen
+
             GraphScreen:
+                name: 'graph_screen'
                 id: graph_screen
+                MDTopAppBar:
+                    title: "Acceleration Approximer"
+                    pos_hint: {"top": 1}
+                    size_hint_y: 0.05
+                    elevation: 0
+                    left_action_items: [['menu', lambda x: nav_drawer.set_state("open")]]
+                    right_action_items: [["arrow-left", lambda x: app.go_back()]]
+
+                ScrollView:
+                    do_scroll_y: True
+
+                    MDBoxLayout:
+                        id: drivetrain_vertical_boxlayout
+                        orientation: "vertical"
+                        adaptive_width: False
+                        spacing: sp(110)
+                        padding: sp(50)
+                        size_hint_y: None
+                        height: sp(300)  # Replace with your desired height
+                        pos_hint: {'top': .7 ,'center_x': 0.5}
+
+                        MDBoxLayout:
+                            orientation: "horizontal"
+                            adaptive_width: False
+                            size_hint_x: 0.5
+                            spacing: sp(20)
+
+                            Widget:
+                                size_hint_x: None
+                                width: (self.parent.width - sp(300) - sp(40)) / 2
+
+                            MDIconButton:
+                                size_hint_x: None
+                                width: sp(24)
+                                icon: 'information'
+                                padding: sp(2)
+                                on_press: app.dialog_information("results_final_speed")
+
+
+
+
             SettingsScreen:
+                name: 'setting_sscreen'
                 id: settings_screen
+
             InfoScreen:
+                name: 'info_screen'
                 id: info_screen
 
 
@@ -121,3 +168,4 @@ Screen:
 
     IconLeftWidget:
         icon: root.icon
+
