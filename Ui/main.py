@@ -208,14 +208,39 @@ class AccelerationApproximator(MDApp):
         dropdown_graph_items = [
             {
                 "viewclass": "OneLineListItem",
-                "text": "2",
+                "text": "Horsepower",
                 "on_release": lambda item=self.screen.ids.main_screen.ids.resultscreen_1.ids.button, text="Horsepower": self.show_graph(item, text),
             },
             {
                 "viewclass": "OneLineListItem",
-                "text": "3",
-                "on_release": lambda item=self.screen.ids.main_screen.ids.resultscreen_1.ids.button, text="3": self.show_graph(item, text)
-            }
+                "text": "Acceleration",
+                "on_release": lambda item=self.screen.ids.main_screen.ids.resultscreen_1.ids.button, text="Acceleration": self.show_graph(item, text)
+            },
+            {
+                "viewclass": "OneLineListItem",
+                "text": "Air Resistance",
+                "on_release": lambda item=self.screen.ids.main_screen.ids.resultscreen_1.ids.button, text="Air Resistance": self.show_graph(item, text)
+            },
+            {
+                "viewclass": "OneLineListItem",
+                "text": "Downforce",
+                "on_release": lambda item=self.screen.ids.main_screen.ids.resultscreen_1.ids.button, text="Downforce": self.show_graph(item, text)
+            },
+            {
+                "viewclass": "OneLineListItem",
+                "text": "Torque",
+                "on_release": lambda item=self.screen.ids.main_screen.ids.resultscreen_1.ids.button, text="Torque": self.show_graph(item, text)
+            },
+            {
+                "viewclass": "OneLineListItem",
+                "text": "Torque (No opposing forces)",
+                "on_release": lambda item=self.screen.ids.main_screen.ids.resultscreen_1.ids.button, text="Torque (No opposing forces)": self.show_graph(item, text)
+            },
+            {
+                "viewclass": "OneLineListItem",
+                "text": "Gear Speeds",
+                "on_release": lambda item=self.screen.ids.main_screen.ids.resultscreen_1.ids.button, text="Gear Speeds": self.show_graph(item, text)
+            },
 
         ]
 
@@ -236,12 +261,107 @@ class AccelerationApproximator(MDApp):
         screen_manager.current = "graph_screen"
 
         if text == "Horsepower":
-            y = self.gear_information[0].torque_at_the_wheels / self.gear_information[0].ratio / 4.1
-            x = self.gear_information[0].rpm
+            torque_y = self.gear_information[0].torque_at_the_wheels / self.gear_information[0].ratio / self.gear_information[0].final_ratio
+            rpm = self.gear_information[0].rpm
+            plt.plot(rpm, torque_y, label="Torque")
+            plt.plot(rpm, self.horsepower_curve, label="Horsepower")
+            plt.ylabel("Torque & HP")
+            plt.xlabel("RPM")
+            plt.title("Horsepower")
+            plt.legend()
 
-        plt.plot(x, y)
-        plt.ylabel("This is MY Y Axis")
-        plt.xlabel("X Axis")
+        if text == "Acceleration":
+            count = 1
+            for i in self.gear_information:
+                if len(i.accel) != len(i.speed):
+                    if len(i.speed) > len(i.accel):
+                        i.speed = i.speed[:len(i.accel)]
+
+                plt.plot(i.speed * 3.6, i.accel / 9.81, label=f"Gear {count}")
+                count += 1
+
+            plt.ylabel("Acceleration (g)")
+            plt.xlabel("Speed (km/h)")
+            plt.title("Acceleration")
+
+            plt.legend()
+
+        if text == "Air Resistance":
+            for i in self.gear_information:
+                if len(i.air_resistance) != len(i.speed):
+                    if len(i.speed) > len(i.air_resistance):
+                        i.speed = i.speed[:len(i.air_resistance)]
+                plt.plot(i.speed * 3.6, i.air_resistance / 9.81, color='red')
+
+            plt.ylabel("Air Resistance (kgf)")
+            plt.xlabel("Speed (km/h)")
+            plt.title("Air Resistance")
+
+        if text == "Downforce":
+            for i in self.gear_information:
+                if len(i.downforce_curve) != len(i.speed):
+                    if len(i.speed) > len(i.downforce_curve):
+                        i.speed = i.speed[:len(i.downforce_curve)]
+                plt.plot(i.speed * 3.6, i.downforce_curve / 9.81, color='red')
+
+            plt.ylabel("Downforce (kgf)")
+            plt.xlabel("Speed (km/h)")
+            plt.title("Downforce")
+
+        if text == "Torque (No opposing forces)":
+            count = 1
+            for i in self.gear_information:
+                if len(i.torque_at_the_wheels) != len(i.speed):
+                    if len(i.speed) > len(i.torque_at_the_wheels):
+                        i.speed = i.speed[:len(i.torque_at_the_wheels)]
+
+                plt.plot(i.speed * 3.6, i.torque_at_the_wheels, label=f"Gear {count}")
+                count += 1
+
+            plt.ylabel("Torque (Nm)")
+            plt.xlabel("Speed (km/h)")
+            plt.title("Torque (No opposing forces")
+
+            plt.legend()
+
+        if text == "Torque":
+            count = 1
+            for i in self.gear_information:
+                if len(i.accel) != len(i.speed):
+                    if len(i.speed) > len(i.accel):
+                        i.speed = i.speed[:len(i.accel)]
+
+                plt.plot(i.speed * 3.6, i.accel * self.car_mass, label=f"Gear {count}")
+                count += 1
+
+            plt.ylabel("Torque (Nm)")
+            plt.xlabel("Speed (km/h)")
+            plt.title("Torque")
+            plt.legend()
+
+        if text == "Gear Speeds":
+            count = 1
+            for i in self.gear_information:
+                if len(i.accel) != len(i.speed):
+                    if len(i.speed) > len(i.accel):
+                        i.speed = i.speed[:len(i.accel)]
+                        i.rpm = i.rpm[:len(i.accel)]
+
+                plt.plot(i.speed * 3.6, i.rpm, label=f"Gear {count}")
+
+                if i != self.gear_information[len(self.gear_information) - 1] and i != self.gear_information[len(self.gear_information) - 2]:
+                    # calculate the x point
+                    x = i.speed[len(i.speed) - 1] * 3.6
+
+                    # plot the vertical
+                    plt.axvline(x=x, linestyle=':', color='black')
+
+                count += 1
+
+            plt.ylabel("RPM")
+            plt.xlabel("Speed (km/h)")
+            plt.title("Gear Speeds")
+            plt.legend()
 
         box = self.root.ids.graph_box
         box.add_widget(FigureCanvasKivyAgg(plt.gcf()))
@@ -516,8 +636,6 @@ class AccelerationApproximator(MDApp):
                 index -= 1
             return index, initial_velocity
 
-        fig = make_subplots(rows=2, cols=3)
-
         # for weight shifting extra calculations
         car_extra_calculations = False
         car_wheelbase = None  # meters
@@ -595,6 +713,7 @@ class AccelerationApproximator(MDApp):
         torque_curve = rpm_torque_interpolation(rpm_curve)[:redline_rpm + 1]
         horsepower_interpolation = interp1d(rpm_curve, horsepower_curve, kind="cubic")
         horsepower_curve = horsepower_interpolation(rpm_curve)[:redline_rpm + 1]
+        self.horsepower_curve = horsepower_curve
 
         # gear ratios
         gear_ratios = []
@@ -611,7 +730,7 @@ class AccelerationApproximator(MDApp):
             max_tractive_force = g * car_mass * front_weight_distribution * tire_mu
 
         class Gear:
-            def __init__(self, ratio, accel, rpm, speed, torque_at_the_wheels, air_resistance_curve, downforce_curve):
+            def __init__(self, ratio, accel, rpm, speed, torque_at_the_wheels, air_resistance_curve, downforce_curve, final_ratio):
                 self.dropdown_rpm = None
                 self.max_speed = None
                 self.optimum_upshift = None
@@ -622,6 +741,7 @@ class AccelerationApproximator(MDApp):
                 self.torque_at_the_wheels = torque_at_the_wheels
                 self.air_resistance = air_resistance_curve
                 self.downforce_curve = downforce_curve
+                self.final_ratio = final_ratio
 
             def add_optimum_upshift(self, value):
                 self.optimum_upshift = value
@@ -647,7 +767,7 @@ class AccelerationApproximator(MDApp):
             torque_at_the_wheels = np.array([x * gear_ratios[i] * gear_ratios[len(gear_ratios) - 1] for x in torque_curve])
 
             acceleration = np.array([])
-            for index in range(0, len(torque_curve) - 1):
+            for index in range(0, len(torque_curve)):
                 downforce = downforce_curve[index] * (downforce_distribution if layout == 'fwd' else (1 - downforce_distribution))
                 air_resistance = air_resistance_curve[index]
                 rolling_resistance = rolling_k * g * car_mass
@@ -665,7 +785,7 @@ class AccelerationApproximator(MDApp):
 
             # putting together all the info
             gear_info = Gear(gear_ratios[i], acceleration, rpm_curve, specific_speed, torque_at_the_wheels, air_resistance_curve,
-                             downforce_curve)
+                             downforce_curve, gear_ratios[len(gear_ratios) - 1])
             gears.append(gear_info)
 
         # finding the optimum upshift shift points for each gear
@@ -729,62 +849,12 @@ class AccelerationApproximator(MDApp):
             current_speed_ms = gears[current_gear].speed[current_rpm]
             current_rpm += 1
 
-        for i in range(len(gears)):
-            fig.add_trace(
-                go.Scatter(x=gears[i].speed * 3.6, y=gears[i].torque_at_the_wheels,
-                           name="Gear {}".format(i + 1)
-                           ), row=2, col=2
-            )
-            # torque vs speed in each gear (max potential speed)
-
-            fig.add_trace(
-                go.Scatter(x=gears[i].speed * 3.6, y=gears[i].accel / g,
-                           name="Gear {}".format(i + 1)
-                           ), row=1, col=2
-            )
-            # acceleration vs speed graph
-
-            # graphs
-            # torque vs rpm graph
-            fig = make_subplots(rows=2, cols=3)
-            fig.add_trace(
-                go.Scatter(x=rpm_curve, y=torque_curve,
-                           name="Torque(Nm)"
-                           ), row=1, col=1
-            )
-
-            # horsepower vs rpm graph
-            fig.add_trace(
-                go.Scatter(x=rpm_curve, y=horsepower_curve,
-                           name='HP'
-                           ), row=1, col=1
-            )
-
-        count2 = 1
-        for i in gears:
-            fig.add_trace(
-                go.Scatter(x=i.speed * 3.6, y=i.torque_at_the_wheels,
-                           name="Gear {}".format(count2)
-                           ), row=2, col=2
-            )
-            # torque vs speed in each gear (max potential speed)
-
-            fig.add_trace(
-                go.Scatter(x=i.speed * 3.6, y=i.accel / g,
-                           name="Gear {}".format(count2)
-                           ), row=1, col=2
-            )
-            count2 += 1
-            # acceleration vs speed graph
-
         for i in range(0, number_of_gears - 1):
             print(f"Gear {i + 1} Optimum Upshift - {gears[i].optimum_upshift + 1 + idle_rpm} RPM")
         print(f"{initial_speed_kmh} - {final_speed_kmh} km/h in {round(total_time, 3)} seconds")
-        fig.update_layout(showlegend=False)
-        fig.show()
+
         self.gear_information = gears
-        # screen_manager = self.root.ids.manager
-        # screen_manager.current = "graph_screen"
+        self.car_mass = car_mass
 
 
 AccelerationApproximator().run()
