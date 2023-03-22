@@ -4,7 +4,7 @@ import plotly.graph_objects as go
 from kivy.core.window import Window
 from kivy.lang import Builder
 from kivy.metrics import sp
-from kivy.properties import StringProperty
+from kivy.properties import StringProperty, ListProperty
 from kivy.uix.screenmanager import Screen
 from kivy.uix.widget import Widget
 from kivymd.app import MDApp
@@ -14,6 +14,7 @@ from kivymd.uix.dialog import MDDialog
 from kivymd.uix.floatlayout import MDFloatLayout
 from kivymd.uix.list import OneLineIconListItem
 from kivymd.uix.menu import MDDropdownMenu
+from kivymd.uix.pickers import MDColorPicker
 from kivymd.uix.tab import MDTabsBase
 from kivymd.uix.textfield import MDTextField
 from plotly.subplots import make_subplots
@@ -24,9 +25,8 @@ Builder.load_file("aero_screen.kv")
 Builder.load_file("car_info_screen.kv")
 Builder.load_file("drivetrain_screen.kv")
 Builder.load_file("engine_screen.kv")
-# Builder.load_file("info_screen.kv")
+Builder.load_file("info_screen.kv")
 Builder.load_file("results_screen.kv")
-Builder.load_file("settings_screen.kv")
 Builder.load_file("tire_screen.kv")
 
 
@@ -44,14 +44,6 @@ class GraphScreen(Screen):
 
 class SettingsScreen(Screen):
     pass
-    # switchTestMode = ObjectProperty(active=True)
-    # testModus = BooleanProperty(store.get('mode')['dev'])
-    #
-    # def save_settings(self):
-    #     print(self.switchTestMode.active)
-    #     store.put('mode', dev=self.switchTestMode.active)
-    #     print("saved settings")
-    #
 
 
 class InfoScreen(Screen):
@@ -170,8 +162,10 @@ class AccelerationApproximator(MDApp):
         self.theme_cls.primary_palette = "BlueGray"
         self.theme_cls.theme_style = "Dark"
         self.screen = Builder.load_file('main_ui.kv')
+
         self.dialog = None
         self.rpm_torque_rows = 0
+        self.rgb = ListProperty([1, 1, 1])
 
         dropdown_gear_items = [
             {
@@ -435,26 +429,34 @@ class AccelerationApproximator(MDApp):
     def add_rpm_torque_text_field(self):
 
         self.rpm_torque_rows += 1
-        self.box_layout = MDBoxLayout(orientation='horizontal', size_hint_x=.5, spacing=sp(20), id=f"rpm_torque{self.rpm_torque_rows}_boxlayout",
-                                      pos_hint={"center_x": 0.5, "center_y": 0.5}, adaptive_width=False)
-        self.widget = Widget(size_hint_x=None, width=(self.box_layout.width - sp(300) - sp(40) / 2))
+        self.box_layout2 = MDBoxLayout(orientation='vertical',
+                                       size_hint_x=.5,
+                                       spacing=sp(20),
+                                       adaptive_width=False)
+        self.box_layout = MDBoxLayout(orientation='horizontal',
+                                      size_hint_x=.5,
+                                      spacing=sp(20),
+                                      id=f"rpm_torque{self.rpm_torque_rows}_boxlayout",
+                                      adaptive_width=False,
+                                      pos_hint={"center_x": 0.95})
+
         self.rpm_text_field = MDTextField(hint_text=f"RPM",
                                           on_text_validate=lambda widget: self.next_text_field(widget, True),
                                           mode="fill", width=sp(150),
                                           size_hint_x=None,
                                           input_filter="float")
 
-        self.torque_text_field = MDTextField(hint_text=f"Torque",
+        self.torque_text_field = MDTextField(hint_text=f"Torque (Nm)",
                                              on_text_validate=lambda widget: self.next_text_field(widget, True),
                                              mode="fill", width=sp(150),
                                              size_hint_x=None,
                                              input_filter="float")
 
-        self.box_layout.add_widget(self.widget)
         self.box_layout.add_widget(self.rpm_text_field)
         self.box_layout.add_widget(self.torque_text_field)
+        self.box_layout2.add_widget(self.box_layout)
         engine_screen = self.root.ids.main_screen.ids.enginescreen_1.ids.engine_vertical_box_layout
-        engine_screen.add_widget(self.box_layout)
+        engine_screen.add_widget(self.box_layout2)
 
     def remove_rpm_torque_text_field(self):
         engine_screen = self.root.ids.main_screen.ids.enginescreen_1.ids.engine_vertical_box_layout
@@ -475,12 +477,17 @@ class AccelerationApproximator(MDApp):
 
         parent_widget = self.root.ids.main_screen.ids.drivetrainscreen_1.ids.drivetrain_vertical_boxlayout
         for i in range(0, self.number_of_gears):
+            self.box_layout2 = MDBoxLayout(orientation='vertical',
+                                          size_hint_x=.5,
+                                          spacing=sp(20),
+                                          id=f"gear_{i + 1}_boxlayout",
+                                          adaptive_width=False)
             self.box_layout = MDBoxLayout(orientation='horizontal',
                                           size_hint_x=.5,
                                           spacing=sp(20),
                                           id=f"gear_{i + 1}_boxlayout",
                                           adaptive_width=False,
-                                          pos_hint={"center_x": .5, "center_y": 5})
+                                          pos_hint={"center_x": 0.95})
 
             self.gear_textfield = MDTextField(hint_text=f"Gear {i + 1} Ratio",
                                               mode="fill",
@@ -489,7 +496,8 @@ class AccelerationApproximator(MDApp):
                                               input_filter="float",
                                               width=sp(300))
             self.box_layout.add_widget(self.gear_textfield)
-            parent_widget.add_widget(self.box_layout)
+            self.box_layout2.add_widget(self.box_layout)
+            parent_widget.add_widget(self.box_layout2)
 
     def remove_gear_text_fields(self):
         parent_widget = self.root.ids.main_screen.ids.drivetrainscreen_1.ids.drivetrain_vertical_boxlayout

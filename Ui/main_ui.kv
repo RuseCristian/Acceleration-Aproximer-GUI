@@ -36,11 +36,6 @@ Screen:
                             pos_hint: {"center_x": 0.5}
                             spacing: dp(20)
 
-
-            SettingsScreen:
-                name: 'setting_screen'
-                id: settings_screen
-
             InfoScreen:
                 name: 'info_screen'
                 id: info_screen
@@ -69,22 +64,13 @@ Screen:
                     size_hint_y: None
                     height: self.texture_size[1]
 
-                ScrollView:
-
+                ScrollView
                     MDList:
-                        OneLineIconListItem:
-                            text: 'Settings'
-                            on_press:
-                                root.ids.nav_drawer.set_state("close")
-                                root.ids.manager.current = 'setting_screen'
-                            IconLeftWidget:
-                                icon: 'settings'
-
                         OneLineIconListItem:
                             text: 'App Info'
                             on_press:
                                 root.ids.nav_drawer.set_state("close")
-                                root.ids.manager.current = 'info'
+                                root.ids.manager.current = 'info_screen'
                             IconLeftWidget:
                                 icon: 'information'
 

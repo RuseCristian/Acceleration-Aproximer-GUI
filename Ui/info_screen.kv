@@ -1,49 +1,111 @@
 
 <InfoScreen>
-    name: 'info'
-    on_back_press:
-        app.root.current = "main"
-    BoxLayout:
-        orientation: 'vertical'
+    MDBoxLayout:
+        orientation: "vertical"
+        adaptive_width: False
 
         MDTopAppBar:
-            title: "Acceleration Approximator - Info"
+            title: "Acceleration Approximer"
             pos_hint: {"top": 1}
-            size_hint_y: 0.1
+            size_hint_y: 0.05
             elevation: 0
-            left_action_items: [['menu', lambda x: root.parent.parent.children[0].set_state("open")]]
+            left_action_items: [['menu', lambda x: app.open_nav_drawer()]]
+            right_action_items: [["arrow-left", lambda x: app.go_back()]]
 
-        BoxLayout:
-            orientation: 'vertical'
-
-            MDLabel:
-                text: "Boilerplate Scanner App"
-                halign: 'center'
-                font_style: 'H5'
-                height: self.texture_size[1]
-
-            MDCard:
+        ScrollView:
+            do_scroll_y: True
+            MDBoxLayout:
                 orientation: "vertical"
-                padding: "20dp"
-                #size_hint: None, None
-                #size: "280dp", "180dp"
-                #pos_hint: {"center_x": .5, "center_y": .5}
+                adaptive_width: False
+                spacing: sp(150)
+                padding: sp(50)
+                size_hint_y: None
+                size: self.minimum_size
+                pos_hint: {'center_x': 0.5}
 
-                MDLabel:
-                    text: "Version: V0.1.0"
-                    height: self.texture_size[1]
+                MDBoxLayout:
+                    orientation: "horizontal"
+                    adaptive_width: False
+                    spacing: sp(20)
 
-                MDLabel:
-                    text: "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet."
-                    height: self.texture_size[1]
+                    MDLabel:
+                        pos_hint: {"center_x": 0.67}
+                        text: "Acceleration Approximer v0.1.0"
+                        font_style: "H4"
+                        theme_text_color: "Secondary"
+                        halign: 'center'
+                        anchor_x: 'center'
+                        width: self.parent.width
 
-            ScrollView:
+                MDBoxLayout:
+                    orientation: "vertical"
+                    adaptive_width: False
+                    spacing: sp(300)
 
-                MDList:
 
-                    TwoLineIconListItem:
-                        text: "Boilerplate Contact"
-                        secondary_text: "foo@bar.com"
+                MDBoxLayout:
+                    orientation: "horizontal"
+                    adaptive_width: False
+                    spacing: sp(20)
 
-                        IconLeftWidget:
-                            icon: "email"
+                    MDLabel:
+                        pos_hint: {"center_x": 0.67}
+                        text: "The Android app is designed to help car enthusiasts and professionals estimate the acceleration of a car based on various physical details. Users can input information about the car, such as its weight, horsepower, torque, and transmission type, to calculate the car's acceleration performance. The app uses advanced physics formulas to provide an accurate estimation of the car's acceleration, and the results can be displayed in a variety of formats, including graphs and charts. With this app, users can compare the acceleration performance of different cars and make informed decisions when purchasing or modifying a vehicle."
+                        font_style: "H4"
+                        theme_text_color: "Secondary"
+                        halign: 'center'
+                        anchor_x: 'center'
+                        width: self.parent.width
+
+                MDBoxLayout:
+                    orientation: "vertical"
+                    adaptive_width: False
+                    spacing: sp(300)
+
+                MDBoxLayout:
+                    orientation: "horizontal"
+                    adaptive_width: False
+                    spacing: sp(20)
+
+                    MDLabel:
+                        pos_hint: {"center_x": 0.67}
+                        text: "Contact Information:"
+                        font_style: "H4"
+                        theme_text_color: "Secondary"
+                        halign: 'center'
+                        anchor_x: 'center'
+                        width: self.parent.width
+
+                MDBoxLayout:
+                    orientation: "horizontal"
+                    adaptive_width: False
+                    spacing: sp(10)
+
+                    MDLabel:
+                        pos_hint: {"center_x": 0.5}
+                        text: "https://github.com/RuseCristian"
+                        font_style: "H4"
+                        theme_text_color: "Secondary"
+                        halign: 'center'
+                        anchor_x: 'center'
+                        width: self.parent.width
+
+                    MDIcon:
+                        icon: 'github'
+
+                MDBoxLayout:
+                    orientation: "horizontal"
+                    adaptive_width: False
+                    spacing: sp(10)
+
+
+                    MDLabel:
+                        pos_hint: {"center_x": 0.5}
+                        text: "rusecristiandrei@gmail.com"
+                        font_style: "H4"
+                        theme_text_color: "Secondary"
+                        halign: 'center'
+                        anchor_x: 'center'
+                        width: self.parent.width
+                    MDIcon:
+                        icon: 'card-account-mail'

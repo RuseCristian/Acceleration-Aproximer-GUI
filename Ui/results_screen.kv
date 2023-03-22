@@ -42,7 +42,7 @@
                     width: (self.parent.width - sp(300) - sp(40)) / 2
 
                 MDTextField:
-                    hint_text: "Initial Speed"
+                    hint_text: "Initial Speed (kmh)"
                     mode: "fill"
                     input_filter: 'int'
                     size_hint_x: None
@@ -67,11 +67,9 @@
                 Widget:
                     size_hint_x: None
                     width: (self.parent.width - sp(300) - sp(40)) / 2
-                    # sp(300) text field width, sp(40) spacing is 20, so for the 2 elements is 40 because the first element
-                    # has 20 spacing to its right and the second element has spacing 20 to its left
 
                 MDTextField:
-                    hint_text: "Final Speed"
+                    hint_text: "Final Speed (kmh)"
                     mode: "fill"
                     input_filter: 'int'
                     size_hint_x: None

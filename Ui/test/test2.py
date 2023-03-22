@@ -1,37 +1,47 @@
-from kivy.lang import Builder
 from kivymd.app import MDApp
-from kivy.uix.floatlayout import FloatLayout
-from kivy.garden.matplotlib.backend_kivyagg import FigureCanvasKivyAgg
-import matplotlib.pyplot as plt
-
-# Define what we want to graph
-x = [1, 2, 3, 4, 5]
-y = [5, 12, 6, 9, 15]
-
-plt.plot(x, y)
-plt.ylabel("This is MY Y Axis")
-plt.xlabel("X Axis")
+from kivy.uix.screenmanager import Screen
+from kivy.properties import ObjectProperty
+from kivymd.uix.picker import MDColorPicker
 
 
-class Matty(FloatLayout):
-    def __init__(self, **kwargs):
-        super().__init__(**kwargs)
+class ColorPickerScreen(Screen):
+    primary_color = ObjectProperty(None)
+    accent_color = ObjectProperty(None)
+    allowed_colors = ["Red", "Pink", "Purple", "DeepPurple", "Indigo", "Blue",
+                      "LightBlue", "Cyan", "Teal", "Green", "LightGreen", "Lime",
+                      "Yellow", "Amber", "Orange", "DeepOrange", "Brown", "Gray",
+                      "BlueGray"]
 
-        box = self.ids.box
-        box.add_widget(FigureCanvasKivyAgg(plt.gcf()))
+    def show_primary_color_picker(self):
+        picker = MDColorPicker()
+        picker.primary_color = self.primary_color.text
+        picker.allow_custom_color = False
+        picker.color = picker.primary_color
+        picker.open(callback=self.set_primary_color)
 
-    def save_it(self):
-        name = self.ids.namer.text
-        if name:
-            plt.savefig(name)
+    def show_accent_color_picker(self):
+        picker = MDColorPicker()
+        picker.primary_color = self.accent_color.text
+        picker.allow_custom_color = False
+        picker.color = picker.primary_color
+        picker.open(callback=self.set_accent_color)
+
+    def set_primary_color(self, instance):
+        self.primary_color.text = instance.color
+
+    def set_accent_color(self, instance):
+        self.accent_color.text = instance.color
 
 
-class MainApp(MDApp):
+class PaletteSelectorApp(MDApp):
     def build(self):
-        self.theme_cls.theme_style = "Dark"
-        self.theme_cls.primary_palette = "BlueGray"
-        Builder.load_file('matty.kv')
-        return Matty()
+        screen = ColorPickerScreen()
+        screen.allowed_colors = ["Red", "Pink", "Purple", "DeepPurple", "Indigo", "Blue",
+                                 "LightBlue", "Cyan", "Teal", "Green", "LightGreen", "Lime",
+                                 "Yellow", "Amber", "Orange", "DeepOrange", "Brown", "Gray",
+                                 "BlueGray"]
+        return screen
 
 
-MainApp().run()
+if __name__ == "__main__":
+    PaletteSelectorApp().run()
