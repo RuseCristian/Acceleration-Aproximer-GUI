@@ -1,13 +1,13 @@
 # AccelApproximer
 
-# AccelApproximer
-
 This is a simple desktop application that estimates the acceleration of a car based on certain parameters such as engine power, car weight, and gear ratio. The application also comes with a graphical user interface (GUI) that makes it easy to use and navigate.
 Installation
 
 To use this application, you need to have Python 3.6 or higher installed on your computer. You need to have kivy, kivymd, matplotlib, and the kivygarden matplotlib flower.
 
 Usage
+
+You can use the application with a simpler Tkinter interface which was used for prototyping or a KivyMd interface
 
 Once the application is running, you can enter the values for the different parameters using the sliders provided on the GUI. The application will then estimate the acceleration of the car based on these parameters and display the result in the output box.
 
