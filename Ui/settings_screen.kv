@@ -1,56 +1,53 @@
 
 <SettingsScreen>
-    switchTestMode: switchTestMode
 
-    name: 'settings'
-    BoxLayout:
-        orientation: 'vertical'
+    MDBoxLayout:
+        orientation: "vertical"
+        adaptive_width: False
 
         MDTopAppBar:
-            title: "Acceleration Approximator - Settings"
+            title: "Acceleration Approximer"
             pos_hint: {"top": 1}
-            size_hint_y: 0.1
+            size_hint_y: 0.05
             elevation: 0
-            left_action_items: [['menu', lambda x: root.parent.parent.children[0].set_state("open")]]
+            left_action_items: [['menu', lambda x: app.open_nav_drawer()]]
+            right_action_items: [["arrow-left", lambda x: app.close_settings_app()]]
 
-        MDGridLayout:
-            cols: 2
-            padding: dp(20)
-            adaptive_height: True
-            #md_bg_color: app.theme_cls.primary_color
+        ScrollView:
+            do_scroll_y: True
 
-            TwoLineListItem:
-                text: "Setting"
-                secondary_text: "Toggle switch"
-                #halign: 'center'
-                #pos_hint: {'center_x': .5, 'center_y': .5}
+            MDBoxLayout:
+                orientation: "vertical"
+                adaptive_width: False
+                spacing: sp(110)
+                padding: sp(50)
+                size_hint_y: None
+                size: self.minimum_size
+                pos_hint: {'center_x': 0.5}
 
-            MDSwitch:
-                id: switchTestMode
-                #active: root.testModus
+                MDLabel:
+                    text: 'Choose theme type:'
+                    halign: 'center'
+                    font_style: 'H6'
+                MDSwitch:
+                    id: theme_switch
+                    active: True
+                MDLabel:
+                    text: 'Light theme' if theme_switch.active else 'Dark theme'
+                    halign: 'center'
+                    font_style: 'Subtitle1'
 
-
-        Widget:
-
-        MDGridLayout:
-            cols: 2
-            padding: dp(20)
-            spacing: dp(20)
-            adaptive_height: True
-            #md_bg_color: app.theme_cls.primary_color
-
-            MDRectangleFlatButton:
-                text: "Save"
-                text_color: 1, 1, 1, 1
-                md_bg_color: app.theme_cls.primary_color
-                on_release:
-                    root.save_settings()
-                    root.manager.current = 'main'
-
-            MDRectangleFlatButton:
-                text: "Cancel"
-                on_release:
-                    root.manager.current = 'main'
-
-
+                # Choose accent color
+                MDLabel:
+                    text: 'Choose accent color:'
+                    halign: 'center'
+                    font_style: 'H6'
+                MDBoxLayout:
+                    adaptive_height: True
+                    spacing: dp(10)
+                    MDIconButton:
+                        icon: 'palette'
+                    MDLabel:
+                        halign: 'center'
+                        font_style: 'Subtitle1'
 

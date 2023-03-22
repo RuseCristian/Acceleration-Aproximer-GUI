@@ -252,13 +252,26 @@ class AccelerationApproximator(MDApp):
 
     def go_back(self):
         screen_manager = self.root.ids.manager
-        screen_names = [screen.name for screen in screen_manager.screens]
         screen_manager.current = "main_screen"
-        print(screen_names)
+        box = self.root.ids.graph_box
+        box.remove_widget(self.graph)
+        plt.clf()
+
+    def open_nav_drawer(self):
+        self.root.ids.nav_drawer.set_state("open")
+
+    def close_settings_app(self):
+        screen_manager = self.root.ids.manager
+        screen_manager.current = "main_screen"
 
     def show_graph(self, item, text):
         screen_manager = self.root.ids.manager
         screen_manager.current = "graph_screen"
+
+        if self.theme_cls.theme_style == "Dark":
+            plt.style.use("dark_background")
+        else:
+            plt.style.use("default")
 
         if text == "Horsepower":
             torque_y = self.gear_information[0].torque_at_the_wheels / self.gear_information[0].ratio / self.gear_information[0].final_ratio
@@ -273,25 +286,28 @@ class AccelerationApproximator(MDApp):
         if text == "Acceleration":
             count = 1
             for i in self.gear_information:
-                if len(i.accel) != len(i.speed):
-                    if len(i.speed) > len(i.accel):
-                        i.speed = i.speed[:len(i.accel)]
+                acceleration = i.accel
+                speed = i.speed
+                if len(acceleration) != len(speed):
+                    if len(speed) > len(acceleration):
+                        speed = speed[:len(acceleration)]
 
-                plt.plot(i.speed * 3.6, i.accel / 9.81, label=f"Gear {count}")
+                plt.plot(speed * 3.6, acceleration / 9.81, label=f"Gear {count}")
                 count += 1
 
             plt.ylabel("Acceleration (g)")
             plt.xlabel("Speed (km/h)")
             plt.title("Acceleration")
-
             plt.legend()
 
         if text == "Air Resistance":
             for i in self.gear_information:
-                if len(i.air_resistance) != len(i.speed):
-                    if len(i.speed) > len(i.air_resistance):
-                        i.speed = i.speed[:len(i.air_resistance)]
-                plt.plot(i.speed * 3.6, i.air_resistance / 9.81, color='red')
+                air_resistance = i.air_resistance
+                speed = i.speed
+                if len(air_resistance) != len(speed):
+                    if len(speed) > len(air_resistance):
+                        speed = speed[:len(air_resistance)]
+                plt.plot(speed * 3.6, air_resistance / 9.81, color='red')
 
             plt.ylabel("Air Resistance (kgf)")
             plt.xlabel("Speed (km/h)")
@@ -299,10 +315,14 @@ class AccelerationApproximator(MDApp):
 
         if text == "Downforce":
             for i in self.gear_information:
-                if len(i.downforce_curve) != len(i.speed):
-                    if len(i.speed) > len(i.downforce_curve):
-                        i.speed = i.speed[:len(i.downforce_curve)]
-                plt.plot(i.speed * 3.6, i.downforce_curve / 9.81, color='red')
+                downforce_curve = i.downforce_curve
+                speed = i.speed
+                acceleration = i.accel
+                if len(acceleration) != len(speed):
+                    if len(speed) > len(acceleration):
+                        speed = speed[:len(acceleration)]
+                        downforce_curve = downforce_curve[:len(acceleration)]
+                plt.plot(speed * 3.6, downforce_curve / 9.81, color='red')
 
             plt.ylabel("Downforce (kgf)")
             plt.xlabel("Speed (km/h)")
@@ -311,11 +331,13 @@ class AccelerationApproximator(MDApp):
         if text == "Torque (No opposing forces)":
             count = 1
             for i in self.gear_information:
-                if len(i.torque_at_the_wheels) != len(i.speed):
-                    if len(i.speed) > len(i.torque_at_the_wheels):
-                        i.speed = i.speed[:len(i.torque_at_the_wheels)]
+                torque_at_the_wheels = i.torque_at_the_wheels
+                speed = i.speed
+                if len(torque_at_the_wheels) != len(speed):
+                    if len(speed) > len(torque_at_the_wheels):
+                        speed = speed[:len(torque_at_the_wheels)]
 
-                plt.plot(i.speed * 3.6, i.torque_at_the_wheels, label=f"Gear {count}")
+                plt.plot(speed * 3.6, torque_at_the_wheels, label=f"Gear {count}")
                 count += 1
 
             plt.ylabel("Torque (Nm)")
@@ -327,11 +349,13 @@ class AccelerationApproximator(MDApp):
         if text == "Torque":
             count = 1
             for i in self.gear_information:
-                if len(i.accel) != len(i.speed):
-                    if len(i.speed) > len(i.accel):
-                        i.speed = i.speed[:len(i.accel)]
+                acceleration = i.accel
+                speed = i.speed
+                if len(acceleration) != len(speed):
+                    if len(speed) > len(acceleration):
+                        speed = speed[:len(acceleration)]
 
-                plt.plot(i.speed * 3.6, i.accel * self.car_mass, label=f"Gear {count}")
+                plt.plot(speed * 3.6, acceleration * self.car_mass, label=f"Gear {count}")
                 count += 1
 
             plt.ylabel("Torque (Nm)")
@@ -342,19 +366,20 @@ class AccelerationApproximator(MDApp):
         if text == "Gear Speeds":
             count = 1
             for i in self.gear_information:
-                if len(i.accel) != len(i.speed):
-                    if len(i.speed) > len(i.accel):
-                        i.speed = i.speed[:len(i.accel)]
-                        i.rpm = i.rpm[:len(i.accel)]
+                speed = i.speed
+                acceleration = i.accel
+                rpm = i.rpm
+                if len(acceleration) != len(speed):
+                    if len(speed) > len(acceleration):
+                        speed = speed[:len(acceleration)]
+                        rpm = rpm[:len(acceleration)]
 
-                plt.plot(i.speed * 3.6, i.rpm, label=f"Gear {count}")
+                plt.plot(speed * 3.6, rpm, label=f"Gear {count}")
 
-                if i != self.gear_information[len(self.gear_information) - 1] and i != self.gear_information[len(self.gear_information) - 2]:
-                    # calculate the x point
-                    x = i.speed[len(i.speed) - 1] * 3.6
+                if i != self.gear_information[len(self.gear_information) - 1]:
+                    x = speed[len(speed) - 1] * 3.6
 
-                    # plot the vertical
-                    plt.axvline(x=x, linestyle=':', color='black')
+                    plt.axvline(x=x, linestyle=':')
 
                 count += 1
 
@@ -364,7 +389,8 @@ class AccelerationApproximator(MDApp):
             plt.legend()
 
         box = self.root.ids.graph_box
-        box.add_widget(FigureCanvasKivyAgg(plt.gcf()))
+        self.graph = FigureCanvasKivyAgg(plt.gcf())
+        box.add_widget(self.graph)
 
         self.dropdown_menu_graphs.dismiss()
 
@@ -382,11 +408,16 @@ class AccelerationApproximator(MDApp):
             for i in args:
                 i.visible = False
 
-    def dialog_information(self, dictionary_entry):
+    def dialog_information(self, dictionary_entry, message=False):
+
+        if message:
+            text = dictionary_entry
+        else:
+            text = dialog_text_dictionary[dictionary_entry],
 
         if not self.dialog:
             self.dialog = MDDialog(
-                text=dialog_text_dictionary[dictionary_entry],
+                text=text,
                 buttons=[
                     MDFlatButton(
                         text="Continue",
@@ -557,10 +588,53 @@ class AccelerationApproximator(MDApp):
 
         return tab_data
 
+    def nested_dict_pairs_iterator(self, dict_obj):
+        for key, value in dict_obj.items():
+            if isinstance(value, dict):
+                for pair in self.nested_dict_pairs_iterator(value):
+                    yield (key, *pair)
+            else:
+                yield (key, value)
+
     def estimate_acceleration(self):
 
         # ui_data = self.get_tab_data()
-        # print(ui_data)
+        # optional_keys = ["Roll Stiffness", "Roll Center Height", "Track Width", "Wheel Base", "Negative Lift Coefficient", "Downforce Total Area", "Downforce Distribution"]
+        # weight_shifting_optional = ["Roll Stiffness", "Roll Center Height", "Track Width", "Wheel Base"]
+        # aero_extra = ["Negative Lift Coefficient", "Downforce Total Area", "Downforce Distribution"]
+        #
+        # if self.root.ids.main_screen.ids.carscreen_1.ids.weight_shifting_switch.active:
+        #     optional_keys = [i for i in optional_keys if i not in weight_shifting_optional]
+        #
+        # if self.root.ids.main_screen.ids.aeroscreen_1.ids.downforce_switch.active:
+        #     optional_keys = [i for i in optional_keys if i not in aero_extra]
+        #     ui_data["aero_info"]['Downforce Distribution'] = 0
+        #     ui_data["aero_info"]['Downforce Total Area'] = 0
+        #     ui_data["aero_info"]['Negative Lift Coefficient'] = 0
+        #
+        # alias_tabs = ["Car Info", "Engine", "Drivetrain", "Tire", "Aerodynamics", "Results"]
+        # for x in self.nested_dict_pairs_iterator(ui_data):
+        #     if x[2] is None and x[1] not in optional_keys:
+        #         if x[0] == "car_info":
+        #             tab_name = "Car Info"
+        #         elif x[0] == "engine_info":
+        #             tab_name = "Engine"
+        #         elif x[0] == "drivetrain_info":
+        #             tab_name = "Drivetrain"
+        #         elif x[0] == "tire_info":
+        #             tab_name = "Tire"
+        #         elif x[0] == "aero_info":
+        #             tab_name = "Aerodynamics"
+        #         elif x[0] == "results_info":
+        #             tab_name = "Results"
+        #         self.dialog_information(f"{x[1]} from {tab_name} tab does not have a value.", message=True)
+        #
+        #         try:
+        #             self.root.ids.main_screen.ids.resultscreen_1.ids.button.visible = False
+        #             self.root.ids.main_screen.ids.resultscreen_1.ids.accel_result.visible = False
+        #         except:
+        #             pass
+        #         return
 
         ui_data = {
             'car_info': {'Roll Stiffness': None, 'Roll Center Height': None, 'Track Width': None, 'Wheel Base': None, 'Car Mass Distribution': '50', 'Car Mass': '1035',
@@ -849,12 +923,11 @@ class AccelerationApproximator(MDApp):
             current_speed_ms = gears[current_gear].speed[current_rpm]
             current_rpm += 1
 
-        for i in range(0, number_of_gears - 1):
-            print(f"Gear {i + 1} Optimum Upshift - {gears[i].optimum_upshift + 1 + idle_rpm} RPM")
-        print(f"{initial_speed_kmh} - {final_speed_kmh} km/h in {round(total_time, 3)} seconds")
-
         self.gear_information = gears
         self.car_mass = car_mass
+        self.root.ids.main_screen.ids.resultscreen_1.ids.button.visible = True
+        self.root.ids.main_screen.ids.resultscreen_1.ids.accel_result.visible = True
+        self.root.ids.main_screen.ids.resultscreen_1.ids.accel_result.text = f"{initial_speed_kmh} - {final_speed_kmh} km/h in {round(total_time, 3)} seconds"
 
 
 AccelerationApproximator().run()

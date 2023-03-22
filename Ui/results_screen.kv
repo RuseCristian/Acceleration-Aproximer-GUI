@@ -109,5 +109,24 @@
                 MDIconButton:
                     id: button
                     icon: "chart-bell-curve"
+                    visible: False
+                    opacity: 1 if self.visible else 0
+                    disabled: not self.visible
                     pos_hint: {"center_x": .5, "center_y": .5}
                     on_release: app.dropdown_menu_graphs.open()
+
+            MDBoxLayout:
+                orientation: "vertical"
+                adaptive_width: False
+                spacing: sp(20)
+
+                MDLabel:
+                    id: accel_result
+                    pos_hint: {"center_x": 0.5}
+                    text: ""
+                    theme_text_color: "Secondary"
+                    halign: 'center'
+                    width: self.parent.width
+                    visible: False
+                    opacity: 1 if self.visible else 0
+                    disabled: not self.visible

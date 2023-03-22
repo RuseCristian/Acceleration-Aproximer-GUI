@@ -13,35 +13,32 @@ Screen:
             GraphScreen:
                 name: 'graph_screen'
                 id: graph_screen
-                MDTopAppBar:
-                    title: "Acceleration Approximer"
-                    pos_hint: {"top": 1}
-                    size_hint_y: 0.05
-                    elevation: 0
-                    left_action_items: [['menu', lambda x: nav_drawer.set_state("open")]]
-                    right_action_items: [["arrow-left", lambda x: app.go_back()]]
-
-                ScrollView:
-                    do_scroll_y: True
-
-                    MDBoxLayout:
-                        id: graph_box
-                        orientation: "horizontal"
-                        adaptive_width: False
-                        size_hint_x: 0.5
-                        pos_hint:{"top": 0.9}
-                        spacing: sp(20)
 
 
+                MDBoxLayout:
+                    orientation: "vertical"
+                    adaptive_width: False
 
+                    MDTopAppBar:
+                        title: "Acceleration Approximer"
+                        pos_hint: {"top": 1}
+                        size_hint_y: 0.05
+                        elevation: 0
+                        left_action_items: [['menu', lambda x: nav_drawer.set_state("open")]]
+                        right_action_items: [["arrow-left", lambda x: app.go_back()]]
 
+                    ScrollView:
+                        do_scroll_y: True
 
-
-
+                        BoxLayout:
+                            id: graph_box
+                            orientation: "horizontal"
+                            pos_hint: {"center_x": 0.5}
+                            spacing: dp(20)
 
 
             SettingsScreen:
-                name: 'setting_sscreen'
+                name: 'setting_screen'
                 id: settings_screen
 
             InfoScreen:
@@ -79,7 +76,7 @@ Screen:
                             text: 'Settings'
                             on_press:
                                 root.ids.nav_drawer.set_state("close")
-                                root.ids.manager.current = 'settings'
+                                root.ids.manager.current = 'setting_screen'
                             IconLeftWidget:
                                 icon: 'settings'
 
