@@ -1,12 +1,11 @@
 import matplotlib.pyplot as plt
 import numpy as np
-import plotly.graph_objects as go
 from kivy.core.window import Window
+from kivy.garden.matplotlib.backend_kivyagg import FigureCanvasKivyAgg
 from kivy.lang import Builder
 from kivy.metrics import sp
 from kivy.properties import StringProperty, ListProperty
 from kivy.uix.screenmanager import Screen
-from kivy.uix.widget import Widget
 from kivymd.app import MDApp
 from kivymd.uix.boxlayout import MDBoxLayout
 from kivymd.uix.button import MDFlatButton
@@ -14,20 +13,17 @@ from kivymd.uix.dialog import MDDialog
 from kivymd.uix.floatlayout import MDFloatLayout
 from kivymd.uix.list import OneLineIconListItem
 from kivymd.uix.menu import MDDropdownMenu
-from kivymd.uix.pickers import MDColorPicker
 from kivymd.uix.tab import MDTabsBase
 from kivymd.uix.textfield import MDTextField
-from plotly.subplots import make_subplots
 from scipy.interpolate import interp1d
-from kivy.garden.matplotlib.backend_kivyagg import FigureCanvasKivyAgg
 
-Builder.load_file("aero_screen.kv")
-Builder.load_file("car_info_screen.kv")
-Builder.load_file("drivetrain_screen.kv")
-Builder.load_file("engine_screen.kv")
-Builder.load_file("info_screen.kv")
-Builder.load_file("results_screen.kv")
-Builder.load_file("tire_screen.kv")
+Builder.load_file("Ui/aero_screen.kv")
+Builder.load_file("Ui/car_info_screen.kv")
+Builder.load_file("Ui/drivetrain_screen.kv")
+Builder.load_file("Ui/engine_screen.kv")
+Builder.load_file("Ui/info_screen.kv")
+Builder.load_file("Ui/results_screen.kv")
+Builder.load_file("Ui/tire_screen.kv")
 
 
 class Tab(MDFloatLayout, MDTabsBase):
@@ -161,7 +157,7 @@ class AccelerationApproximator(MDApp):
     def build(self):
         self.theme_cls.primary_palette = "BlueGray"
         self.theme_cls.theme_style = "Dark"
-        self.screen = Builder.load_file('main_ui.kv')
+        self.screen = Builder.load_file('Ui/main_ui.kv')
 
         self.dialog = None
         self.rpm_torque_rows = 0
