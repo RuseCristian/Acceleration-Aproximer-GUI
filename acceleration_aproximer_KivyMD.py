@@ -602,58 +602,60 @@ class AccelerationApproximator(MDApp):
 
     def estimate_acceleration(self):
 
-        # ui_data = self.get_tab_data()
-        # optional_keys = ["Roll Stiffness", "Roll Center Height", "Track Width", "Wheel Base", "Negative Lift Coefficient", "Downforce Total Area", "Downforce Distribution"]
-        # weight_shifting_optional = ["Roll Stiffness", "Roll Center Height", "Track Width", "Wheel Base"]
-        # aero_extra = ["Negative Lift Coefficient", "Downforce Total Area", "Downforce Distribution"]
-        #
-        # if self.root.ids.main_screen.ids.carscreen_1.ids.weight_shifting_switch.active:
-        #     optional_keys = [i for i in optional_keys if i not in weight_shifting_optional]
-        #
-        # if self.root.ids.main_screen.ids.aeroscreen_1.ids.downforce_switch.active:
-        #     optional_keys = [i for i in optional_keys if i not in aero_extra]
-        #     ui_data["aero_info"]['Downforce Distribution'] = 0
-        #     ui_data["aero_info"]['Downforce Total Area'] = 0
-        #     ui_data["aero_info"]['Negative Lift Coefficient'] = 0
-        #
-        # alias_tabs = ["Car Info", "Engine", "Drivetrain", "Tire", "Aerodynamics", "Results"]
-        # for x in self.nested_dict_pairs_iterator(ui_data):
-        #     if x[2] is None and x[1] not in optional_keys:
-        #         if x[0] == "car_info":
-        #             tab_name = "Car Info"
-        #         elif x[0] == "engine_info":
-        #             tab_name = "Engine"
-        #         elif x[0] == "drivetrain_info":
-        #             tab_name = "Drivetrain"
-        #         elif x[0] == "tire_info":
-        #             tab_name = "Tire"
-        #         elif x[0] == "aero_info":
-        #             tab_name = "Aerodynamics"
-        #         elif x[0] == "results_info":
-        #             tab_name = "Results"
-        #         self.dialog_information(f"{x[1]} from {tab_name} tab does not have a value.", message=True)
-        #
-        #         try:
-        #             self.root.ids.main_screen.ids.resultscreen_1.ids.button.visible = False
-        #             self.root.ids.main_screen.ids.resultscreen_1.ids.accel_result.visible = False
-        #         except:
-        #             pass
-        #         return
+        ui_data = self.get_tab_data()
+        optional_keys = ["Roll Stiffness", "Roll Center Height", "Track Width", "Wheel Base", "Negative Lift Coefficient", "Downforce Total Area", "Downforce Distribution"]
+        weight_shifting_optional = ["Roll Stiffness", "Roll Center Height", "Track Width", "Wheel Base"]
+        aero_extra = ["Negative Lift Coefficient", "Downforce Total Area", "Downforce Distribution"]
 
-        ui_data = {
-            'car_info': {'Roll Stiffness': None, 'Roll Center Height': None, 'Track Width': None, 'Wheel Base': None, 'Car Mass Distribution': '50', 'Car Mass': '1035',
-                         'Car Name': 'Mx5 nd 2015'},
-            'engine_info': {'Idle RPM': '1000', 'Redline RPM': '7500', 'Torque_0': '150', 'RPM_1': '1000', 'Torque_1': '162', 'RPM_2': '2000', 'Torque_2': '170',
-                            'RPM_3': '2500', 'Torque_3': '183', 'RPM_4': '3000', 'Torque_4': '191', 'RPM_5': '3500', 'Torque_5': '194', 'RPM_6': '4000',
-                            'Torque_6': '189', 'RPM_7': '4500', 'Torque_7': '192', 'RPM_8': '5000', 'Torque_8': '185', 'RPM_9': '5500', 'Torque_9': '173',
-                            'RPM_10': '6000', 'Torque_10': '165', 'RPM_11': '6500', 'Torque_11': '160', 'RPM_12': '7000', 'Torque_12': '152', 'RPM_13': '7500'},
-            'drivetrain_info': {'Gear 6 Ratio': '0.58', 'Gear 5 Ratio': '0.71', 'Gear 4 Ratio': '1', 'Gear 3 Ratio': '1.4', 'Gear 2 Ratio': '2.06',
-                                'Gear 1 Ratio': '3.54', 'Final Drive Ratio': '4.1', 'Gas Level': '0.3', 'Off Clutch RPM': '1400', 'Shifting Time (s)': '0.5',
-                                'Drivetrain Loss': '12', 'Layout': 'rwd'},
-            'tire_info': {'Rolling Resistance Coefficient (k)': '0.01', 'Tire Friction Coefficient (µ)': '0.92', 'Wheel Diameter': '16', 'Tire Aspect Ratio': '45',
-                          'Tire Width': '195'},
-            'aero_info': {'Downforce Distribution': '0', 'Downforce Total Area': '0', 'Negative Lift Coefficient': '0', 'Air Density': '1.225', 'Frontal Area': '1.82',
-                          'Coefficient of Drag': '0.33'}, 'results_info': {'Final Speed': '100', 'Initial Speed': '0'}}
+        if self.root.ids.main_screen.ids.carscreen_1.ids.weight_shifting_switch.active:
+            optional_keys = [i for i in optional_keys if i not in weight_shifting_optional]
+
+        if self.root.ids.main_screen.ids.aeroscreen_1.ids.downforce_switch.active:
+            optional_keys = [i for i in optional_keys if i not in aero_extra]
+            ui_data["aero_info"]['Downforce Distribution'] = 0
+            ui_data["aero_info"]['Downforce Total Area'] = 0
+            ui_data["aero_info"]['Negative Lift Coefficient'] = 0
+
+        alias_tabs = ["Car Info", "Engine", "Drivetrain", "Tire", "Aerodynamics", "Results"]
+        for x in self.nested_dict_pairs_iterator(ui_data):
+            if x[2] is None and x[1] not in optional_keys:
+                if x[0] == "car_info":
+                    tab_name = "Car Info"
+                elif x[0] == "engine_info":
+                    tab_name = "Engine"
+                elif x[0] == "drivetrain_info":
+                    tab_name = "Drivetrain"
+                elif x[0] == "tire_info":
+                    tab_name = "Tire"
+                elif x[0] == "aero_info":
+                    tab_name = "Aerodynamics"
+                elif x[0] == "results_info":
+                    tab_name = "Results"
+                self.dialog_information(f"{x[1]} from {tab_name} tab does not have a value.", message=True)
+
+                try:
+                    self.root.ids.main_screen.ids.resultscreen_1.ids.button.visible = False
+                    self.root.ids.main_screen.ids.resultscreen_1.ids.accel_result.visible = False
+                except:
+                    pass
+                return
+        
+        # already predefined set of datas, used for debuging
+        
+        # ui_data = {
+        #     'car_info': {'Roll Stiffness': None, 'Roll Center Height': None, 'Track Width': None, 'Wheel Base': None, 'Car Mass Distribution': '50', 'Car Mass': '1035',
+        #                  'Car Name': 'Mx5 nd 2015'},
+        #     'engine_info': {'Idle RPM': '1000', 'Redline RPM': '7500', 'Torque_0': '150', 'RPM_1': '1000', 'Torque_1': '162', 'RPM_2': '2000', 'Torque_2': '170',
+        #                     'RPM_3': '2500', 'Torque_3': '183', 'RPM_4': '3000', 'Torque_4': '191', 'RPM_5': '3500', 'Torque_5': '194', 'RPM_6': '4000',
+        #                     'Torque_6': '189', 'RPM_7': '4500', 'Torque_7': '192', 'RPM_8': '5000', 'Torque_8': '185', 'RPM_9': '5500', 'Torque_9': '173',
+        #                     'RPM_10': '6000', 'Torque_10': '165', 'RPM_11': '6500', 'Torque_11': '160', 'RPM_12': '7000', 'Torque_12': '152', 'RPM_13': '7500'},
+        #     'drivetrain_info': {'Gear 6 Ratio': '0.58', 'Gear 5 Ratio': '0.71', 'Gear 4 Ratio': '1', 'Gear 3 Ratio': '1.4', 'Gear 2 Ratio': '2.06',
+        #                         'Gear 1 Ratio': '3.54', 'Final Drive Ratio': '4.1', 'Gas Level': '0.3', 'Off Clutch RPM': '1400', 'Shifting Time (s)': '0.5',
+        #                         'Drivetrain Loss': '12', 'Layout': 'rwd'},
+        #     'tire_info': {'Rolling Resistance Coefficient (k)': '0.01', 'Tire Friction Coefficient (µ)': '0.92', 'Wheel Diameter': '16', 'Tire Aspect Ratio': '45',
+        #                   'Tire Width': '195'},
+        #     'aero_info': {'Downforce Distribution': '0', 'Downforce Total Area': '0', 'Negative Lift Coefficient': '0', 'Air Density': '1.225', 'Frontal Area': '1.82',
+        #                   'Coefficient of Drag': '0.33'}, 'results_info': {'Final Speed': '100', 'Initial Speed': '0'}}
 
         def estimate_weight_shift(acceleration_value, wheelbase, track_width, roll_center_height, roll_stiffness):
 
