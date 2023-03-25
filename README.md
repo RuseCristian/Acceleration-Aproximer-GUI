@@ -51,8 +51,6 @@ If you encounter any issues while using AccelApproximer or would like to contrib
 
 Here are some photos of the app when it simulates a 2016 mazda miata nd's time from 0-100 km/h.
 ![python_d57drbX4Zg](https://user-images.githubusercontent.com/99805998/227724960-dc2ecae9-b04a-40d9-bb93-03686a587d5e.png)
-![python_TOYaHcXgw3](https://user-images.githubusercontent.com/99805998/227724962-9f1c969a-4869-4a58-8f8a-5ab3c59f47ab.png)
-![python_rtQLS70VtP](https://user-images.githubusercontent.com/99805998/227724963-50b68e7c-fdae-4836-b841-7fcb155fb108.png)
-![python_4WDXztmYt5](https://user-images.githubusercontent.com/99805998/227724964-1da625e4-594a-4025-a81f-4831cf721950.png)
 ![python_SbiWhqGGJ9](https://user-images.githubusercontent.com/99805998/227724966-9f2da7dd-66d4-4083-88cd-6e5519841a33.png)
 ![python_85BQllGA7y](https://user-images.githubusercontent.com/99805998/227724967-3b32b690-97ec-44d2-b121-c6e166105384.png)
+![python_U8eOl4QEu0](https://user-images.githubusercontent.com/99805998/227725193-e5aa0fc5-9320-4e77-9e79-5dbfd6dcafcd.png)
