@@ -48,6 +48,8 @@ engine torque and horsepower, acceleration, air resistance, downforce, torque, t
 If you encounter any issues while using AccelApproximer or would like to contribute to its development, please feel free to submit a pull request or create an issue.
 
 # Photo Showcase
+
+Here are some photos of the app when it simulates a 2016 mazda miata nd's time from 0-100 km/h.
 ![python_d57drbX4Zg](https://user-images.githubusercontent.com/99805998/227724960-dc2ecae9-b04a-40d9-bb93-03686a587d5e.png)
 ![python_TOYaHcXgw3](https://user-images.githubusercontent.com/99805998/227724962-9f1c969a-4869-4a58-8f8a-5ab3c59f47ab.png)
 ![python_rtQLS70VtP](https://user-images.githubusercontent.com/99805998/227724963-50b68e7c-fdae-4836-b841-7fcb155fb108.png)
